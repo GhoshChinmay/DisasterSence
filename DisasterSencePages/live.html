@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Disaster Watch India — Responsive Navigation with Scroll Progress</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  </head>
+  <body class="antialiased bg-black text-gray-100 selection:bg-cyan-400/20 selection:text-cyan-200" style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'">
+    <!-- Scroll Progress -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-cyan-400 to-teal-400 w-0 z-[60]" style="width: 0%"></div>
+
+    <!-- Header -->
+    <header id="site-header" class="fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b bg-black/70 border-white/10 transition-transform duration-300 will-change-transform" style="transform: translateY(0px)">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16">
+        <div class="h-full flex items-center justify-between">
+          <!-- Brand -->
+          <a href="#overview" class="flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-md">
+            <div class="h-6 w-6 rounded-md bg-gradient-to-br from-cyan-400 to-teal-400"></div>
+            <div class="leading-tight">
+              <p class="text-base font-medium tracking-tight">Disaster Watch</p>
+              <p class="text-[11px] text-gray-400">India · Real-time Monitoring</p>
+            </div>
+          </a>
+
+          <!-- Desktop Nav -->
+          <div class="hidden md:flex items-center gap-7">
+            <a href="#overview" data-nav-link class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="page" style="background-size: 100% 2px">Overview</a>
+            <a href="#map-section" data-nav-link class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px">Map</a>
+            <a href="#alerts" data-nav-link class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px">Alerts</a>
+            <a href="#social" data-nav-link class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px">Social</a>
+            <a href="#status" data-nav-link class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px">Status</a>
+            <a href="#contacts" data-nav-link class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px">Contacts</a>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 text-xs text-emerald-400">
+              <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-30"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+              Live
+            </div>
+            <button id="refreshBtn" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium bg-cyan-400 text-black hover:bg-cyan-300 transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-cyan-500">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh
+            </button>
+            <button id="nav-toggle" aria-expanded="false" aria-controls="mobile-panel" class="md:hidden p-2 rounded-md transition-colors hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+              <i data-lucide="menu" class="w-5 h-5"></i>
+              <i data-lucide="x" class="w-5 h-5 hidden"></i>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Mobile Panel -->
+      <div id="mobile-panel" class="fixed inset-0 z-40 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close-overlay></div>
+        <div class="absolute inset-x-0 top-0 bg-gray-950/95 border-b border-white/10 px-4 sm:px-6 pt-20 pb-8 translate-y-[-8px] opacity-0 transition-all duration-300">
+          <div class="max-w-7xl mx-auto">
+            <div class="grid gap-3">
+              <a href="#overview" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                <span class="text-base font-medium text-gray-100">Overview</span>
+                <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+              </a>
+              <a href="#map-section" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                <span class="text-base font-medium text-gray-100">Map</span>
+                <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+              </a>
+              <a href="#alerts" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                <span class="text-base font-medium text-gray-100">Alerts</span>
+                <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+              </a>
+              <a href="#social" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                <span class="text-base font-medium text-gray-100">Social</span>
+                <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+              </a>
+              <a href="#status" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                <span class="text-base font-medium text-gray-100">Status</span>
+                <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+              </a>
+              <a href="#contacts" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+                <span class="text-base font-medium text-gray-100">Contacts</span>
+                <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+              </a>
+            </div>
+            <div class="mt-6 flex items-center gap-3">
+              <button id="refreshBtnMobile" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-cyan-400 text-black hover:bg-cyan-300 transition-all hover:scale-[1.02]">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh Data
+              </button>
+              <div class="inline-flex items-center gap-2 text-sm text-emerald-400">
+                <span class="relative flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-30"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                Live
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="pt-24">
+      <!-- Overview -->
+      <section id="overview" class="py-8 sm:py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <!-- Summary cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" id="summaryCards"></div>
+
+          <!-- Filters -->
+          <div class="rounded-xl bg-gray-950/70 border border-white/10 p-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <div class="md:col-span-1 relative">
+                <i data-lucide="search" class="w-4.5 h-4.5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input id="searchInput" class="w-full pl-9 pr-12 py-2.5 rounded-lg bg-black/50 border border-white/10 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm" placeholder="Search by location, type, or title" />
+                <div class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-gray-500 select-none">⌘K</div>
+              </div>
+              <select id="severityFilter" class="px-3 py-2.5 rounded-lg bg-black/50 border border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <option value="all">All Severities</option>
+                <option value="critical">Critical</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+              <select id="typeFilter" class="px-3 py-2.5 rounded-lg bg-black/50 border border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <option value="all">All Types</option>
+                <option value="cyclone">Cyclone</option>
+                <option value="flood">Flood</option>
+                <option value="earthquake">Earthquake</option>
+                <option value="fire">Fire</option>
+                <option value="heatwave">Heatwave</option>
+              </select>
+              <select id="stateFilter" class="px-3 py-2.5 rounded-lg bg-black/50 border border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <option value="all">All States</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Map + Lists -->
+      <section id="map-section" class="py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="rounded-xl overflow-hidden bg-gray-950/70 border border-white/10">
+            <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+              <span class="text-sm font-medium tracking-tight">Disaster Map — India</span>
+              <div class="flex items-center gap-2 text-xs text-gray-400">
+                <i data-lucide="map" class="w-4 h-4"></i> Leaflet
+              </div>
+            </div>
+            <div id="map" class="h-80"></div>
+          </div>
+
+          <div class="lg:col-span-2 space-y-6">
+            <div class="rounded-xl bg-gray-950/70 border border-white/10">
+              <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2">
+                <i data-lucide="alarm-octagon" class="w-4 h-4 text-red-400"></i>
+                <span class="text-sm font-medium tracking-tight">Active Alerts</span>
+              </div>
+              <div id="alertsList" class="p-4 space-y-3"></div>
+            </div>
+
+            <div id="social" class="rounded-xl bg-gray-950/70 border border-white/10">
+              <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2">
+                <i data-lucide="radio" class="w-4 h-4 text-cyan-300"></i>
+                <span class="text-sm font-medium tracking-tight">Social Media Reports</span>
+              </div>
+              <div id="socialList" class="p-4 space-y-3"></div>
+            </div>
+
+            <div id="status" class="rounded-xl bg-gray-950/70 border border-white/10">
+              <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2">
+                <i data-lucide="activity" class="w-4 h-4 text-emerald-300"></i>
+                <span class="text-sm font-medium tracking-tight">Data Sources & System Status</span>
+              </div>
+              <div id="statusList" class="p-4 space-y-3"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick actions -->
+      <section class="py-2">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-xl bg-gray-950/70 border border-white/10 p-4">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <button class="px-4 py-3 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400/20 text-cyan-200 text-sm inline-flex items-center justify-center gap-2 transition-colors" onclick="toast('Report Disaster coming soon')">
+              <i data-lucide="file-plus" class="w-4 h-4"></i> Report Disaster
+            </button>
+            <button class="px-4 py-3 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-400/20 text-rose-200 text-sm inline-flex items-center justify-center gap-2 transition-colors" onclick="toast('Send Alert coming soon')">
+              <i data-lucide="send" class="w-4 h-4"></i> Send Alert
+            </button>
+            <button class="px-4 py-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-sm inline-flex items-center justify-center gap-2 transition-colors" onclick="toast('Analytics coming soon')">
+              <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Analytics
+            </button>
+            <button class="px-4 py-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-sm inline-flex items-center justify-center gap-2 transition-colors" onclick="toast('Export coming soon')">
+              <i data-lucide="download" class="w-4 h-4"></i> Export Data
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer id="contacts" class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-xl bg-gray-950/70 border border-white/10 p-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <h3 class="font-medium mb-2 tracking-tight">Emergency Contacts</h3>
+              <div class="space-y-1 text-sm text-gray-300">
+                <p class="flex items-center justify-between border-b border-white/5 py-1.5"><span class="text-gray-400">NDRF</span> <span class="font-medium">9711077372</span></p>
+                <p class="flex items-center justify-between border-b border-white/5 py-1.5"><span class="text-gray-400">Police</span> <span class="font-medium">100</span></p>
+                <p class="flex items-center justify-between border-b border-white/5 py-1.5"><span class="text-gray-400">Fire</span> <span class="font-medium">101</span></p>
+                <p class="flex items-center justify-between py-1.5"><span class="text-gray-400">Medical</span> <span class="font-medium">108</span></p>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-medium mb-2 tracking-tight">Official Sources</h3>
+              <div class="space-y-1 text-sm">
+                <a href="https://ndma.gov.in" target="_blank" class="block text-cyan-300 hover:text-cyan-200">NDMA.gov.in</a>
+                <a href="https://mausam.imd.gov.in" target="_blank" class="block text-cyan-300 hover:text-cyan-2 00">IMD.gov.in</a>
+                <a href="https://bhuvan.nrsc.gov.in" target="_blank" class="block text-cyan-300 hover:text-cyan-200">ISRO Bhuvan</a>
+                <a href="https://www.india.gov.in" target="_blank" class="block text-cyan-300 hover:text-cyan-200">Emergency.gov.in</a>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-medium mb-2 tracking-tight">System Information</h3>
+              <div class="space-y-1 text-sm text-gray-400" id="systemInfo"></div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast" role="status" aria-live="polite" class="pointer-events-none fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-black shadow-lg opacity-0 translate-y-2 transition-all"></div>
+
+    <script>
+      // Icons (1.5 stroke width)
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      });
+
+      // Smooth anchor scroll
+      function smoothScrollTo(target) {
+        const el = document.querySelector(target);
+        if (!el) return;
+        const headerOffset = document.getElementById('site-header').offsetHeight;
+        const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - headerOffset + 1;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+
+      // Scroll progress
+      const progressEl = document.getElementById('scroll-progress');
+      const onScrollProgress = () => {
+        const h = document.documentElement;
+        const scrollTop = h.scrollTop || document.body.scrollTop;
+        const scrollHeight = h.scrollHeight - h.clientHeight;
+        const pct = Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100));
+        progressEl.style.width = pct + '%';
+      };
+      document.addEventListener('scroll', onScrollProgress, { passive: true });
+
+      // Header show/hide on scroll
+      const header = document.getElementById('site-header');
+      let lastY = window.pageYOffset;
+      let ticking = false;
+      function handleHeader() {
+        const y = window.pageYOffset;
+        const down = y > lastY && y > 80;
+        header.style.transform = down ? 'translateY(-100%)' : 'translateY(0)';
+        lastY = y;
+        ticking = false;
+      }
+      document.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(handleHeader);
+          ticking = true;
+        }
+      }, { passive: true });
+
+      // Mobile panel
+      const toggleBtn = document.getElementById('nav-toggle');
+      const mobilePanel = document.getElementById('mobile-panel');
+      const panelInner = mobilePanel.querySelector('div.absolute.inset-x-0.top-0');
+      const overlay = mobilePanel.querySelector('[data-close-overlay]');
+
+      function openMobile() {
+        mobilePanel.classList.remove('pointer-events-none');
+        mobilePanel.classList.add('pointer-events-auto');
+        mobilePanel.style.opacity = '1';
+        panelInner.style.transform = 'translateY(0)';
+        panelInner.style.opacity = '1';
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        toggleBtn.querySelector('[data-lucide="menu"]').classList.add('hidden');
+        toggleBtn.querySelector('[data-lucide="x"]').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeMobile() {
+        mobilePanel.style.opacity = '0';
+        panelInner.style.transform = 'translateY(-8px)';
+        panelInner.style.opacity = '0';
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        toggleBtn.querySelector('[data-lucide="menu"]').classList.remove('hidden');
+        toggleBtn.querySelector('[data-lucide="x"]').classList.add('hidden');
+        setTimeout(() => {
+          mobilePanel.classList.remove('pointer-events-auto');
+          mobilePanel.classList.add('pointer-events-none');
+          document.body.style.overflow = '';
+        }, 250);
+      }
+      toggleBtn.addEventListener('click', () => {
+        const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+        expanded ? closeMobile() : openMobile();
+      });
+      overlay.addEventListener('click', closeMobile);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobile(); });
+      window.addEventListener('resize', () => { if (window.innerWidth >= 768) closeMobile(); });
+
+      // Mobile links: close + smooth scroll
+      document.querySelectorAll('[data-mobile-link]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = a.getAttribute('href');
+          closeMobile();
+          setTimeout(() => smoothScrollTo(href), 220);
+        });
+      });
+
+      // Desktop nav smooth scroll
+      document.querySelectorAll('[data-nav-link]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          smoothScrollTo(a.getAttribute('href'));
+        });
+      });
+
+      // Active link highlighting
+      const sections = Array.from(document.querySelectorAll('section[id], footer[id]'));
+      const navLinks = Array.from(document.querySelectorAll('[data-nav-link]'));
+      function setActive(id) {
+        navLinks.forEach(link => {
+          const match = link.getAttribute('href') === '#' + id;
+          link.setAttribute('aria-current', match ? 'page' : 'false');
+          link.style.backgroundSize = match ? '100% 2px' : '0% 2px';
+          link.classList.toggle('text-white', match);
+        });
+      }
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) setActive(entry.target.id); });
+      }, { threshold: 0.5, rootMargin: '-20% 0px -20% 0px' });
+      sections.forEach(sec => observer.observe(sec));
+
+      // ---------------- App Logic ----------------
+      const sampleDisasters = [
+        { id: '1', title: 'Severe Cyclone Warning - Odisha Coast', description: 'Cyclone approaching Odisha coast...', type: 'cyclone', severity: 'critical', state: 'Odisha', district: 'Bhadrak', latitude: '21.0547', longitude: '86.7903', reportedAt: new Date().toISOString() },
+        { id: '2', title: 'Flash Flood Alert - Mumbai Metropolitan Region', description: 'Heavy rainfall waterlogging in Mumbai.', type: 'flood', severity: 'high', state: 'Maharashtra', district: 'Mumbai', latitude: '19.0760', longitude: '72.8777', reportedAt: new Date().toISOString() },
+        { id: '3', title: 'Earthquake - Magnitude 4.2 - Himachal Pradesh', description: 'Moderate earthquake felt in Shimla.', type: 'earthquake', severity: 'medium', state: 'Himachal Pradesh', district: 'Shimla', latitude: '31.1048', longitude: '77.1734', reportedAt: new Date().toISOString() },
+        { id: '4', title: 'Forest Fire - Uttarakhand Hills', description: 'Wildfire near Nainital.', type: 'fire', severity: 'high', state: 'Uttarakhand', district: 'Nainital', latitude: '29.3803', longitude: '79.4636', reportedAt: new Date().toISOString() },
+        { id: '5', title: 'Heat Wave Warning - Rajasthan', description: 'Severe heat wave 48°C in parts of Rajasthan.', type: 'heatwave', severity: 'medium', state: 'Rajasthan', district: 'Churu', latitude: '28.2969', longitude: '74.9647', reportedAt: new Date().toISOString() },
+      ];
+      const sampleSocial = [
+        { id: 's1', user: 'WeatherAlert_IN', verified: false, content: 'Heavy rains causing waterlogging in Andheri East...', location: 'Mumbai, Maharashtra', likes: 123, retweets: 45, replies: 12, reportedAt: '15m' },
+        { id: 's2', user: 'OdishaEmergency', verified: true, content: 'Cyclone shelter opened at Government High School, Balasore...', location: 'Balasore, Odisha', likes: 245, retweets: 89, replies: 23, reportedAt: '45m' },
+        { id: 's3', user: 'HimachalUpdates', verified: false, content: 'Felt tremors in Shimla area around 1:30 PM...', location: 'Shimla, Himachal Pradesh', likes: 156, retweets: 67, replies: 34, reportedAt: '25m' },
+      ];
+      const sampleStatuses = [
+        { name: 'NDMA API', status: 'online', lastSync: 'less than a minute ago' },
+        { name: 'ISRO BHUVAN', status: 'online', lastSync: 'less than a minute ago' },
+        { name: 'Twitter API', status: 'online', lastSync: '2 minutes ago' },
+        { name: 'IMD API', status: 'online', lastSync: 'less than a minute ago' },
+      ];
+
+      const stateSet = new Set(sampleDisasters.map(d => d.state));
+      const allStates = ['all', ...Array.from(stateSet)];
+
+      const els = {
+        summary: document.getElementById('summaryCards'),
+        stateFilter: document.getElementById('stateFilter'),
+        typeFilter: document.getElementById('typeFilter'),
+        severityFilter: document.getElementById('severityFilter'),
+        search: document.getElementById('searchInput'),
+        alerts: document.getElementById('alertsList'),
+        social: document.getElementById('socialList'),
+        status: document.getElementById('statusList'),
+        systemInfo: document.getElementById('systemInfo'),
+        refreshBtn: document.getElementById('refreshBtn'),
+        refreshBtnMobile: document.getElementById('refreshBtnMobile')
+      };
+
+      // Populate state filter
+      els.stateFilter.innerHTML = allStates.map(s => `<option value="${s}">${s === 'all' ? 'All States' : s}</option>`).join('');
+
+      const severityBadge = (sev) => {
+        const map = {
+          critical: 'bg-red-600 text-white',
+          high: 'bg-orange-500 text-white',
+          medium: 'bg-amber-500 text-black',
+          low: 'bg-emerald-500 text-black',
+          info: 'bg-blue-500 text-white'
+        };
+        return map[sev] || map.info;
+      };
+
+      function computeSummary(data){
+        return {
+          critical: data.filter(d=>d.severity==='critical').length,
+          high: data.filter(d=>d.severity==='high').length,
+          medium: data.filter(d=>d.severity==='medium').length,
+          low: data.filter(d=>d.severity==='low').length,
+        };
+      }
+
+      function renderSummary(){
+        const s = computeSummary(filteredDisasters());
+        const card = (label, count, ring) => `
+          <div class="rounded-xl p-4 bg-gray-950/70 border border-white/10">
+            <div class="flex items-start justify-between">
+              <div class="text-2xl font-semibold tracking-tight">${count}</div>
+              <span class="h-2.5 w-2.5 rounded-full ${ring}"></span>
+            </div>
+            <div class="text-sm text-gray-400 mt-1">${label}</div>
+          </div>`;
+        els.summary.innerHTML = [
+          card('Critical', s.critical, 'bg-red-500'),
+          card('High', s.high, 'bg-orange-500'),
+          card('Medium', s.medium, 'bg-amber-500'),
+          card('Low', s.low, 'bg-emerald-500')
+        ].join('');
+      }
+
+      function matchesFilters(d){
+        const q = (els.search.value || '').toLowerCase();
+        if(q){
+          const inText = (d.title + ' ' + d.description + ' ' + d.state + ' ' + (d.district||'')).toLowerCase();
+          if(!inText.includes(q)) return false;
+        }
+        const sev = els.severityFilter.value;
+        if(sev !== 'all' && d.severity !== sev) return false;
+        const type = els.typeFilter.value;
+        if(type !== 'all' && d.type !== type) return false;
+        const st = els.stateFilter.value;
+        if(st !== 'all' && d.state !== st) return false;
+        return true;
+      }
+
+      function filteredDisasters(){
+        return sampleDisasters.filter(matchesFilters);
+      }
+
+      function renderAlerts(){
+        const data = filteredDisasters();
+        if(data.length === 0){
+          els.alerts.innerHTML = '<div class="text-sm text-gray-400">No alerts match your filters.</div>';
+          return;
+        }
+        els.alerts.innerHTML = data.map(d=>`
+          <div class="border border-white/10 rounded-lg p-3 bg-black/40">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-xs text-gray-400">
+                <span class="px-2 py-0.5 rounded-md ${severityBadge(d.severity)}">${d.severity.toUpperCase()}</span>
+                NDMA
+              </div>
+              <a href="#" class="text-gray-400 hover:text-gray-200" aria-label="open"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+            </div>
+            <div class="mt-1 font-medium">${d.title}</div>
+            <div class="text-sm text-gray-400" style="display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden">${d.description}</div>
+            <div class="mt-2 text-xs text-gray-500">${d.state}${d.district?`, ${d.district}`:''}</div>
+          </div>
+        `).join('');
+        if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      }
+
+      function renderSocial(){
+        els.social.innerHTML = sampleSocial.map(s=>`
+          <div class="border border-white/10 rounded-lg p-3 bg-black/40">
+            <div class="flex items-center justify-between text-xs text-gray-400">
+              <div class="flex items-center gap-2">
+                <span class="text-gray-200">@${s.user}</span>
+                ${s.verified?'<i data-lucide="badge-check" class="w-4 h-4 text-emerald-400"></i>':'<i data-lucide="badge" class="w-4 h-4 text-yellow-400"></i>'}
+              </div>
+              <div>${s.reportedAt}</div>
+            </div>
+            <div class="mt-1">${s.content}</div>
+            <div class="mt-2 text-xs text-gray-500">${s.location}</div>
+          </div>
+        `).join('');
+        if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      }
+
+      function renderStatus(){
+        els.status.innerHTML = sampleStatuses.map(s=>`
+          <div class="flex items-center justify-between border border-white/10 rounded-lg p-3 bg-black/40">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full ${s.status==='online'?'bg-emerald-500':'bg-amber-500'}"></span>
+              ${s.name}
+            </div>
+            <div class="text-xs text-gray-400">${s.status} · Last sync: ${s.lastSync}</div>
+          </div>
+        `).join('');
+        els.systemInfo.innerHTML = `
+          <p>API Status: <span class="text-emerald-400 font-medium">Operational</span></p>
+          <p>Data Sources: <span class="font-medium text-gray-200">${sampleStatuses.length} active</span></p>
+          <p>Total Alerts: <span class="font-medium text-gray-200">${sampleDisasters.length}</span></p>
+          <p class="text-xs pt-2 text-gray-500">© ${new Date().getFullYear()} Disaster Management System India</p>
+        `;
+      }
+
+      function initMap(){
+        const map = L.map('map').setView([22.9734, 78.6569], 4.5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const markers = filteredDisasters()
+          .filter(d=>d.latitude && d.longitude)
+          .map(d=>{
+            const m = L.marker([parseFloat(d.latitude), parseFloat(d.longitude)]).addTo(map);
+            m.bindPopup(`<strong>${d.title}</strong><br/>${d.state}${d.district?`, ${d.district}`:''}`);
+            return m;
+          });
+
+        window.__map = map;
+        window.__markers = markers;
+      }
+
+      function updateMapMarkers(){
+        const map = window.__map;
+        const current = window.__markers || [];
+        current.forEach(m => m.remove());
+        const markers = filteredDisasters()
+          .filter(d=>d.latitude && d.longitude)
+          .map(d=>{
+            const m = L.marker([parseFloat(d.latitude), parseFloat(d.longitude)]).addTo(map);
+            m.bindPopup(`<strong>${d.title}</strong><br/>${d.state}${d.district?`, ${d.district}`:''}`);
+            return m;
+          });
+        window.__markers = markers;
+      }
+
+      function toast(message){
+        const t = document.getElementById('toast');
+        t.textContent = message;
+        t.classList.remove('opacity-0', 'translate-y-2');
+        t.classList.add('opacity-100', 'translate-y-0');
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(()=>{
+          t.classList.add('opacity-0', 'translate-y-2');
+          t.classList.remove('opacity-100', 'translate-y-0');
+        }, 2000);
+      }
+
+      function renderAll(){
+        renderSummary();
+        renderAlerts();
+        renderSocial();
+        renderStatus();
+        if(window.__map){ updateMapMarkers(); }
+      }
+
+      // Events
+      [els.search, els.severityFilter, els.typeFilter, els.stateFilter].forEach(el => {
+        el.addEventListener('input', renderAll);
+        el.addEventListener('change', renderAll);
+      });
+      const refresh = () => { toast('Data refreshed'); renderAll(); };
+      if (els.refreshBtn) els.refreshBtn.addEventListener('click', refresh);
+      if (els.refreshBtnMobile) els.refreshBtnMobile.addEventListener('click', () => { refresh(); closeMobile(); });
+
+      // Initial render
+      renderAll();
+      initMap();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,797 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DisasterSence — Emergency Kit Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="antialiased bg-black text-gray-100 selection:bg-teal-400/20 selection:text-teal-200" style="font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'">
+    <!-- Scroll Progress -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-teal-400 to-cyan-400 w-0 z-[60]" style="width: 0%;"></div>
+  
+    <!-- Header -->
+    <header id="site-header" class="fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b bg-black/70 border-gray-900 transition-transform duration-300 will-change-transform" style="transform: translateY(0);">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16">
+        <div class="h-full flex items-center justify-between">
+          <!-- Brand -->
+          <a href="{{ url_for('index') }}" class="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md">
+            <div class="h-6 w-6 rounded-md bg-gradient-to-br from-teal-500 to-cyan-400"></div>
+            <span class="text-lg font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">DisasterSence</span>
+          </a>
+  
+          <!-- Desktop Nav -->
+          <div class="hidden md:flex items-center gap-6">
+            <a href="{{ url_for('index') }}" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300 text-white" aria-current="page" style="background-size: 100% 2px;"><span>Home</span></a>
+            <a href="#planner" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300 text-white" aria-current="page" style="background-size: 100% 2px;">Planner</a>
+            <a href="#tips" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px;">Tips</a>
+            <a href="#maintenance" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px;">Maintenance</a>
+            <a href="#storage" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px;">Storage</a>
+            <a href="#contacts" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px;">Contacts</a>
+          </div>
+  
+          <!-- Actions -->
+          <div class="flex items-center gap-3">
+            <button id="generateTop" class="hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+              Generate Kit
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="wand-2" class="lucide w-4 h-4"><path d="M15 4V2"></path><path d="M15 16v-2"></path><path d="M8 9h2"></path><path d="M20 9h2"></path><path d="m17 22-3-3"></path><path d="M5 11l-3-3"></path><path d="m5 22 3-3"></path><path d="m17 11 3-3"></path><path d="M11 5 9 3"></path><path d="m2 2 20 20"></path></svg>
+            </button>
+            <button id="nav-toggle" aria-expanded="false" aria-controls="mobile-panel" class="md:hidden p-2 rounded-md transition-colors hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="menu" class="lucide w-5 h-5"><path d="M4 12h16"></path><path d="M4 18h16"></path><path d="M4 6h16"></path></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide w-5 h-5 hidden"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+  
+      <!-- Mobile Panel -->
+      <div id="mobile-panel" class="fixed inset-0 z-40 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close-overlay=""></div>
+        <div class="absolute inset-x-0 top-0 bg-gray-950/95 border-b border-gray-900 px-4 sm:px-6 pt-20 pb-8 translate-y-[-8px] opacity-0 transition-all duration-300">
+          <div class="max-w-7xl mx-auto">
+            <div class="grid gap-4">
+              <a href="{{ url_for('index') }}" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+                <span class="text-base font-medium text-gray-100">Home</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+              </a>
+              <a href="#planner" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+                <span class="text-base font-medium text-gray-100">Planner</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+              </a>
+              <a href="#tips" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+                <span class="text-base font-medium text-gray-100">Tips</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+              </a>
+              <a href="#maintenance" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+                <span class="text-base font-medium text-gray-100">Maintenance</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+              </a>
+              <a href="#storage" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+                <span class="text-base font-medium text-gray-100">Storage</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+              </a>
+              <a href="#contacts" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+                <span class="text-base font-medium text-gray-100">Contacts</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+              </a>
+            </div>
+            <div class="mt-6 flex items-center gap-3">
+              <button id="generateTopMobile" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+                Generate
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="wand-2" class="lucide w-4 h-4"><path d="M15 4V2"></path><path d="M15 16v-2"></path><path d="M8 9h2"></path><path d="M20 9h2"></path><path d="m17 22-3-3"></path><path d="M5 11l-3-3"></path><path d="m5 22 3-3"></path><path d="m17 11 3-3"></path><path d="M11 5 9 3"></path><path d="m2 2 20 20"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  
+    <!-- Hero -->
+    <section class="relative overflow-hidden pt-24 sm:pt-28 pb-10 bg-cover bg-center" style="background-image: url('{{ url_for('static', filename='kit_hero.jpg') }}');">
+      <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/60 to-black"></div>
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <p class="text-sm font-medium uppercase tracking-wider text-teal-300/90">Preparedness Planner</p>
+            <h1 class="mt-3 text-4xl sm:text-5xl leading-tight font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">
+              Build your personalized emergency kit
+            </h1>
+            <p class="mt-5 text-lg text-gray-300 max-w-xl">
+              Plan essentials for floods, earthquakes, cyclones, and landslides—tailored to your family's needs.
+            </p>
+            <div class="mt-7 flex flex-col sm:flex-row gap-3">
+              <a href="#planner" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+                Get Started
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="lucide w-5 h-5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+              </a>
+              <a href="#tips" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]">
+                Learn Tips
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="lightbulb" class="lucide w-5 h-5"><path d="M6 9a6 6 0 1 1 12 0c0 2.3-1.223 4.009-2.5 5.5-.445.5-.5 1-.5 1.5v1a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-1c0-.5-.055-1-.5-1.5C7.223 13.009 6 11.3 6 9Z"></path><path d="M9.5 22h5"></path></svg>
+              </a>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gray-900/40">
+              <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&amp;w=1600&amp;auto=format&amp;fit=crop" alt="Emergency kit" class="w-full h-[420px] object-cover">
+              <div class="absolute top-4 right-4 backdrop-blur-sm rounded-xl p-4 shadow-lg bg-black/80 border border-white/10">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex bg-gray-800 rounded-full items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="first-aid-kit" class="lucide w-5 h-5 text-gray-200"><path d="M8 8v8"></path><path d="M12 12H8"></path><path d="M20 7a2 2 0 0 0-2-2h-3V3H9v2H6a2 2 0 0 0-2 2v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-300">Coverage</p>
+                    <p class="text-lg font-semibold text-white">3–14 days</p>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute bottom-4 left-4 backdrop-blur-sm rounded-xl p-4 shadow-lg bg-black/80 border border-white/10">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex bg-gray-800 rounded-full items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="users" class="lucide w-5 h-5 text-gray-300"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-300">Family Size</p>
+                    <p class="text-lg font-semibold text-white"><span id="familySizeDisplayHero">4</span> people</p>
+                  </div>
+                </div>
+                <div class="mt-3 w-44 h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div id="kitProgressMini" class="h-full bg-gradient-to-r from-teal-400 to-cyan-400" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Partners divider -->
+        <div class="mt-10 border-t border-white/10 pt-6">
+          <p class="text-center text-sm text-gray-400">Built for Indian preparedness</p>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Planner -->
+    <section id="planner" class="py-12 bg-gray-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between gap-6">
+          <div>
+            <p class="text-sm font-medium uppercase tracking-wider text-teal-300/90">Planner</p>
+            <h2 class="mt-2 text-3xl lg:text-4xl tracking-tight font-medium text-white" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">
+              Emergency Kit Planner
+            </h2>
+          </div>
+          <div class="hidden md:flex items-center gap-3">
+            <button id="downloadChecklistBtn" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]">
+              Download Checklist
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="download" class="lucide w-4 h-4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>
+            </button>
+            <button id="showShoppingListBtn" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+              Shopping List
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="shopping-cart" class="lucide w-4 h-4"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.74 12.17a2 2 0 0 0 2 1.63h7.45a2 2 0 0 0 2-1.63l1.26-7.54H5.12"></path></svg>
+            </button>
+          </div>
+        </div>
+  
+        <div class="mt-8 grid lg:grid-cols-[320px,1fr] gap-6">
+          <!-- Sidebar Controls -->
+          <aside class="space-y-6 p-5 rounded-xl border border-white/10 bg-black/40 backdrop-blur">
+            <div class="flex items-center gap-2">
+              <div class="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-round" class="lucide w-4.5 h-4.5 text-gray-300"><path d="M18 20a6 6 0 0 0-12 0"></path><circle cx="12" cy="10" r="4"></circle></svg>
+              </div>
+              <h3 class="text-lg font-semibold tracking-tight">Family Details</h3>
+            </div>
+  
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="familySize" class="block text-sm text-gray-300 mb-1">Family Size</label>
+                <input id="familySize" type="number" min="1" max="20" value="4" class="w-full px-3 py-2.5 rounded-lg bg-black/60 border border-white/10 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500">
+              </div>
+              <div>
+                <label for="adults" class="block text-sm text-gray-300 mb-1">Adults</label>
+                <input id="adults" type="number" min="1" max="20" value="2" class="w-full px-3 py-2.5 rounded-lg bg-black/60 border border-white/10 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500">
+              </div>
+              <div>
+                <label for="children" class="block text-sm text-gray-300 mb-1">Children</label>
+                <input id="children" type="number" min="0" max="20" value="2" class="w-full px-3 py-2.5 rounded-lg bg-black/60 border border-white/10 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500">
+              </div>
+              <div>
+                <label for="seniors" class="block text-sm text-gray-300 mb-1">Seniors (65+)</label>
+                <input id="seniors" type="number" min="0" max="20" value="0" class="w-full px-3 py-2.5 rounded-lg bg-black/60 border border-white/10 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500">
+              </div>
+            </div>
+  
+            <div class="h-px bg-white/10"></div>
+  
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="heart-pulse" class="lucide w-4.5 h-4.5 text-gray-300"><path d="M2 12h4l3 8 4-16 3 8h6"></path><path d="M21 8a4 4 0 0 0-7.33-2.67"></path><path d="M3 8a4 4 0 0 1 7.33-2.67"></path></svg>
+                </div>
+                <h4 class="text-base font-semibold tracking-tight">Special Needs</h4>
+              </div>
+              <div class="space-y-3">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input id="hasMedical" type="checkbox" class="appearance-none w-5 h-5 rounded border border-white/20 bg-black/60 checked:bg-teal-400 checked:border-teal-400 relative transition-colors">
+                  <span class="text-sm text-gray-300">Family member with medical conditions</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input id="hasDisabilities" type="checkbox" class="appearance-none w-5 h-5 rounded border border-white/20 bg-black/60 checked:bg-teal-400 checked:border-teal-400 relative transition-colors">
+                  <span class="text-sm text-gray-300">Family member with disabilities</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input id="hasPets" type="checkbox" class="appearance-none w-5 h-5 rounded border border-white/20 bg-black/60 checked:bg-teal-400 checked:border-teal-400 relative transition-colors">
+                  <span class="text-sm text-gray-300">Pets</span>
+                </label>
+              </div>
+            </div>
+  
+            <div class="h-px bg-white/10"></div>
+  
+            <div class="grid grid-cols-1 gap-3">
+              <div>
+                <label for="kitDuration" class="block text-sm text-gray-300 mb-1">Emergency Kit Duration</label>
+                <select id="kitDuration" class="w-full px-3 py-2.5 rounded-lg bg-black/60 border border-white/10 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                  <option value="3">3 days</option>
+                  <option value="7">7 days</option>
+                  <option value="14">14 days</option>
+                </select>
+              </div>
+              <div>
+                <label for="budgetRange" class="block text-sm text-gray-300 mb-1">Budget Range (₹)</label>
+                <select id="budgetRange" class="w-full px-3 py-2.5 rounded-lg bg-black/60 border border-white/10 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                  <option value="basic">Basic (₹500–1000)</option>
+                  <option value="standard">Standard (₹1000–2000)</option>
+                  <option value="premium">Premium (₹2000+)</option>
+                </select>
+              </div>
+            </div>
+  
+            <button id="generateBtn" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+              Generate Emergency Kit
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" class="lucide w-4 h-4"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>
+            </button>
+  
+            <div class="h-px bg-white/10"></div>
+  
+            <!-- Indian-specific resources -->
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="map" class="lucide w-4.5 h-4.5 text-gray-300"><path d="M9 18 2 15V3l7 3 7-3 7 3v12l-7-3-7 3z"></path><path d="M9 3v15"></path><path d="M16 6v15"></path></svg>
+                </div>
+                <h4 class="text-base font-semibold tracking-tight">Indian Resources</h4>
+              </div>
+              <div class="grid gap-2">
+                <button id="btnIndianResources" class="inline-flex items-center justify-between gap-2 w-full px-3 py-2 rounded-lg bg-amber-400/10 hover:bg-amber-400/15 border border-amber-400/20 text-sm transition-colors">
+                  <span class="inline-flex items-center gap-2 text-amber-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="book-open" class="lucide w-4 h-4"><path d="M2 4a2 2 0 0 1 2-2h7a4 4 0 0 1 4 4v12a2 2 0 0 0-2-2H4a2 2 0 0 1-2-2z"></path><path d="M22 6a4 4 0 0 0-4-4"></path></svg>
+                    Disaster Resources
+                  </span>
+                  <span class="text-amber-200/80">View</span>
+                </button>
+                <button id="btnRegionalSuppliers" class="inline-flex items-center justify-between gap-2 w-full px-3 py-2 rounded-lg bg-cyan-400/10 hover:bg-cyan-400/15 border border-cyan-400/20 text-sm transition-colors">
+                  <span class="inline-flex items-center gap-2 text-cyan-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="truck" class="lucide w-4 h-4"><path d="M10 17h4V7H2v10h4"></path><path d="M14 17h2l3-5h-5z"></path><circle cx="5.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
+                    Regional Suppliers
+                  </span>
+                  <span class="text-cyan-200/80">Soon</span>
+                </button>
+                <button id="btnLocalContacts" class="inline-flex items-center justify-between gap-2 w-full px-3 py-2 rounded-lg bg-emerald-400/10 hover:bg-emerald-400/15 border border-emerald-400/20 text-sm transition-colors">
+                  <span class="inline-flex items-center gap-2 text-emerald-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" class="lucide w-4 h-4"><path d="M22 16.92v2a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.15 8.81 19.8 19.8 0 0 1 .08 0 2 2 0 0 1 2.06-.18h2a2 2 0 0 1 2 1.72 12.4 12.4 0 0 0 .67 2.73 2 2 0 0 1-.45 2.11L5.38 7.4a16 16 0 0 0 6.22 6.22l.99-.89a2 2 0 0 1 2.11-.45 12.4 12.4 0 0 0 2.73.67 2 2 0 0 1 1.72 2z"></path></svg>
+                    Local Contacts
+                  </span>
+                  <span class="text-emerald-200/80">Soon</span>
+                </button>
+              </div>
+            </div>
+          </aside>
+  
+          <!-- Main -->
+          <div class="space-y-6">
+            <!-- Disaster selector -->
+            <div class="p-5 rounded-xl border border-white/10 bg-black/40 backdrop-blur">
+              <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4 justify-between">
+                <div class="w-full sm:w-auto">
+                  <label for="disasterType" class="block text-sm text-gray-300 mb-1">Select Disaster Type</label>
+                  <select id="disasterType" class="w-full sm:w-64 px-3 py-2.5 rounded-lg bg-black/60 border border-white/10 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <option value="Flood">Flood</option>
+                    <option value="Earthquake">Earthquake</option>
+                    <option value="Cyclone">Cyclone</option>
+                    <option value="Landslide">Landslide</option>
+                  </select>
+                </div>
+                <div class="text-sm text-gray-400">
+                  Build your personalized <span id="disasterName" class="text-gray-200 font-medium">flood</span> emergency kit based on family needs
+                </div>
+              </div>
+            </div>
+  
+            <!-- India-specific tips -->
+            <div class="rounded-xl border border-amber-400/20 bg-amber-400/10 p-5">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-lg bg-amber-400/15 border border-amber-400/30 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="lightbulb" class="lucide w-4.5 h-4.5 text-amber-100"><path d="M6 9a6 6 0 1 1 12 0c0 2.3-1.223 4.009-2.5 5.5-.445.5-.5 1-.5 1.5v1a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-1c0-.5-.055-1-.5-1.5C7.223 13.009 6 11.3 6 9Z"></path><path d="M9.5 22h5"></path></svg>
+                </div>
+                <div>
+                  <h4 class="text-base font-semibold tracking-tight text-amber-100">India-Specific Tips</h4>
+                  <p id="indiaSpecificTips" class="mt-1 text-sm text-amber-200/90">For flood preparedness in India, keep important documents in waterproof containers and know your local evacuation routes to higher ground.</p>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Safety tips -->
+            <div id="tips" class="rounded-xl border border-white/10 bg-black/40 p-5">
+              <div id="safetyTips" class="text-gray-300 text-sm"></div>
+            </div>
+  
+            <!-- Stats -->
+            <div class="grid md:grid-cols-3 gap-4">
+              <div class="p-5 rounded-xl border border-white/10 bg-black/40 text-center">
+                <p class="text-sm text-gray-400">Total Items</p>
+                <p id="totalItems" class="mt-1 text-3xl font-semibold tracking-tight">0</p>
+              </div>
+              <div class="p-5 rounded-xl border border-white/10 bg-black/40 text-center">
+                <p class="text-sm text-gray-400">Estimated Cost</p>
+                <p id="estimatedCost" class="mt-1 text-3xl font-semibold tracking-tight">₹0</p>
+              </div>
+              <div class="p-5 rounded-xl border border-white/10 bg-black/40 text-center">
+                <p class="text-sm text-gray-400">Covers Family Size</p>
+                <p id="familySizeDisplay" class="mt-1 text-3xl font-semibold tracking-tight">4</p>
+              </div>
+            </div>
+  
+            <!-- Kit completion progress -->
+            <div class="rounded-xl border border-white/10 bg-black/40 p-5">
+              <div class="flex items-center justify-between">
+                <h4 class="text-base font-semibold tracking-tight">Kit Completion Progress</h4>
+                <span id="kitProgressLabel" class="text-sm text-gray-400">0%</span>
+              </div>
+              <div class="mt-3 w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                <div id="kitProgressBar" class="h-full bg-gradient-to-r from-teal-400 to-cyan-400 transition-[width] duration-300" style="width: 0%;"></div>
+              </div>
+              <p class="mt-2 text-xs text-gray-500">Check items as you collect them to track progress.</p>
+            </div>
+  
+            <!-- Kit items -->
+            <div class="rounded-xl border border-white/10 bg-black/40">
+              <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+                <div class="inline-flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="list-checks" class="lucide w-4.5 h-4.5 text-gray-300"><path d="m3 17 2 2 4-4"></path><path d="m3 7 2 2 4-4"></path><path d="M13 6h8"></path><path d="M13 12h8"></path><path d="M13 18h8"></path></svg>
+                  <h4 class="text-base font-semibold tracking-tight">Your Personalized Emergency Kit</h4>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button id="showShoppingListBtn2" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+                    Shopping List
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="shopping-bag" class="lucide w-4 h-4"><path d="M8 7V6a4 4 0 1 1 8 0v1"></path><path d="M6 7h14l-1.4 12.6A2 2 0 0 1 16.6 22H9.4a2 2 0 0 1-2-1.8z"></path></svg>
+                  </button>
+                  <button id="downloadChecklistBtn2" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]">
+                    Download
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="download" class="lucide w-4 h-4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>
+                  </button>
+                </div>
+              </div>
+              <div id="kitItems" class="p-5">
+                <p class="text-center text-sm text-gray-400">Select your family details and click "Generate Emergency Kit" to get started.</p>
+              </div>
+            </div>
+  
+            <!-- Maintenance -->
+            <div id="maintenance" class="rounded-xl border border-white/10 bg-black/40 p-5">
+              <div class="inline-flex items-center gap-2 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar-check" class="lucide w-4.5 h-4.5 text-gray-300"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect x="3" y="6" width="18" height="16" rx="2"></rect><path d="m9 13 2 2 4-4"></path></svg>
+                <h4 class="text-base font-semibold tracking-tight">Kit Maintenance Schedule</h4>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead class="text-gray-400">
+                    <tr class="border-b border-white/10">
+                      <th class="text-left py-2 pr-4 font-medium">Task</th>
+                      <th class="text-left py-2 pr-4 font-medium">Frequency</th>
+                      <th class="text-left py-2 pr-4 font-medium">Next Due</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-white/10">
+                    <tr>
+                      <td class="py-2 pr-4">Check expiration dates</td>
+                      <td class="py-2 pr-4">Every 6 months</td>
+                      <td class="py-2 pr-4">March 2026</td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 pr-4">Test battery-powered devices</td>
+                      <td class="py-2 pr-4">Every 3 months</td>
+                      <td class="py-2 pr-4">January 2026</td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 pr-4">Rotate water supply</td>
+                      <td class="py-2 pr-4">Every 6 months</td>
+                      <td class="py-2 pr-4">April 2026</td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 pr-4">Update important documents</td>
+                      <td class="py-2 pr-4">Annually</td>
+                      <td class="py-2 pr-4">June 2026</td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 pr-4">Check clothing sizes</td>
+                      <td class="py-2 pr-4">Every 6 months</td>
+                      <td class="py-2 pr-4">February 2026</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+  
+            <!-- Storage Tips -->
+            <div id="storage" class="rounded-xl border border-white/10 bg-black/40 p-5">
+              <div class="inline-flex items-center gap-2 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="box" class="lucide w-4.5 h-4.5 text-gray-300"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73"></path><path d="M3.3 7L12 12l8.7-5"></path></svg>
+                <h4 class="text-base font-semibold tracking-tight">Storage Tips</h4>
+              </div>
+              <ul class="space-y-2 text-sm text-gray-300">
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-teal-300">🏠</span> Store kit in easily accessible location known to all family members</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-teal-300">🎒</span> Use waterproof containers and bags to protect items</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-teal-300">📍</span> Keep smaller kits in car, workplace, and school</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-teal-300">🌡️</span> Store in cool, dry place away from direct sunlight</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-teal-300">📝</span> Label everything with contents and expiration dates</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-teal-300">🔄</span> Rotate perishable items regularly</li>
+              </ul>
+            </div>
+  
+            <!-- Emergency Contacts -->
+            <div id="contacts" class="rounded-xl border border-rose-500/30 bg-rose-500/10 p-5">
+              <div class="inline-flex items-center gap-2 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" class="lucide w-4.5 h-4.5 text-rose-200"><path d="M22 16.92v2a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.15 8.81 19.8 19.8 0 0 1 .08 0 2 2 0 0 1 2.06-.18h2a2 2 0 0 1 2 1.72 12.4 12.4 0 0 0 .67 2.73 2 2 0 0 1-.45 2.11L5.38 7.4a16 16 0 0 0 6.22 6.22l.99-.89a2 2 0 0 1 2.11-.45 12.4 12.4 0 0 0 2.73.67 2 2 0 0 1 1.72 2z"></path></svg>
+                <h4 class="text-base font-semibold tracking-tight text-rose-100">Emergency Contacts</h4>
+              </div>
+              <div class="text-sm text-rose-100/90 space-y-1.5">
+                <p><span class="font-medium text-white">National:</span> 112</p>
+                <p><span class="font-medium text-white">Disaster Management:</span> 1078</p>
+                <p><span class="font-medium text-white">Local Emergency:</span> Contact district office</p>
+                <p><span class="font-medium text-white">Ambulance:</span> 108</p>
+                <p><span class="font-medium text-white">Fire:</span> 101</p>
+              </div>
+            </div>
+  
+            <!-- Weather Alert -->
+            <div class="rounded-xl border border-amber-400/30 bg-amber-400/10 p-4">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-md bg-amber-400/15 border border-amber-400/30 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="triangle-alert" class="lucide w-4 h-4 text-amber-200"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+                </div>
+                <p class="text-sm text-amber-100"><span class="font-medium">Weather Alert:</span> Heavy rain expected in next 24 hours. Ensure your emergency kit is ready!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-gray-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="grid md:grid-cols-4 gap-8">
+          <div class="md:col-span-2">
+            <a href="{{ url_for('index') }}" class="inline-flex items-center gap-2">
+              <div class="h-6 w-6 rounded-md bg-gradient-to-br from-teal-500 to-cyan-400"></div>
+              <span class="text-lg font-medium" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">DisasterSence</span>
+            </a>
+            <p class="mt-3 text-sm text-gray-400 max-w-md">Plan and maintain a reliable emergency kit for your family with regional guidance and practical tips.</p>
+            <div class="mt-4 flex items-center gap-3 text-sm">
+              <a href="#" class="inline-flex items-center gap-2 text-gray-400 hover:text-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="mail" class="lucide w-4 h-4"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg> support@resqindia.in
+              </a>
+              <span class="text-gray-700">•</span>
+              <span class="inline-flex items-center gap-2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="lucide w-4 h-4"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg> India
+              </span>
+            </div>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-300">Navigate</p>
+            <ul class="mt-3 space-y-2 text-sm text-gray-400">
+              <li><a href="#planner" class="hover:text-teal-300">Planner</a></li>
+              <li><a href="#tips" class="hover:text-teal-300">Tips</a></li>
+              <li><a href="#maintenance" class="hover:text-teal-300">Maintenance</a></li>
+              <li><a href="#storage" class="hover:text-teal-300">Storage</a></li>
+              <li><a href="#contacts" class="hover:text-teal-300">Contacts</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-300">Legal</p>
+            <ul class="mt-3 space-y-2 text-sm text-gray-400">
+              <li><a href="#" class="hover:text-teal-300">Privacy</a></li>
+              <li><a href="#" class="hover:text-teal-300">Terms</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+          <p>© <span id="year">2025</span> DisasterSence. All rights reserved.</p>
+          <div class="flex items-center gap-3">
+            <a href="#" class="hover:text-teal-300">Twitter</a>
+            <a href="#" class="hover:text-teal-300">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  
+    <!-- Toast -->
+    <div id="toast" role="status" aria-live="polite" class="pointer-events-none fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-black shadow-lg opacity-0 translate-y-2 transition-all"></div>
+  
+    <!-- Shopping List Modal -->
+    <div id="shoppingListModal" class="fixed inset-0 z-[80] hidden">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-modal-close=""></div>
+      <div class="relative mx-auto mt-24 w-[92%] max-w-2xl rounded-2xl border border-white/10 bg-gray-950 shadow-xl">
+        <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+          <h5 class="text-base font-semibold tracking-tight inline-flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="shopping-cart" class="lucide w-4.5 h-4.5"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.74 12.17a2 2 0 0 0 2 1.63h7.45a2 2 0 0 0 2-1.63l1.26-7.54H5.12"></path></svg>
+            Shopping List
+          </h5>
+          <button data-modal-close="" class="p-2 rounded-md hover:bg-white/5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide w-5 h-5 text-gray-300"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+        <div class="px-5 py-4 max-h-[60vh] overflow-y-auto" id="shoppingListContent"></div>
+        <div class="px-5 py-4 border-t border-white/10 flex items-center justify-end gap-2">
+          <button data-modal-close="" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]">Close</button>
+          <button id="printShoppingListBtn" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+            Print List
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="printer" class="lucide w-4 h-4"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Indian Resources Modal -->
+    <div id="indianResourcesModal" class="fixed inset-0 z-[80] hidden">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-modal-close=""></div>
+      <div class="relative mx-auto mt-20 w-[92%] max-w-2xl rounded-2xl border border-white/10 bg-gray-950 shadow-xl">
+        <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+          <h5 class="text-base font-semibold tracking-tight inline-flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="book-open" class="lucide w-4.5 h-4.5"><path d="M2 4a2 2 0 0 1 2-2h7a4 4 0 0 1 4 4v12a2 2 0 0 0-2-2H4a2 2 0 0 1-2-2z"></path><path d="M22 6a4 4 0 0 0-4-4"></path></svg>
+            Indian Disaster Resources
+          </h5>
+          <button data-modal-close="" class="p-2 rounded-md hover:bg-white/5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide w-5 h-5 text-gray-300"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+        <div class="px-5 py-4 space-y-3 text-sm text-gray-300">
+          <a class="block px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10" href="https://ndma.gov.in" target="_blank" rel="noopener">NDMA — National Disaster Management Authority</a>
+          <a class="block px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10" href="https://mausam.imd.gov.in" target="_blank" rel="noopener">IMD — Weather Alerts &amp; Warnings</a>
+          <a class="block px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10" href="https://www.nidr.ndma.gov.in" target="_blank" rel="noopener">NIDM — Disaster Resource Portal</a>
+          <a class="block px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10" href="https://www.mohfw.gov.in" target="_blank" rel="noopener">MoHFW — Health &amp; Emergency Advisories</a>
+        </div>
+        <div class="px-5 py-4 border-t border-white/10 flex items-center justify-end">
+          <button data-modal-close="" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]">Close</button>
+        </div>
+      </div>
+    </div>
+  
+    <script>
+      // Utilities
+      const $ = (s, r = document) => r.querySelector(s);
+      const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+      const toast = (msg) => {
+        const t = $('#toast');
+        t.textContent = msg;
+        t.classList.remove('opacity-0', 'translate-y-2');
+        t.classList.add('opacity-100', '-translate-y-0');
+        setTimeout(() => {
+          t.classList.add('opacity-0', 'translate-y-2');
+        }, 1800);
+      };
+  
+      // Emergency Kit Generation
+      document.getElementById('generateBtn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('generateBtn');
+        const originalText = btn.innerHTML;
+        
+        try {
+          btn.disabled = true;
+          btn.innerHTML = '<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Generating...';
+          
+          const data = {
+            family_size: parseInt(document.getElementById('familySize').value) || 4,
+            adults: parseInt(document.getElementById('adults').value) || 2,
+            children: parseInt(document.getElementById('children').value) || 2,
+            seniors: parseInt(document.getElementById('seniors').value) || 0,
+            has_medical_conditions: document.getElementById('hasMedical').checked,
+            has_disabilities: document.getElementById('hasDisabilities').checked,
+            has_pets: document.getElementById('hasPets').checked,
+            kit_duration: parseInt(document.getElementById('kitDuration').value) || 7,
+            budget_range: document.getElementById('budgetRange').value || 'standard',
+            disaster_type: document.getElementById('disasterType').value || 'Flood'
+          };
+          
+          const response = await fetch('/api/emergency-kit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok) {
+            displayKitItems(result.kit_items);
+            updateStats(result.kit_items);
+            toast('Emergency kit generated successfully!');
+          } else {
+            throw new Error(result.error || 'Kit generation failed');
+          }
+        } catch (err) {
+          toast('Error generating kit: ' + err.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        }
+      });
+      
+      function displayKitItems(kitData) {
+        const container = document.getElementById('kitItems');
+        if (!container) return;
+        
+        const items = kitData.items || {};
+        const totalItems = Object.keys(items).length;
+        
+        let html = '<div class="space-y-3">';
+        
+        Object.entries(items).forEach(([itemName, itemData]) => {
+          const priority = itemData.priority || 'medium';
+          const priorityColor = priority === 'high' ? 'text-red-400' : priority === 'medium' ? 'text-yellow-400' : 'text-green-400';
+          
+          html += `
+            <div class="flex items-center justify-between p-3 rounded-lg border border-white/10 bg-black/60">
+              <div class="flex items-center gap-3">
+                <input type="checkbox" class="w-4 h-4 text-teal-400 bg-gray-900 border-gray-700 rounded focus:ring-teal-500">
+                <span class="text-sm text-gray-200">${itemName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-400">${itemData.quantity}</span>
+                <span class="text-xs ${priorityColor}">${priority.toUpperCase()}</span>
+              </div>
+            </div>
+          `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+      }
+      
+      function updateStats(kitData) {
+        const totalItemsEl = document.getElementById('totalItems');
+        const estimatedCostEl = document.getElementById('estimatedCost');
+        const familySizeEl = document.getElementById('familySizeDisplay');
+        
+        if (totalItemsEl) totalItemsEl.textContent = Object.keys(kitData.items || {}).length;
+        if (estimatedCostEl) estimatedCostEl.textContent = `₹${kitData.estimated_cost || 0}`;
+        if (familySizeEl) familySizeEl.textContent = kitData.family_size || 4;
+      }
+  
+      // Year
+      $('#year').textContent = String(new Date().getFullYear());
+  
+      // Scroll progress
+      const sp = $('#scroll-progress');
+      window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        sp.style.width = scrolled + '%';
+      });
+  
+      // Mobile nav
+      const navToggle = $('#nav-toggle');
+      const mobilePanel = $('#mobile-panel');
+      const menuIcon = navToggle.querySelector('[data-lucide="menu"]');
+      const closeIcon = navToggle.querySelector('[data-lucide="x"]');
+      const setMobile = (open) => {
+        if (open) {
+          mobilePanel.classList.remove('pointer-events-none', 'opacity-0');
+          mobilePanel.children[1].classList.remove('translate-y-[-8px]', 'opacity-0');
+          navToggle.setAttribute('aria-expanded', 'true');
+          menuIcon.classList.add('hidden'); closeIcon.classList.remove('hidden');
+        } else {
+          mobilePanel.classList.add('pointer-events-none', 'opacity-0');
+          mobilePanel.children[1].classList.add('translate-y-[-8px]', 'opacity-0');
+          navToggle.setAttribute('aria-expanded', 'false');
+          menuIcon.classList.remove('hidden'); closeIcon.classList.add('hidden');
+        }
+      };
+      navToggle.addEventListener('click', () => setMobile(navToggle.getAttribute('aria-expanded') !== 'true'));
+      $$('[data-close-overlay], [data-mobile-link]').forEach(el => el.addEventListener('click', () => setMobile(false)));
+  
+      // Disaster copy updates
+      const disasterTypeEl = $('#disasterType');
+      const disasterNameEl = $('#disasterName');
+      const indiaTipsEl = $('#indiaSpecificTips');
+      const safetyTipsEl = $('#safetyTips');
+      const disasterTips = {
+        Flood: {
+          india: 'Keep documents in waterproof pouches, switch off electricity, and know your local evacuation routes to higher ground.',
+          safety: 'Stay informed via local news, avoid walking or driving through floodwaters, and have a communication plan with family members.',
+        },
+        Earthquake: {
+          india: 'Drop, Cover, and Hold On. Stay away from windows and heavy furniture. Practice earthquake drills regularly.',
+          safety: 'If indoors, stay inside. If outdoors, move to an open area away from buildings and power lines. Be prepared for aftershocks.',
+        },
+        Cyclone: {
+          india: 'Secure loose items, board up windows, and have an emergency kit ready. Evacuate if advised by authorities.',
+          safety: 'Stay indoors in a safe room. Monitor official weather updates. Avoid coastal areas during and after the cyclone.',
+        },
+        Landslide: {
+          india: 'Listen for unusual sounds that might indicate moving debris. Evacuate immediately if you notice changes in land. Avoid areas prone to landslides.',
+          safety: 'Be aware of your surroundings, especially during heavy rains. If caught in a landslide, curl into a ball and protect your head. Report any changes in land to local authorities.',
+        }
+      };
+  
+      const updateDisasterInfo = () => {
+        const selectedDisaster = disasterTypeEl.value;
+        const tips = disasterTips[selectedDisaster];
+        if (disasterNameEl) disasterNameEl.textContent = selectedDisaster.toLowerCase();
+        if (indiaTipsEl) indiaTipsEl.textContent = tips.india;
+        if (safetyTipsEl) safetyTipsEl.innerHTML = `
+          <h4 class="text-base font-semibold tracking-tight text-gray-100 mb-2">General Safety Tips for ${selectedDisaster}</h4>
+          <p>${tips.safety}</p>
+        `;
+      };
+  
+      disasterTypeEl?.addEventListener('change', updateDisasterInfo);
+      updateDisasterInfo(); // Initial load
+  
+      // Modal Logic
+      const setupModal = (modalId, openBtnId, closeBtnSelector) => {
+        const modal = $(modalId);
+        const openBtn = $(openBtnId);
+        const closeBtns = $$(closeBtnSelector, modal);
+  
+        if (!modal || !openBtn) return;
+  
+        const openModal = () => {
+          modal.classList.remove('hidden');
+          setTimeout(() => {
+            modal.children[1].classList.remove('translate-y-[-8px]', 'opacity-0');
+          }, 10);
+          document.body.style.overflow = 'hidden';
+        };
+  
+        const closeModal = () => {
+          modal.children[1].classList.add('translate-y-[-8px]', 'opacity-0');
+          setTimeout(() => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+          }, 300);
+        };
+  
+        openBtn.addEventListener('click', openModal);
+        closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+      };
+  
+      setupModal('#shoppingListModal', '#showShoppingListBtn', '[data-modal-close]');
+      setupModal('#indianResourcesModal', '#btnIndianResources', '[data-modal-close]');
+  
+      // Print Shopping List
+      $('#printShoppingListBtn')?.addEventListener('click', () => {
+        const printContent = $('#shoppingListContent').innerHTML;
+        const originalContent = document.body.innerHTML;
+        document.body.innerHTML = `
+          <div style="font-family: 'Inter', sans-serif; padding: 20px; color: #000;">
+            <h1 style="text-align: center; color: #000;">Emergency Kit Shopping List</h1>
+            ${printContent}
+          </div>
+        `;
+        window.print();
+        document.body.innerHTML = originalContent;
+        location.reload(); // Reload to restore event listeners and state
+      });
+  
+      // Initialize Lucide Icons
+      lucide.createIcons();
+    </script>
+  
+  
+  
+</body></html>

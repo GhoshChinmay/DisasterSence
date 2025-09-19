@@ -1,0 +1,573 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DisasterSence — Emergency SOS with Direct Call</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="antialiased bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 text-slate-100 selection:bg-cyan-400/20 selection:text-cyan-200" style="font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'">
+  <!-- Scroll Progress -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-cyan-400 to-teal-400 w-0 z-[60]" style="width:0%"></div>
+
+  <!-- Header -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b bg-black/60 border-white/10 transition-transform duration-300 will-change-transform" style="transform: translateY(0)">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16">
+      <div class="h-full flex items-center justify-between">
+        <!-- Brand -->
+        <a href="#overview" class="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-md">
+          <div class="h-6 w-6 rounded-md bg-gradient-to-br from-cyan-500 to-teal-400"></div>
+          <span class="text-lg font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">DisasterSence</span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-7">
+          <a href="/index.html" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300 text-white" aria-current="page" style="background-size: 100% 2px;">
+            <span>Home</span>
+          </a>
+          <a href="#overview" class="group text-sm font-medium text-slate-300 hover:text-white transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="page" style="background-size: 100% 2px;">Overview</a>
+          <a href="#contacts" class="group text-sm font-medium text-slate-300 hover:text-white transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px;">Contacts</a>
+          <a href="#sos" class="group text-sm font-medium text-slate-300 hover:text-white transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px;">SOS</a>
+          <a href="#privacy" class="group text-sm font-medium text-slate-300 hover:text-white transition-colors bg-gradient-to-r from-cyan-400 to-cyan-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size: 0% 2px;">Privacy</a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+          <a href="#sos" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-black hover:bg-slate-200 transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-cyan-500">
+            Activate SOS
+            <i data-lucide="locate-fixed" class="w-4 h-4"></i>
+          </a>
+          <button id="nav-toggle" aria-expanded="false" aria-controls="mobile-panel" class="md:hidden p-2 rounded-md transition-colors hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+            <i data-lucide="x" class="w-5 h-5 hidden"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Panel -->
+    <div id="mobile-panel" class="fixed inset-0 z-40 pointer-events-none opacity-0 transition-opacity duration-300">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close-overlay=""></div>
+      <div class="absolute inset-x-0 top-0 bg-slate-950/95 border-b border-white/10 px-4 sm:px-6 pt-20 pb-8 translate-y-[-8px] opacity-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid gap-4">
+            <a href="#overview" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-white">Overview</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400"></i>
+            </a>
+            <a href="#contacts" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-white">Contacts</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400"></i>
+            </a>
+            <a href="#sos" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-white">SOS</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400"></i>
+            </a>
+            <a href="#privacy" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-white">Privacy</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400"></i>
+            </a>
+          </div>
+          <div class="mt-6">
+            <a href="#sos" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-cyan-400 text-black hover:bg-cyan-300 transition-all hover:scale-[1.02]">
+              Activate SOS
+              <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero / Overview -->
+  <section id="overview" class="relative overflow-hidden pt-24 sm:pt-28 pb-14">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute -top-24 -right-16 w-[38rem] h-[38rem] bg-cyan-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-24 -left-16 w-[42rem] h-[42rem] bg-teal-500/10 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider text-cyan-300/90">Emergency Readiness</p>
+          <h1 class="mt-4 text-4xl sm:text-5xl leading-tight font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">
+            Instant help with smart location sharing
+          </h1>
+          <p class="mt-5 text-lg text-slate-300 max-w-xl">
+            DisasterSence connects you to authorities faster. Call critical contacts directly and share precise location data during emergencies.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a href="#sos" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-cyan-400 text-black hover:bg-cyan-300 transition-all hover:scale-[1.02]">
+              Go to SOS
+              <i data-lucide="locate-fixed" class="w-5 h-5"></i>
+            </a>
+            <a href="#contacts" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-white/5 text-white hover:bg-white/10 border border-white/10 transition-all hover:scale-[1.02]">
+              View contacts
+              <i data-lucide="phone" class="w-5 h-5"></i>
+            </a>
+          </div>
+
+          <div id="statusMessage" role="status" aria-live="polite" class="mt-6 hidden rounded-xl border px-4 py-3 text-sm"></div>
+        </div>
+        <div class="relative">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gradient-to-b from-slate-900/60 to-slate-950">
+            <img src="https://images.unsplash.com/photo-1529101091764-c3526daf38fe?q=80&amp;w=1600&amp;auto=format&amp;fit=crop" alt="Emergency response" class="w-full h-[420px] object-cover">
+            <div class="absolute bottom-4 left-4 right-4 grid sm:grid-cols-2 gap-3">
+              <div class="backdrop-blur-sm rounded-xl p-4 bg-black/75 border border-white/10">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex bg-slate-800 rounded-full items-center justify-center">
+                    <i data-lucide="siren" class="w-5 h-5 text-slate-200"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm text-slate-300">Average response</p>
+                    <p class="text-lg font-semibold text-white">~2–5 minutes</p>
+                  </div>
+                </div>
+              </div>
+              <div class="backdrop-blur-sm rounded-xl p-4 bg-black/75 border border-white/10">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex bg-slate-800 rounded-full items-center justify-center">
+                    <i data-lucide="shield" class="w-5 h-5 text-slate-200"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm text-slate-300">Location accuracy</p>
+                    <p class="text-lg font-semibold text-white">High precision</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="mt-10 border-t border-white/10 pt-6">
+        <p class="text-center text-sm text-slate-400">Designed for clarity under pressure</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Direct Emergency Contacts -->
+  <section id="contacts" class="py-16 bg-slate-950/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-6">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider text-cyan-300/90">Direct Lines</p>
+          <h2 class="mt-3 text-3xl lg:text-4xl tracking-tight font-medium text-white" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">
+            Direct Emergency Contacts
+          </h2>
+          <p class="mt-3 text-slate-400 max-w-2xl">
+            Tap a contact to start a call. On supported devices, calls initiate immediately.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Emergency 911 -->
+        <button class="group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-rose-600 to-rose-500 text-white p-5 hover:shadow-lg hover:shadow-rose-500/20 transition-all hover:translate-y-[-2px]" onclick="directCall('911')">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                <i data-lucide="siren" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-base font-semibold">Emergency 911</p>
+                <p class="text-sm text-white/80">General emergency</p>
+              </div>
+            </div>
+            <i data-lucide="phone-outgoing" class="w-5 h-5 opacity-80"></i>
+          </div>
+        </button>
+
+        <!-- Emergency 112 -->
+        <button class="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-white p-5 hover:bg-white/10 transition-all hover:translate-y-[-2px]" onclick="directCall('112')">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                <i data-lucide="phone" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-base font-semibold">Emergency 112</p>
+                <p class="text-sm text-slate-300">International standard</p>
+              </div>
+            </div>
+            <i data-lucide="phone-outgoing" class="w-5 h-5 opacity-80"></i>
+          </div>
+        </button>
+
+        <!-- Local Hospital -->
+        <button class="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-white p-5 hover:bg-white/10 transition-all hover:translate-y-[-2px]" onclick="directCall('+1234567890')">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                <i data-lucide="hospital" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-base font-semibold">Local Hospital</p>
+                <p class="text-sm text-slate-300">+1 234 567 890</p>
+              </div>
+            </div>
+            <i data-lucide="phone-outgoing" class="w-5 h-5 opacity-80"></i>
+          </div>
+        </button>
+
+        <!-- Fire Department -->
+        <button class="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-white p-5 hover:bg-white/10 transition-all hover:translate-y-[-2px]" onclick="directCall('+1234567891')">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                <i data-lucide="flame" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-base font-semibold">Fire Department</p>
+                <p class="text-sm text-slate-300">+1 234 567 891</p>
+              </div>
+            </div>
+            <i data-lucide="phone-outgoing" class="w-5 h-5 opacity-80"></i>
+          </div>
+        </button>
+
+        <!-- Police Station -->
+        <button class="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-white p-5 hover:bg-white/10 transition-all hover:translate-y-[-2px]" onclick="directCall('+1234567892')">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                <i data-lucide="shield" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-base font-semibold">Police Station</p>
+                <p class="text-sm text-slate-300">+1 234 567 892</p>
+              </div>
+            </div>
+            <i data-lucide="phone-outgoing" class="w-5 h-5 opacity-80"></i>
+          </div>
+        </button>
+
+        <!-- Personal Doctor -->
+        <button class="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-white p-5 hover:bg-white/10 transition-all hover:translate-y-[-2px]" onclick="directCall('+1234567893')">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                <i data-lucide="stethoscope" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-base font-semibold">Personal Doctor</p>
+                <p class="text-sm text-slate-300">+1 234 567 893</p>
+              </div>
+            </div>
+            <i data-lucide="phone-outgoing" class="w-5 h-5 opacity-80"></i>
+          </div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOS -->
+  <section id="sos" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="rounded-2xl border border-white/10 bg-gradient-to-b from-slate-950/70 to-black/60 p-6 sm:p-8">
+        <div class="flex flex-col items-center text-center">
+          <div class="inline-flex items-center gap-2 text-cyan-300/90 text-sm font-medium uppercase tracking-wider">
+            <i data-lucide="alert-triangle" class="w-4 h-4"></i> Emergency SOS Alert
+          </div>
+          <h3 class="mt-2 text-3xl tracking-tight font-medium" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Share your live location in seconds</h3>
+          <p class="mt-3 text-slate-300 max-w-2xl">
+            In case of emergency, press the SOS button to capture your coordinates and prepare a message for authorities.
+          </p>
+
+          <div class="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-left w-full max-w-3xl">
+            <div class="flex items-start gap-3">
+              <div class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
+                <i data-lucide="info" class="w-5 h-5 text-slate-200"></i>
+              </div>
+              <p class="text-slate-300 text-sm">
+                Your location data is only accessed when you press SOS. It won’t be stored on a server.
+              </p>
+            </div>
+          </div>
+
+          <!-- SOS Button -->
+          <button id="sosButton" class="mt-8 relative w-48 h-48 rounded-full bg-gradient-to-br from-rose-600 to-rose-500 shadow-[0_0_0_8px_rgba(244,63,94,0.25)] hover:shadow-[0_0_0_12px_rgba(244,63,94,0.28)] transition-all focus:outline-none focus:ring-4 focus:ring-rose-500/40 flex flex-col items-center justify-center text-white text-2xl font-semibold">
+            <i data-lucide="locate-fixed" class="w-10 h-10 mb-1"></i>
+            SOS
+          </button>
+
+          <!-- Location Data -->
+          <div id="locationData" class="mt-8 hidden w-full max-w-3xl">
+            <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+              <h4 class="text-lg font-semibold tracking-tight text-white text-center">Location Data to be Shared</h4>
+              <div class="mt-4 grid sm:grid-cols-2 gap-4">
+                <div class="rounded-lg border border-white/10 bg-black/40 p-4">
+                  <p class="text-sm text-slate-400">Latitude</p>
+                  <p id="latitude" class="mt-1 font-medium text-slate-100">Not available</p>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-black/40 p-4">
+                  <p class="text-sm text-slate-400">Longitude</p>
+                  <p id="longitude" class="mt-1 font-medium text-slate-100">Not available</p>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-black/40 p-4">
+                  <p class="text-sm text-slate-400">Accuracy</p>
+                  <p id="accuracy" class="mt-1 font-medium text-slate-100">Not available</p>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-black/40 p-4">
+                  <p class="text-sm text-slate-400">Map Link</p>
+                  <p id="mapLink" class="mt-1 font-medium text-cyan-300">Not available</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Toast -->
+          <div id="toast" role="status" aria-live="polite" class="pointer-events-none fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-black shadow-lg opacity-0 translate-y-2 transition-all"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy / Footer -->
+  <section id="privacy" class="py-12 bg-slate-950/60 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h4 class="text-xl tracking-tight font-medium" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Privacy &amp; Data</h4>
+          <p class="mt-3 text-slate-300">
+            This emergency SOS system only accesses your geolocation when you activate it. No personal data is stored or transmitted to any server by default.
+          </p>
+        </div>
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
+              <i data-lucide="shield-check" class="w-5 h-5 text-slate-200"></i>
+            </div>
+            <div>
+              <p class="text-slate-200 font-medium">Data usage</p>
+              <p class="text-slate-400 text-sm mt-1">Location is used to build a map link for authorities. You may share it via your device’s messaging or call application.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+        <p>© <span id="year">2025</span> DisasterSence. All rights reserved.</p>
+        <div class="flex items-center gap-3">
+          <a href="#overview" class="hover:text-cyan-300">Overview</a>
+          <a href="#contacts" class="hover:text-cyan-300">Contacts</a>
+          <a href="#sos" class="hover:text-cyan-300">SOS</a>
+          <a href="#privacy" class="hover:text-cyan-300">Privacy</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Icons (set stroke width 1.5)
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    });
+
+    // Smooth scroll
+    function smoothScrollTo(target) {
+      const el = document.querySelector(target);
+      if (!el) return;
+      const headerOffset = document.getElementById('site-header').offsetHeight;
+      const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerOffset + 1;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+    }
+
+    // Scroll progress
+    const progressEl = document.getElementById('scroll-progress');
+    const onScrollProgress = () => {
+      const h = document.documentElement;
+      const scrollTop = h.scrollTop || document.body.scrollTop;
+      const scrollHeight = h.scrollHeight - h.clientHeight;
+      const pct = Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100));
+      progressEl.style.width = pct + '%';
+    };
+    document.addEventListener('scroll', onScrollProgress, { passive: true });
+
+    // Header show/hide on scroll
+    const header = document.getElementById('site-header');
+    let lastY = window.pageYOffset;
+    let ticking = false;
+    function handleHeader() {
+      const y = window.pageYOffset;
+      const down = y > lastY && y > 80;
+      header.style.transform = down ? 'translateY(-100%)' : 'translateY(0)';
+      lastY = y;
+      ticking = false;
+    }
+    document.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(handleHeader);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Mobile panel
+    const toggleBtn = document.getElementById('nav-toggle');
+    const mobilePanel = document.getElementById('mobile-panel');
+    const panelInner = mobilePanel.querySelector('div.absolute.inset-x-0.top-0');
+    const overlay = mobilePanel.querySelector('[data-close-overlay]');
+
+    function openMobile() {
+      mobilePanel.classList.remove('pointer-events-none');
+      mobilePanel.classList.add('pointer-events-auto');
+      mobilePanel.style.opacity = '1';
+      panelInner.style.transform = 'translateY(0)';
+      panelInner.style.opacity = '1';
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      toggleBtn.querySelector('[data-lucide="menu"]').classList.add('hidden');
+      toggleBtn.querySelector('[data-lucide="x"]').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMobile() {
+      mobilePanel.style.opacity = '0';
+      panelInner.style.transform = 'translateY(-8px)';
+      panelInner.style.opacity = '0';
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.querySelector('[data-lucide="menu"]').classList.remove('hidden');
+      toggleBtn.querySelector('[data-lucide="x"]').classList.add('hidden');
+      setTimeout(() => {
+        mobilePanel.classList.remove('pointer-events-auto');
+        mobilePanel.classList.add('pointer-events-none');
+        document.body.style.overflow = '';
+      }, 250);
+    }
+    toggleBtn.addEventListener('click', () => {
+      const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      expanded ? closeMobile() : openMobile();
+    });
+    overlay.addEventListener('click', closeMobile);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobile(); });
+    window.addEventListener('resize', () => { if (window.innerWidth >= 768) closeMobile(); });
+
+    // Link binds
+    document.querySelectorAll('[data-mobile-link]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = a.getAttribute('href');
+        closeMobile();
+        setTimeout(() => smoothScrollTo(href), 220);
+      });
+    });
+    document.querySelectorAll('[data-nav-link]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        smoothScrollTo(a.getAttribute('href'));
+      });
+    });
+
+    // Active link highlighting
+    const sections = Array.from(document.querySelectorAll('section[id]'));
+    const navLinks = Array.from(document.querySelectorAll('[data-nav-link]'));
+    function setActive(id) {
+      navLinks.forEach(link => {
+        const match = link.getAttribute('href') === '#' + id;
+        link.setAttribute('aria-current', match ? 'page' : 'false');
+        link.style.backgroundSize = match ? '100% 2px' : '0% 2px';
+        link.classList.toggle('text-white', match);
+      });
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) setActive(entry.target.id); });
+    }, { threshold: 0.5, rootMargin: '-20% 0px -20% 0px' });
+    sections.forEach(sec => observer.observe(sec));
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Toast helper
+    const toast = document.getElementById('toast');
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2200);
+    }
+
+    // Status message
+    const statusMessage = document.getElementById('statusMessage');
+    function setStatus(msg, type) {
+      statusMessage.textContent = msg;
+      statusMessage.classList.remove('hidden');
+      statusMessage.classList.remove('bg-white/5','text-slate-300','border-white/10','bg-emerald-500/10','text-emerald-300','border-emerald-500/20','bg-rose-500/10','text-rose-300','border-rose-500/20');
+      if (type === 'success') {
+        statusMessage.classList.add('bg-emerald-500/10','text-emerald-300','border-emerald-500/20');
+      } else if (type === 'error') {
+        statusMessage.classList.add('bg-rose-500/10','text-rose-300','border-rose-500/20');
+      } else {
+        statusMessage.classList.add('bg-white/5','text-slate-300','border-white/10');
+      }
+    }
+
+    // Geolocation availability
+    if (!navigator.geolocation) {
+      setStatus('Geolocation is not supported by your browser. This SOS system cannot function properly.', 'error');
+    } else {
+      setStatus('Geolocation is available. Press SOS in case of emergency.', 'success');
+    }
+
+    // Direct call
+    function directCall(number) {
+      try {
+        window.location.href = `tel:${number}`;
+        showToast(`Attempting to call ${number}...`);
+      } catch (e) {
+        showToast('Unable to start the call on this device.');
+        alert(`In a real application, this would call: ${number}\n\nOn a mobile device, this would initiate a direct call.`);
+      }
+    }
+
+    // SOS logic
+    const sosButton = document.getElementById('sosButton');
+    const locationData = document.getElementById('locationData');
+    const latitudeElement = document.getElementById('latitude');
+    const longitudeElement = document.getElementById('longitude');
+    const accuracyElement = document.getElementById('accuracy');
+    const mapLinkElement = document.getElementById('mapLink');
+
+    sosButton.addEventListener('click', () => {
+      // Visual feedback
+      sosButton.innerHTML = '<i data-lucide="loader-2" class="w-10 h-10 mb-1 animate-spin"></i>LOCATING...';
+      if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } }); // refresh icon
+      setStatus('Getting your location...', null);
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          const accuracy = position.coords.accuracy;
+
+          latitudeElement.textContent = latitude;
+          longitudeElement.textContent = longitude;
+          accuracyElement.textContent = `${Math.round(accuracy)} meters`;
+
+          const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+          mapLinkElement.innerHTML = `<a href="${mapUrl}" target="_blank" class="underline decoration-cyan-400/60 underline-offset-4 hover:text-cyan-200">View on Google Maps</a>`;
+
+          locationData.classList.remove('hidden');
+
+          setStatus('Sending your location to nearby authorities...', null);
+          setTimeout(() => {
+            setStatus('EMERGENCY ALERT SENT! Your location has been prepared for authorities. Help is on the way.', 'success');
+            sosButton.innerHTML = '<i data-lucide="check-circle-2" class="w-10 h-10 mb-1"></i>HELP IS COMING';
+            if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+            showToast('Location shared successfully.');
+          }, 1500);
+        },
+        (error) => {
+          setStatus(`Error getting location: ${error.message}. Please check your location settings and try again.`, 'error');
+          sosButton.innerHTML = '<i data-lucide="locate-fixed" class="w-10 h-10 mb-1"></i>SOS';
+          if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    });
+  </script>
+
+</body></html>

@@ -1,0 +1,697 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DisasterSence — India Disaster Prediction Map</title>
+
+  <!-- Fonts + Tailwind -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body class="antialiased bg-black text-gray-100 selection:bg-teal-400/20 selection:text-teal-200" style="font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'">
+
+  <!-- Scroll Progress -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-teal-400 to-cyan-400 w-0 z-[60]" style="width: 0%;"></div>
+
+  <!-- Header -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b bg-black/70 border-gray-900 transition-transform duration-300 will-change-transform" style="transform: translateY(0);">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16">
+      <div class="h-full flex items-center justify-between">
+        <!-- Brand -->
+        <a href="#overview" class="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md">
+          <div class="h-6 w-6 rounded-md bg-gradient-to-br from-teal-500 to-cyan-400"></div>
+          <span class="text-lg font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">DisasterSence</span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-8">
+          <a href="/index.html" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300 text-white" aria-current="page" style="background-size: 100% 2px;">Home</a>
+          <a href="/userGen.html" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300">User</a>
+          <a href="/live.html" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300">Live Updates</a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+          <a href="#predictions" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-black hover:bg-gray-200 transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-teal-500">
+            Get Updates
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+          <button id="nav-toggle" aria-expanded="false" aria-controls="mobile-panel" class="md:hidden p-2 rounded-md transition-colors hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+            <i data-lucide="x" class="w-5 h-5 hidden"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Panel -->
+    <div id="mobile-panel" class="fixed inset-0 z-40 pointer-events-none opacity-0 transition-opacity duration-300">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close-overlay=""></div>
+      <div class="absolute inset-x-0 top-0 bg-gray-950/95 border-b border-gray-900 px-4 sm:px-6 pt-20 pb-8 translate-y-[-8px] opacity-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid gap-4">
+            <a href="/index.html" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">Home</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+            <a href="/userGen.html" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">User</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+            <a href="/live.html" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">Live Updates</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+          </div>
+          <div class="mt-6">
+            <a href="#predictions" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+              Get Updates
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero / Overview -->
+  <section id="overview" class="relative overflow-hidden pt-24 sm:pt-28 pb-16 bg-[url('https://images.unsplash.com/photo-1523419409543-3170b1e4c08c?q=80&amp;w=1600&amp;auto=format&amp;fit=crop')] bg-cover bg-center">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/60 to-black"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider text-teal-300/90">Early Warning Intelligence</p>
+          <h1 class="mt-4 text-4xl sm:text-5xl lg:text-6xl leading-tight font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">
+            India Disaster Prediction Map
+          </h1>
+          <p class="mt-6 text-lg text-gray-300 max-w-xl">
+            Explore predicted floods, landslides, cyclones, and seismic risks for the next 7 days. Click any marker for details.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a href="#map" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+              Open Map
+              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </a>
+            <a href="#predictions" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]">
+              View Predictions
+              <i data-lucide="list" class="w-5 h-5"></i>
+            </a>
+          </div>
+          <div class="mt-8 border-t border-white/10 pt-6 text-sm text-gray-400">
+            Data is illustrative and refreshed daily. Use alongside official advisories.
+          </div>
+        </div>
+        <div class="relative">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gray-900/40">
+            <img src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&amp;q=80" alt="Disaster response" class="w-full h-[420px] object-cover">
+            <div class="absolute bottom-4 left-4 right-4 grid sm:flex gap-3">
+              <div class="flex-1 backdrop-blur-sm rounded-xl p-4 shadow-lg bg-black/80 border border-white/10">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex bg-gray-800 rounded-full items-center justify-center">
+                    <i data-lucide="waves" class="w-5 h-5 text-teal-300"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-300">Flood risk hotspots</p>
+                    <p class="text-lg font-semibold text-white">Updated today</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex-1 backdrop-blur-sm rounded-xl p-4 shadow-lg bg-black/80 border border-white/10">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex bg-gray-800 rounded-full items-center justify-center">
+                    <i data-lucide="activity" class="w-5 h-5 text-orange-300"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-300">Seismic activity</p>
+                    <p class="text-lg font-semibold text-white">Monitoring</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map + Controls -->
+  <section id="map" class="py-14 bg-gray-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-6">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider text-teal-300/90">Interactive Map</p>
+          <h2 class="mt-2 text-3xl lg:text-4xl tracking-tight font-medium text-white" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Explore 7-Day Predictions</h2>
+        </div>
+        <div class="hidden sm:flex items-center gap-2 text-sm text-gray-400">
+          <i data-lucide="info" class="w-4 h-4"></i>
+          <span>Click markers for details</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="mt-6 rounded-2xl border border-white/10 bg-black/40 backdrop-blur">
+        <div class="flex flex-col lg:flex-row lg:items-center gap-3 p-4 border-b border-white/10">
+          <div class="flex items-center gap-2 text-sm text-gray-300">
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+            <span class="font-medium">Select day</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button class="date-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-teal-400 text-black border border-teal-300 transition-colors" data-day="0">Today</button>
+            <button class="date-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-white/5 text-gray-200 hover:bg-white/10 border border-white/10 transition-colors" data-day="1">Day 2</button>
+            <button class="date-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-white/5 text-gray-200 hover:bg-white/10 border border-white/10 transition-colors" data-day="2">Day 3</button>
+            <button class="date-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-white/5 text-gray-200 hover:bg-white/10 border border-white/10 transition-colors" data-day="3">Day 4</button>
+            <button class="date-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-white/5 text-gray-200 hover:bg-white/10 border border-white/10 transition-colors" data-day="4">Day 5</button>
+            <button class="date-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-white/5 text-gray-200 hover:bg-white/10 border border-white/10 transition-colors" data-day="5">Day 6</button>
+            <button class="date-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-white/5 text-gray-200 hover:bg-white/10 border border-white/10 transition-colors" data-day="6">Day 7</button>
+          </div>
+          <div class="hidden lg:block ml-auto text-sm text-gray-400">
+            <span id="selected-date-label">Showing: Today</span>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="grid lg:grid-cols-10 gap-0">
+          <!-- Map -->
+          <div class="lg:col-span-7 relative">
+            <div id="leaflet-map" class="w-full h-[60vh] lg:h-[72vh] rounded-none lg:rounded-bl-2xl" style="outline: none;"></div>
+          </div>
+
+          <!-- Info Panel -->
+          <aside id="info-panel" class="lg:col-span-3 border-t lg:border-t-0 lg:border-l border-white/10 bg-gray-950/60 p-4 lg:p-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-xl font-semibold tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Disaster Predictions</h3>
+                <p class="mt-1 text-sm text-gray-400">Select a day or click a marker for details</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 text-xs text-gray-400">
+                  <span class="w-2.5 h-2.5 rounded-full" style="background-color:#10b981"></span> Low
+                </span>
+                <span class="inline-flex items-center gap-1 text-xs text-gray-400">
+                  <span class="w-2.5 h-2.5 rounded-full" style="background-color:#f59e0b"></span> Moderate
+                </span>
+                <span class="inline-flex items-center gap-1 text-xs text-gray-400">
+                  <span class="w-2.5 h-2.5 rounded-full" style="background-color:#ef4444"></span> High
+                </span>
+              </div>
+            </div>
+            <div id="predictions-list" class="mt-4">
+              <!-- Filled by JS -->
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Predictions List (full width) -->
+  <section id="predictions" class="py-14 bg-black">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-6">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider text-teal-300/90">Daily Summaries</p>
+          <h2 class="mt-2 text-3xl lg:text-4xl tracking-tight font-medium text-white" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Highlights for Selected Day</h2>
+        </div>
+        <a href="#map" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]">
+          Back to Map
+          <i data-lucide="map" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <div id="predictions-cards" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="py-16 bg-gray-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider text-teal-300/90">About</p>
+          <h3 class="mt-2 text-3xl tracking-tight font-medium text-white" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Built for rapid situational awareness</h3>
+          <p class="mt-4 text-gray-400 text-lg">
+            DisasterSence surfaces projected risks to help teams act faster—aggregating signals and presenting them on an intuitive, high-contrast map.
+          </p>
+          <div class="mt-6 grid sm:grid-cols-2 gap-4">
+            <div class="p-5 rounded-xl border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center">
+                  <i data-lucide="clock" class="w-5 h-5 text-gray-300"></i>
+                </div>
+                <div>
+                  <p class="text-base font-medium text-white">Daily refresh</p>
+                  <p class="text-sm text-gray-400">Rolling 7-day window</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-5 rounded-xl border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center">
+                  <i data-lucide="shield-check" class="w-5 h-5 text-gray-300"></i>
+                </div>
+                <div>
+                  <p class="text-base font-medium text-white">Actionable</p>
+                  <p class="text-sm text-gray-400">Designed for response</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="mt-6 text-sm text-gray-500">Use official advisories for decisions. This is a supporting tool.</p>
+        </div>
+        <div class="rounded-2xl overflow-hidden border border-white/10">
+          <img src="https://images.unsplash.com/photo-1518458028785-8fbcd101ebb9?q=80&amp;w=1600&amp;auto=format&amp;fit=crop" alt="Preparedness" class="w-full h-[360px] object-cover">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 bg-black">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="md:col-span-2">
+          <a href="#overview" class="inline-flex items-center gap-2">
+            <div class="h-6 w-6 rounded-md bg-gradient-to-br from-teal-500 to-cyan-400"></div>
+            <span class="text-lg font-medium" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">DisasterSence</span>
+          </a>
+          <p class="mt-3 text-sm text-gray-400 max-w-md">A focused interface to explore near-term disaster risks across India.</p>
+          <div class="mt-4 flex items-center gap-3 text-sm text-gray-400">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+            <span>contact@disastersence.io</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-300">Navigate</p>
+          <ul class="mt-3 space-y-2 text-sm text-gray-400">
+            <li><a href="#map" class="hover:text-teal-300">Map</a></li>
+            <li><a href="#predictions" class="hover:text-teal-300">Predictions</a></li>
+            <li><a href="#about" class="hover:text-teal-300">About</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-300">Legal</p>
+          <ul class="mt-3 space-y-2 text-sm text-gray-400">
+            <li><a href="#" class="hover:text-teal-300">Privacy</a></li>
+            <li><a href="#" class="hover:text-teal-300">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+        <p>© <span id="year">2025</span> DisasterSence. All rights reserved.</p>
+        <div class="flex items-center gap-3">
+          <a href="#overview" class="hover:text-teal-300">Overview</a>
+          <a href="#map" class="hover:text-teal-300">Map</a>
+          <a href="#predictions" class="hover:text-teal-300">Predictions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Icons
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      }
+    });
+
+    // Smooth anchor scroll
+    function smoothScrollTo(target) {
+      const el = document.querySelector(target);
+      if (!el) return;
+      const headerOffset = document.getElementById('site-header').offsetHeight;
+      const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerOffset + 1;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+    }
+
+    // Scroll progress
+    const progressEl = document.getElementById('scroll-progress');
+    const onScrollProgress = () => {
+      const h = document.documentElement;
+      const scrollTop = h.scrollTop || document.body.scrollTop;
+      const scrollHeight = h.scrollHeight - h.clientHeight;
+      const pct = Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100));
+      progressEl.style.width = pct + '%';
+    };
+    document.addEventListener('scroll', onScrollProgress, { passive: true });
+
+    // Header show/hide on scroll
+    const header = document.getElementById('site-header');
+    let lastY = window.pageYOffset;
+    let ticking = false;
+    function handleHeader() {
+      const y = window.pageYOffset;
+      const down = y > lastY && y > 80;
+      header.style.transform = down ? 'translateY(-100%)' : 'translateY(0)';
+      lastY = y;
+      ticking = false;
+    }
+    document.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(handleHeader);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Mobile panel
+    const toggleBtn = document.getElementById('nav-toggle');
+    const mobilePanel = document.getElementById('mobile-panel');
+    const panelInner = mobilePanel.querySelector('div.absolute.inset-x-0.top-0');
+    const overlay = mobilePanel.querySelector('[data-close-overlay]');
+
+    function openMobile() {
+      mobilePanel.classList.remove('pointer-events-none');
+      mobilePanel.classList.add('pointer-events-auto');
+      mobilePanel.style.opacity = '1';
+      panelInner.style.transform = 'translateY(0)';
+      panelInner.style.opacity = '1';
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      toggleBtn.querySelector('[data-lucide="menu"]').classList.add('hidden');
+      toggleBtn.querySelector('[data-lucide="x"]').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMobile() {
+      mobilePanel.style.opacity = '0';
+      panelInner.style.transform = 'translateY(-8px)';
+      panelInner.style.opacity = '0';
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.querySelector('[data-lucide="menu"]').classList.remove('hidden');
+      toggleBtn.querySelector('[data-lucide="x"]').classList.add('hidden');
+      setTimeout(() => {
+        mobilePanel.classList.remove('pointer-events-auto');
+        mobilePanel.classList.add('pointer-events-none');
+        document.body.style.overflow = '';
+      }, 250);
+    }
+    toggleBtn.addEventListener('click', () => {
+      const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      expanded ? closeMobile() : openMobile();
+    });
+    overlay.addEventListener('click', closeMobile);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobile(); });
+    window.addEventListener('resize', () => { if (window.innerWidth >= 768) closeMobile(); });
+
+    // Nav links: smooth scroll + active state
+    function bindSmoothLinks(selector) {
+      document.querySelectorAll(selector).forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          smoothScrollTo(a.getAttribute('href'));
+        });
+      });
+    }
+    bindSmoothLinks('[data-nav-link]');
+    document.querySelectorAll('[data-mobile-link]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = a.getAttribute('href');
+        closeMobile();
+        setTimeout(() => smoothScrollTo(href), 220);
+      });
+    });
+
+    const sections = Array.from(document.querySelectorAll('section[id]'));
+    const navLinks = Array.from(document.querySelectorAll('[data-nav-link]'));
+    function setActive(id) {
+      navLinks.forEach(link => {
+        const match = link.getAttribute('href') === '#' + id;
+        link.setAttribute('aria-current', match ? 'page' : 'false');
+        link.style.backgroundSize = match ? '100% 2px' : '0% 2px';
+        link.classList.toggle('text-white', match);
+      });
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) setActive(entry.target.id); });
+    }, { threshold: 0.5, rootMargin: '-20% 0px -20% 0px' });
+    sections.forEach(sec => observer.observe(sec));
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // -----------------------------
+    // Map logic (adapted, original respected)
+    // -----------------------------
+
+    // Initialize map centered on India
+    const map = L.map('leaflet-map', { zoomControl: true }).setView([20.5937, 78.9629], 5);
+
+    // Add base map layer (OSM)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Disaster icon mapping (using lucide names)
+    const disasterIcons = {
+      landslide: 'layers',
+      flood: 'waves',
+      cyclone: 'wind',
+      earthquake: 'activity'
+    };
+
+    // Severity -> colors
+    function severityBg(intensity) {
+      if (intensity === 'High') return '#ef4444';      // red-500
+      if (intensity === 'Moderate') return '#f59e0b';  // amber-500
+      return '#10b981';                                 // emerald-500 (Low)
+    }
+    function severityText(intensity) {
+      if (intensity === 'High') return 'High';
+      if (intensity === 'Moderate') return 'Moderate';
+      return 'Low';
+    }
+
+    // Sample real-time prediction data (original preserved)
+    const predictions = {
+      "0": [
+        { lat: 30.73, lon: 76.77, name: "Chandigarh, Punjab", type: "flood", intensity: "High", probability: 90, description: "Widespread flooding with thousands displaced." },
+        { lat: 28.70, lon: 77.10, name: "New Delhi", type: "flood", intensity: "Moderate", probability: 70, description: "Yamuna river crossing danger mark, mass evacuations underway." },
+        { lat: 26.14, lon: 91.74, name: "Guwahati, Assam", type: "flood", intensity: "High", probability: 85, description: "Brahmaputra river and tributaries overflowing, affecting millions." },
+        { lat: 25.57, lon: 85.13, name: "Patna, Bihar", type: "flood", intensity: "Moderate", probability: 65, description: "Ganga and Gandak rivers are rising, flood alert issued." },
+        { lat: 31.10, lon: 77.17, name: "Shimla, Himachal Pradesh", type: "landslide", intensity: "High", probability: 95, description: "Cloudbursts causing frequent landslides, blocking key highways." },
+        { lat: 34.08, lon: 74.80, name: "Srinagar, J&K", type: "landslide", intensity: "Moderate", probability: 75, description: "Landslides reported along Srinagar-Jammu highway." },
+        { lat: 10.85, lon: 76.27, name: "Kochi, Kerala", type: "landslide", intensity: "Moderate", probability: 55, description: "Western Ghats region experiencing multiple minor landslides." }
+      ],
+      "1": [
+        { lat: 30.31, lon: 78.03, name: "Dehradun, Uttarakhand", type: "flood", intensity: "High", probability: 80, description: "Flash floods expected in low-lying areas due to heavy rainfall." },
+        { lat: 29.85, lon: 77.88, name: "Roorkee, Uttarakhand", type: "landslide", intensity: "High", probability: 70, description: "High risk of landslides along the Char Dham Yatra routes." },
+        { lat: 26.85, lon: 80.95, name: "Lucknow, Uttar Pradesh", type: "flood", intensity: "Moderate", probability: 60, description: "Severe flood alerts along Gomti and Ganga rivers." },
+        { lat: 27.47, lon: 77.67, name: "Mathura, Uttar Pradesh", type: "flood", intensity: "Low", probability: 30, description: "Yamuna river at an elevated level, but no immediate threat." },
+        { lat: 25.68, lon: 91.89, name: "Shillong, Meghalaya", type: "landslide", intensity: "High", probability: 85, description: "Hill slopes collapsing, isolating villages in East Khasi Hills." },
+        { lat: 22.30, lon: 72.57, name: "Ahmedabad, Gujarat", type: "cyclone", intensity: "Low", probability: 15, description: "Early forecast of a low-pressure system in Arabian Sea." },
+        { lat: 32.24, lon: 77.18, name: "Manali, Himachal Pradesh", type: "landslide", intensity: "High", probability: 80, description: "Increased landslide risk from continuous heavy rain." }
+      ],
+      "2": [
+        { lat: 28.59, lon: 77.81, name: "Moradabad, Uttar Pradesh", type: "flood", intensity: "Moderate", probability: 50, description: "Ramganga river levels rising due to upstream rain." },
+        { lat: 31.06, lon: 76.22, name: "Ropar, Punjab", type: "flood", intensity: "High", probability: 75, description: "Sutlej River flowing above danger mark, affecting downstream areas." },
+        { lat: 25.75, lon: 86.17, name: "Saharsa, Bihar", type: "flood", intensity: "High", probability: 80, description: "Kosi river embankments are under pressure, high flood risk." },
+        { lat: 28.61, lon: 77.20, name: "New Delhi", type: "flood", intensity: "High", probability: 85, description: "Yamuna river levels at an all-time high, affecting residential areas." },
+        { lat: 24.81, lon: 93.02, name: "Imphal, Manipur", type: "earthquake", intensity: "Moderate", probability: 50, description: "Seismic activity reported, minor tremors likely." },
+        { lat: 27.33, lon: 88.61, name: "Gangtok, Sikkim", type: "landslide", intensity: "High", probability: 70, description: "Cloudbursts and heavy rain leading to landslides and road closures." }
+      ],
+      "3": [
+        { lat: 20.27, lon: 85.83, name: "Bhubaneswar, Odisha", type: "cyclone", intensity: "High", probability: 80, description: "Cyclone developing in Bay of Bengal, forecast to make landfall on East Coast." },
+        { lat: 25.43, lon: 81.84, name: "Prayagraj, Uttar Pradesh", type: "flood", intensity: "High", probability: 70, description: "Confluence of Ganga and Yamuna at an alarming level." },
+        { lat: 34.08, lon: 74.80, name: "Srinagar, J&K", type: "earthquake", intensity: "Low", probability: 20, description: "Minor tremors expected." },
+        { lat: 22.57, lon: 88.36, name: "Kolkata, West Bengal", type: "cyclone", intensity: "Moderate", probability: 60, description: "Cyclone approaching the West Bengal coast, winds expected." },
+        { lat: 28.47, lon: 95.83, name: "Pasighat, Arunachal Pradesh", type: "landslide", intensity: "High", probability: 90, description: "Heavy rains in the mountainous region causing severe landslides." }
+      ],
+      "4": [
+        { lat: 22.30, lon: 72.57, name: "Ahmedabad, Gujarat", type: "cyclone", intensity: "Moderate", probability: 60, description: "Cyclone is weakening but still a threat, with strong winds and heavy rain." },
+        { lat: 17.68, lon: 83.21, name: "Visakhapatnam, Andhra Pradesh", type: "cyclone", intensity: "Low", probability: 30, description: "System moving further north, minor effects expected." },
+        { lat: 28.18, lon: 76.71, name: "Rewari, Haryana", type: "flood", intensity: "Low", probability: 30, description: "Heavy rains could lead to minor flash floods in low-lying areas." },
+        { lat: 28.62, lon: 77.01, name: "Gurgaon, Haryana", type: "flood", intensity: "Moderate", probability: 45, description: "Urban flooding from local water bodies overflowing." },
+        { lat: 30.06, lon: 79.01, name: "Rishikesh, Uttarakhand", type: "landslide", intensity: "High", probability: 80, description: "New landslide alerts on the Rishikesh-Badrinath highway." }
+      ],
+      "5": [
+        { lat: 24.81, lon: 93.02, name: "Imphal, Manipur", type: "earthquake", intensity: "Moderate", probability: 50, description: "Persistent seismic activity in the Northeast region." },
+        { lat: 26.56, lon: 91.68, name: "Barpeta, Assam", type: "flood", intensity: "High", probability: 95, description: "Brahmaputra tributaries overflowing, causing a severe flood crisis." },
+        { lat: 31.97, lon: 76.22, name: "Kangra, Himachal Pradesh", type: "landslide", intensity: "High", probability: 85, description: "Multiple villages isolated due to landslides." },
+        { lat: 28.98, lon: 77.71, name: "Baghpat, Uttar Pradesh", type: "flood", intensity: "Moderate", probability: 60, description: "Yamuna River levels remain high, affecting agriculture." },
+        { lat: 23.02, lon: 72.57, name: "Bhuj, Gujarat", type: "earthquake", intensity: "High", probability: 70, description: "Historical seismic zone with a high risk of tremors." }
+      ],
+      "6": [
+        { lat: 25.75, lon: 86.17, name: "Darbhanga, Bihar", type: "flood", intensity: "High", probability: 75, description: "Severe flood situation due to overflowing rivers." },
+        { lat: 24.81, lon: 93.02, name: "Aizawl, Mizoram", type: "landslide", intensity: "High", probability: 85, description: "Heavy rains causing hill slopes to collapse." },
+        { lat: 28.47, lon: 95.83, name: "Itanagar, Arunachal Pradesh", type: "landslide", intensity: "High", probability: 80, description: "Major landslides along the NH-415 highway." },
+        { lat: 10.85, lon: 76.27, name: "Thiruvananthapuram, Kerala", type: "flood", intensity: "Low", probability: 30, description: "Minor flash floods from heavy local rainfall." },
+        { lat: 21.14, lon: 79.08, name: "Nagpur, Maharashtra", type: "flood", intensity: "Low", probability: 20, description: "Monsoon rains in the catchment area of the Wainganga river." }
+      ]
+    };
+
+    // Layers
+    let markerLayer = L.layerGroup().addTo(map);
+
+    // Legend (Leaflet control)
+    const legend = L.control({ position: 'bottomright' });
+    legend.onAdd = function () {
+      const div = L.DomUtil.create('div');
+      div.className = 'rounded-lg border border-white/10 bg-black/80 text-gray-200 p-3 text-sm shadow';
+      div.innerHTML = `
+        <div style="font-weight: 600; margin-bottom: 6px;">Severity</div>
+        <div class="flex items-center gap-2"><span style="width:14px;height:14px;border-radius:9999px;background-color:#10b981;display:inline-block"></span>Low</div>
+        <div class="flex items-center gap-2 mt-1"><span style="width:14px;height:14px;border-radius:9999px;background-color:#f59e0b;display:inline-block"></span>Moderate</div>
+        <div class="flex items-center gap-2 mt-1"><span style="width:14px;height:14px;border-radius:9999px;background-color:#ef4444;display:inline-block"></span>High</div>
+      `;
+      return div;
+    };
+    legend.addTo(map);
+
+    // Current day selection
+    let currentDay = "0";
+
+    // Create a function to get the date string
+    function getDateByDay(day) {
+      const today = new Date();
+      const targetDate = new Date();
+      targetDate.setDate(today.getDate() + parseInt(day, 10));
+      return targetDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    // Update button active state
+    function updateButtons(day) {
+      document.querySelectorAll('.date-btn').forEach(btn => {
+        const isActive = btn.dataset.day === day;
+        btn.classList.toggle('bg-teal-400', isActive);
+        btn.classList.toggle('text-black', isActive);
+        btn.classList.toggle('border-teal-300', isActive);
+        btn.classList.toggle('bg-white/5', !isActive);
+        btn.classList.toggle('text-gray-200', !isActive);
+        btn.classList.toggle('border-white/10', !isActive);
+      });
+      document.getElementById('selected-date-label').textContent = 'Showing: ' + (day === '0' ? 'Today' : getDateByDay(day));
+    }
+
+    // Helpers for icon HTML inside marker
+    function markerHtml(pred) {
+      const bg = severityBg(pred.intensity);
+      const iconName = disasterIcons[pred.type] || 'alert-triangle';
+      return `
+        <div style="
+          width:34px;height:34px;border-radius:9999px;
+          background:${bg};
+          border:2px solid white; box-shadow:0 2px 8px rgba(0,0,0,.35);
+          display:flex;align-items:center;justify-content:center;">
+          <i data-lucide="${iconName}" class="w-4 h-4 text-white"></i>
+        </div>
+      `;
+    }
+
+    // Update map + side panels
+    function updateMapForDay(day) {
+      currentDay = day;
+      markerLayer.clearLayers();
+
+      const dailyPredictions = predictions[day] || [];
+      dailyPredictions.forEach(pred => {
+        const customIcon = L.divIcon({
+          className: 'custom-icon',
+          html: markerHtml(pred),
+          iconSize: [34, 34],
+          iconAnchor: [17, 28]
+        });
+        const marker = L.marker([pred.lat, pred.lon], { icon: customIcon }).addTo(markerLayer);
+        marker.bindPopup(`
+          <div style="font-weight:600;margin-bottom:4px">${pred.type.charAt(0).toUpperCase() + pred.type.slice(1)}</div>
+          <div><span style="color:#9ca3af">Location:</span> ${pred.name}</div>
+          <div><span style="color:#9ca3af">Intensity:</span> ${pred.intensity}</div>
+          <div><span style="color:#9ca3af">Probability:</span> ${pred.probability}%</div>
+          <div style="margin-top:4px;color:#9ca3af;font-size:12px">${pred.description}</div>
+        `);
+      });
+
+      // Re-render any lucide icons added inside markers
+      if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+
+      // Buttons
+      updateButtons(day);
+
+      // Info panel (sidebar)
+      const predictionsList = document.getElementById('predictions-list');
+      let html = `
+        <div class="text-sm text-gray-400 mb-2">${getDateByDay(day)}</div>
+      `;
+      if (dailyPredictions.length > 0) {
+        html += `<div class="space-y-2">`;
+        dailyPredictions.forEach(pred => {
+          html += `
+            <div class="rounded-lg border border-white/10 bg-black/40 p-3">
+              <div class="flex items-start gap-3">
+                <div class="mt-0.5 w-2 h-2 rounded-full" style="background:${severityBg(pred.intensity)}"></div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="${disasterIcons[pred.type] || 'alert-triangle'}" class="w-4 h-4 text-gray-300"></i>
+                    <p class="text-sm font-medium text-white">${pred.type.charAt(0).toUpperCase() + pred.type.slice(1)}</p>
+                  </div>
+                  <p class="text-sm text-gray-300 mt-1">${pred.name}</p>
+                  <div class="mt-1 text-xs text-gray-400">
+                    <span class="mr-3"><span class="text-gray-500">Intensity:</span> ${pred.intensity}</span>
+                    <span><span class="text-gray-500">Probability:</span> ${pred.probability}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      } else {
+        html += '<p class="text-sm text-gray-300">No disaster predictions for this day.</p>';
+      }
+      predictionsList.innerHTML = html;
+
+      // Re-render icons inside sidebar
+      if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+
+      // Predictions cards (full width section)
+      const cards = document.getElementById('predictions-cards');
+      cards.innerHTML = '';
+      dailyPredictions.forEach(pred => {
+        const color = severityBg(pred.intensity);
+        const card = document.createElement('article');
+        card.className = 'group relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-gray-900/60 to-black p-4';
+        card.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)">
+              <i data-lucide="${disasterIcons[pred.type] || 'alert-triangle'}" class="w-5 h-5 text-gray-300"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-base font-semibold tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">${pred.name}</h4>
+              <p class="mt-0.5 text-sm text-gray-400">${pred.description}</p>
+              <div class="mt-3 flex items-center gap-3 text-xs">
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-white/10 bg-white/5 text-gray-200">
+                  <span class="w-2 h-2 rounded-full" style="background:${color}"></span> ${severityText(pred.intensity)}
+                </span>
+                <span class="text-gray-400"><span class="text-gray-500">Probability:</span> ${pred.probability}%</span>
+                <span class="text-gray-400"><span class="text-gray-500">Type:</span> ${pred.type}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        cards.appendChild(card);
+      });
+      if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    }
+
+    // Set up date button event listeners
+    document.querySelectorAll('.date-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        updateMapForDay(this.dataset.day);
+      });
+    });
+
+    // Initialize with today's predictions
+    updateMapForDay("0");
+  </script>
+
+</body></html>

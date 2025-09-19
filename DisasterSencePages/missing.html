@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Missing Persons Connect - India</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="antialiased bg-neutral-950 text-neutral-100 selection:bg-teal-400/20 selection:text-teal-200" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'">
+  <!-- Scroll Progress -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-teal-400 to-cyan-400 w-0 z-50" style="width: 0%"></div>
+
+  <!-- Header -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-neutral-900/70 bg-neutral-900/80 border-b border-white/10 transition-transform duration-300 will-change-transform" style="transform: translateY(0)">
+    <nav class="max-w-7xl mx-auto h-16 px-4 sm:px-6 lg:px-8">
+      <div class="h-full flex items-center justify-between">
+        <!-- Brand -->
+        <a href="#" class="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md">
+          <!-- Brand Mark -->
+          <div class="h-6 w-6 rounded-md bg-gradient-to-br from-teal-500 to-cyan-400"></div>
+          <div class="flex items-center gap-2">
+            <span class="text-lg font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Missing Persons Connect</span>
+            <!-- India emblem (circle flag) -->
+            <svg viewBox="0 0 24 24" class="w-4 h-4 rounded-full overflow-hidden ring-1 ring-white/20" aria-hidden="true">
+              <defs>
+                <clipPath id="r">
+                  <circle cx="12" cy="12" r="12"></circle>
+                </clipPath>
+              </defs>
+              <g clip-path="url(#r)">
+                <rect width="24" height="8" y="0" fill="#FF9933"></rect>
+                <rect width="24" height="8" y="8" fill="#ffffff"></rect>
+                <rect width="24" height="8" y="16" fill="#138808"></rect>
+                <circle cx="12" cy="12" r="2.2" fill="#000080"></circle>
+              </g>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-7">
+          <a href="/index.html" class="group text-sm font-medium text-neutral-300 hover:text-white bg-left-bottom bg-gradient-to-r from-teal-400 to-teal-400 bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size,color] duration-300">Home</a>
+          <a href="#login-section" data-nav-link class="group text-sm font-medium text-neutral-300 hover:text-white bg-left-bottom bg-gradient-to-r from-teal-400 to-teal-400 bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size,color] duration-300">Login</a>
+          <a href="#report-section" data-nav-link class="group text-sm font-medium text-neutral-300 hover:text-white bg-left-bottom bg-gradient-to-r from-teal-400 to-teal-400 bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size,color] duration-300">Report</a>
+          <a href="#cases" data-nav-link class="group text-sm font-medium text-neutral-300 hover:text-white bg-left-bottom bg-gradient-to-r from-teal-400 to-teal-400 bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size,color] duration-300">Cases</a>
+          <a href="#user-info" data-nav-link class="group text-sm font-medium text-neutral-300 hover:text-white bg-left-bottom bg-gradient-to-r from-teal-400 to-teal-400 bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size,color] duration-300">Account</a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+          <button id="logout-btn" style="display:none" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium bg-rose-500/90 text-white hover:bg-rose-500 transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-rose-400">
+            <i data-lucide="log-out" class="w-4 h-4 stroke-[1.5]"></i>
+            Logout
+          </button>
+          <button id="nav-toggle" aria-expanded="false" aria-controls="mobile-panel" class="md:hidden p-2 rounded-md transition-colors hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <i data-lucide="menu" class="w-5 h-5 stroke-[1.5]"></i>
+            <i data-lucide="x" class="w-5 h-5 stroke-[1.5] hidden"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Panel -->
+    <div id="mobile-panel" class="fixed inset-0 z-30 pointer-events-none opacity-0 transition-opacity duration-300">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close-overlay></div>
+      <div class="absolute inset-x-0 top-0 bg-neutral-950/95 border-b border-white/10 px-4 sm:px-6 pt-20 pb-6 translate-y-[-8px] opacity-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid gap-2">
+            <a href="/index.html" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/[0.06] border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-neutral-100">Home</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-neutral-400 stroke-[1.5]"></i>
+            </a>
+            <a href="#login-section" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/[0.06] border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-neutral-100">Login</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-neutral-400 stroke-[1.5]"></i>
+            </a>
+            <a href="#report-section" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/[0.06] border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-neutral-100">Report</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-neutral-400 stroke-[1.5]"></i>
+            </a>
+            <a href="#cases" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/[0.06] border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-neutral-100">Cases</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-neutral-400 stroke-[1.5]"></i>
+            </a>
+            <a href="#user-info" data-mobile-link class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-white/[0.06] border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-neutral-100">Account</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-neutral-400 stroke-[1.5]"></i>
+            </a>
+          </div>
+          <div class="mt-5">
+            <button id="logout-btn-mobile" style="display:none" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-rose-500/90 text-white hover:bg-rose-500 transition-all hover:scale-[1.02]">
+              <i data-lucide="log-out" class="w-4 h-4 stroke-[1.5]"></i>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="pt-24 sm:pt-28">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Page header card -->
+      <div class="rounded-2xl border border-white/10 bg-gradient-to-b from-neutral-900/70 to-neutral-950/60 p-5 sm:p-6 mb-5">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Help reunite families across India</h1>
+            <p class="mt-1 text-sm sm:text-base text-neutral-400">Report, view and update missing persons cases with secure phone verification.</p>
+          </div>
+          <div class="hidden sm:flex items-center gap-6">
+            <div class="text-center">
+              <div id="total-reports" class="text-xl font-semibold">12</div>
+              <div class="text-xs text-neutral-400">Total Reports</div>
+            </div>
+            <div class="text-center">
+              <div id="resolved" class="text-xl font-semibold">8</div>
+              <div class="text-xs text-neutral-400">Resolved Cases</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div id="success-alert" class="hidden mb-4 rounded-lg border border-emerald-400/20 bg-emerald-400/10 text-emerald-300 px-4 py-3 flex items-start gap-3" role="status" aria-live="polite" style="display:none">
+        <i data-lucide="check-circle-2" class="w-5 h-5 stroke-[1.5]"></i>
+        <span id="success-message" class="text-sm"></span>
+      </div>
+      <div id="error-alert" class="hidden mb-4 rounded-lg border border-rose-400/20 bg-rose-400/10 text-rose-300 px-4 py-3 flex items-start gap-3" role="alert" style="display:none">
+        <i data-lucide="alert-triangle" class="w-5 h-5 stroke-[1.5]"></i>
+        <span id="error-message" class="text-sm"></span>
+      </div>
+
+      <!-- Modal -->
+      <div id="confirmation-modal" class="fixed inset-0 z-50 hidden items-center justify-center" style="display:none">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative w-full max-w-sm rounded-xl border border-white/10 bg-neutral-950 p-5">
+          <h3 class="text-lg font-semibold tracking-tight">Confirm Action</h3>
+          <p class="mt-1 text-sm text-neutral-400">Has this person been found?</p>
+          <div class="mt-5 flex items-center justify-end gap-2">
+            <button id="cancel-found" class="px-3.5 py-2 rounded-lg text-sm bg-white/[0.06] hover:bg-white/[0.1] border border-white/10">Cancel</button>
+            <button id="confirm-found" class="px-3.5 py-2 rounded-lg text-sm bg-teal-400 text-black hover:bg-teal-300">Yes, Mark as Found</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- App layout -->
+      <div class="grid lg:grid-cols-3 gap-5">
+        <!-- Main -->
+        <div class="lg:col-span-2 space-y-5">
+          <!-- Login -->
+          <div id="login-section" class="rounded-2xl border border-white/10 bg-neutral-900/60 p-5 sm:p-6">
+            <div class="flex items-center gap-2">
+              <i data-lucide="smartphone" class="w-5 h-5 stroke-[1.5] text-neutral-300"></i>
+              <h2 class="text-xl font-semibold tracking-tight">Login with Indian Phone Number</h2>
+            </div>
+            <div class="mt-4 grid sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label for="phone" class="block text-sm text-neutral-300 mb-1">Phone Number</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-400">
+                    <span class="text-sm">+91</span>
+                  </div>
+                  <input id="phone" type="tel" placeholder="10-digit Indian number" class="w-full pl-12 pr-3 py-2.5 rounded-lg bg-black/50 border border-white/10 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"/>
+                </div>
+              </div>
+              <div id="otp-group" class="sm:col-span-2" style="display:none">
+                <label for="otp" class="block text-sm text-neutral-300 mb-1">Enter OTP</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <i data-lucide="shield" class="w-4 h-4 stroke-[1.5] text-neutral-400"></i>
+                  </div>
+                  <input id="otp" type="text" placeholder="6-digit code" class="w-full pl-10 pr-3 py-2.5 rounded-lg bg-black/50 border border-white/10 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"/>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <button id="request-otp" class="col-span-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-rose-500/90 text-white hover:bg-rose-500">
+                <i data-lucide="message-circle" class="w-4 h-4 stroke-[1.5]"></i>
+                Request OTP
+              </button>
+              <button id="verify-otp" style="display:none" class="col-span-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-teal-400 text-black hover:bg-teal-300">
+                <i data-lucide="lock" class="w-4 h-4 stroke-[1.5]"></i>
+                Verify & Login
+              </button>
+            </div>
+          </div>
+
+          <!-- Report -->
+          <div id="report-section" class="rounded-2xl border border-white/10 bg-neutral-900/60 p-5 sm:p-6" style="display:none">
+            <div class="flex items-center gap-2">
+              <i data-lucide="file-plus" class="w-5 h-5 stroke-[1.5] text-neutral-300"></i>
+              <h2 class="text-xl font-semibold tracking-tight">Report a Missing Person</h2>
+            </div>
+            <div class="mt-4 grid sm:grid-cols-2 gap-4">
+              <div>
+                <label for="name" class="block text-sm text-neutral-300 mb-1">Full Name</label>
+                <input id="name" type="text" placeholder="Full name" class="w-full px-3 py-2.5 rounded-lg bg-black/50 border border-white/10 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"/>
+              </div>
+              <div>
+                <label for="age" class="block text-sm text-neutral-300 mb-1">Age</label>
+                <input id="age" type="number" placeholder="Age" class="w-full px-3 py-2.5 rounded-lg bg-black/50 border border-white/10 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"/>
+              </div>
+              <div>
+                <label for="gender" class="block text-sm text-neutral-300 mb-1">Gender</label>
+                <select id="gender" class="w-full px-3 py-2.5 rounded-lg bg-black/50 border border-white/10 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm">
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="last-seen" class="block text-sm text-neutral-300 mb-1">Last Seen Location (City/Area)</label>
+                <input id="last-seen" type="text" placeholder="Where last seen?" class="w-full px-3 py-2.5 rounded-lg bg-black/50 border border-white/10 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"/>
+              </div>
+              <div class="sm:col-span-2">
+                <label for="description" class="block text-sm text-neutral-300 mb-1">Physical Description</label>
+                <textarea id="description" placeholder="Height, weight, hair color, eye color, distinguishing features" class="w-full px-3 py-2.5 rounded-lg bg-black/50 border border-white/10 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" rows="4"></textarea>
+              </div>
+              <div>
+                <label for="contact" class="block text-sm text-neutral-300 mb-1">Contact Number for Information</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-400">
+                    <span class="text-sm">+91</span>
+                  </div>
+                  <input id="contact" type="tel" placeholder="Contact phone" class="w-full pl-12 pr-3 py-2.5 rounded-lg bg-black/50 border border-white/10 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"/>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm text-neutral-300 mb-1">Upload Photo</label>
+                <div id="photo-upload" class="cursor-pointer rounded-lg border border-dashed border-white/15 bg-black/40 hover:bg-black/50 transition-colors px-4 py-5 text-center">
+                  <div class="mx-auto w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                    <i data-lucide="upload-cloud" class="w-5 h-5 text-neutral-300 stroke-[1.5]"></i>
+                  </div>
+                  <p class="mt-2 text-sm text-neutral-300">Click to upload a photo</p>
+                  <input id="photo-input" type="file" accept="image/*" style="display:none"/>
+                  <img id="image-preview" src="" alt="Preview" class="hidden mx-auto mt-3 max-h-48 rounded-md border border-white/10 object-cover"/>
+                </div>
+              </div>
+            </div>
+            <div class="mt-5">
+              <button id="report-btn" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-teal-400 text-black hover:bg-teal-300">
+                <i data-lucide="send" class="w-4 h-4 stroke-[1.5]"></i>
+                Submit Report
+              </button>
+            </div>
+          </div>
+
+          <!-- Cases -->
+          <div id="cases" class="rounded-2xl border border-white/10 bg-neutral-900/60 p-5 sm:p-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="users" class="w-5 h-5 stroke-[1.5] text-neutral-300"></i>
+                <h2 class="text-xl font-semibold tracking-tight">Recently Reported Missing Persons</h2>
+              </div>
+            </div>
+            <div id="missing-persons-list" class="mt-4 grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              <!-- Cards injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="space-y-5">
+          <!-- Account -->
+          <div id="user-info" class="rounded-2xl border border-white/10 bg-neutral-900/60 p-5 sm:p-6 text-center" style="display:none">
+            <h3 class="text-lg font-semibold tracking-tight">Your Account</h3>
+            <p id="user-phone" class="mt-1 text-sm text-neutral-400"></p>
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="rounded-lg border border-white/10 bg-black/40 p-3">
+                <div class="text-sm text-neutral-400">Reports</div>
+                <div class="text-lg font-semibold" id="user-report-count">0</div>
+              </div>
+              <div class="rounded-lg border border-white/10 bg-black/40 p-3">
+                <div class="text-sm text-neutral-400">Resolved</div>
+                <div class="text-lg font-semibold" id="user-resolved-count">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- My Reports -->
+          <div id="my-reports-section" class="rounded-2xl border border-white/10 bg-neutral-900/60 p-5 sm:p-6" style="display:none">
+            <div class="flex items-center gap-2">
+              <i data-lucide="folder-open" class="w-5 h-5 stroke-[1.5] text-neutral-300"></i>
+              <h2 class="text-lg font-semibold tracking-tight">My Reports</h2>
+            </div>
+            <div id="my-reports-list" class="mt-3 divide-y divide-white/5">
+              <!-- Items injected by JS -->
+            </div>
+          </div>
+
+          <!-- Features -->
+          <div class="rounded-2xl border border-white/10 bg-neutral-900/60 p-5 sm:p-6">
+            <h2 class="text-lg font-semibold tracking-tight">Features</h2>
+            <ul class="mt-3 space-y-3 text-sm">
+              <li class="flex items-center gap-2 text-neutral-300"><i data-lucide="smartphone" class="w-4 h-4 stroke-[1.5] text-teal-300"></i> Phone verification for secure login</li>
+              <li class="flex items-center gap-2 text-neutral-300"><i data-lucide="user-plus" class="w-4 h-4 stroke-[1.5] text-teal-300"></i> Report missing persons with details</li>
+              <li class="flex items-center gap-2 text-neutral-300"><i data-lucide="camera" class="w-4 h-4 stroke-[1.5] text-teal-300"></i> Upload photos of missing persons</li>
+              <li class="flex items-center gap-2 text-neutral-300"><i data-lucide="eye" class="w-4 h-4 stroke-[1.5] text-teal-300"></i> View all reported cases</li>
+              <li class="flex items-center gap-2 text-neutral-300"><i data-lucide="phone" class="w-4 h-4 stroke-[1.5] text-teal-300"></i> Contact information for each case</li>
+              <li class="flex items-center gap-2 text-neutral-300"><i data-lucide="check-circle-2" class="w-4 h-4 stroke-[1.5] text-teal-300"></i> Mark cases as resolved when found</li>
+              <li class="flex items-center gap-2 text-neutral-300"><i data-lucide="share-2" class="w-4 h-4 stroke-[1.5] text-teal-300"></i> Share cases on social media</li>
+              <li class="flex items-center gap-2 text-neutral-300"><i data-lucide="map-pin" class="w-4 h-4 stroke-[1.5] text-teal-300"></i> Last seen location mapping</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Mobile Stats -->
+      <div class="sm:hidden mt-5 grid grid-cols-2 gap-3">
+        <div class="rounded-lg border border-white/10 bg-black/40 p-3 text-center">
+          <div class="text-xs text-neutral-400">Total Reports</div>
+          <div id="total-reports-mobile" class="text-lg font-semibold">12</div>
+        </div>
+        <div class="rounded-lg border border-white/10 bg-black/40 p-3 text-center">
+          <div class="text-xs text-neutral-400">Resolved Cases</div>
+          <div id="resolved-mobile" class="text-lg font-semibold">8</div>
+        </div>
+      </div>
+
+      <div class="h-10"></div>
+    </section>
+  </main>
+
+  <script>
+    // Icons
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+    });
+
+    // Smooth anchor scroll
+    function smoothScrollTo(target) {
+      const el = document.querySelector(target);
+      if (!el) return;
+      const headerOffset = document.getElementById('site-header').offsetHeight;
+      const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerOffset + 1;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+    }
+
+    // Scroll progress
+    const progressEl = document.getElementById('scroll-progress');
+    const onScrollProgress = () => {
+      const h = document.documentElement;
+      const scrollTop = h.scrollTop || document.body.scrollTop;
+      const scrollHeight = h.scrollHeight - h.clientHeight;
+      const pct = Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100));
+      progressEl.style.width = pct + '%';
+    };
+    document.addEventListener('scroll', onScrollProgress, { passive: true });
+
+    // Header show/hide on scroll
+    const header = document.getElementById('site-header');
+    let lastY = window.pageYOffset;
+    let ticking = false;
+    function handleHeader() {
+      const y = window.pageYOffset;
+      const down = y > lastY && y > 80;
+      header.style.transform = down ? 'translateY(-100%)' : 'translateY(0)';
+      lastY = y;
+      ticking = false;
+    }
+    document.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(handleHeader);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Mobile panel
+    const toggleBtn = document.getElementById('nav-toggle');
+    const mobilePanel = document.getElementById('mobile-panel');
+    const panelInner = mobilePanel.querySelector('div.absolute.inset-x-0.top-0');
+    const overlay = mobilePanel.querySelector('[data-close-overlay]');
+    const logoutBtnMobile = document.getElementById('logout-btn-mobile');
+    function openMobile() {
+      mobilePanel.classList.remove('pointer-events-none');
+      mobilePanel.classList.add('pointer-events-auto');
+      mobilePanel.style.opacity = '1';
+      panelInner.style.transform = 'translateY(0)';
+      panelInner.style.opacity = '1';
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      toggleBtn.querySelector('[data-lucide="menu"]').classList.add('hidden');
+      toggleBtn.querySelector('[data-lucide="x"]').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMobile() {
+      mobilePanel.style.opacity = '0';
+      panelInner.style.transform = 'translateY(-8px)';
+      panelInner.style.opacity = '0';
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.querySelector('[data-lucide="menu"]').classList.remove('hidden');
+      toggleBtn.querySelector('[data-lucide="x"]').classList.add('hidden');
+      setTimeout(() => {
+        mobilePanel.classList.remove('pointer-events-auto');
+        mobilePanel.classList.add('pointer-events-none');
+        document.body.style.overflow = '';
+      }, 250);
+    }
+    toggleBtn.addEventListener('click', () => {
+      const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      expanded ? closeMobile() : openMobile();
+    });
+    overlay.addEventListener('click', closeMobile);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobile(); });
+    window.addEventListener('resize', () => { if (window.innerWidth >= 768) closeMobile(); });
+
+    // Mobile link click closes panel + smooth scroll
+    document.querySelectorAll('[data-mobile-link]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = a.getAttribute('href');
+        closeMobile();
+        setTimeout(() => smoothScrollTo(href), 220);
+      });
+    });
+
+    // Desktop nav smooth scroll
+    document.querySelectorAll('[data-nav-link]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        smoothScrollTo(a.getAttribute('href'));
+      });
+    });
+
+    // Active link highlighting
+    const anchors = Array.from(document.querySelectorAll('main [id]')).filter(el => ['login-section','report-section','cases','user-info'].includes(el.id));
+    const navLinks = Array.from(document.querySelectorAll('[data-nav-link]'));
+    function setActive(id) {
+      navLinks.forEach(link => {
+        const match = link.getAttribute('href') === '#' + id;
+        link.style.backgroundSize = match ? '100% 2px' : '0% 2px';
+        link.classList.toggle('text-white', match);
+      });
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) setActive(entry.target.id); });
+    }, { threshold: 0.5, rootMargin: '-20% 0px -20% 0px' });
+    anchors.forEach(sec => io.observe(sec));
+
+    // -----------------------------
+    // Original App Logic (theme-only)
+    // -----------------------------
+
+    // Demo credentials for Indian users
+    const demoCredentials = {
+      "9876543210": "123456",
+      "9123456780": "654321",
+      "8765432109": "112233"
+    };
+
+    // Sample data
+    let missingPersons = [
+      {
+        id: 1,
+        name: "Rajesh Kumar",
+        age: 24,
+        gender: "male",
+        lastSeen: "Connaught Place, Delhi",
+        description: "Height: 5'8\", Black hair, brown eyes, last seen wearing blue jeans and white shirt",
+        contact: "+91 9876543210",
+        reportedBy: "9876543210",
+        image: "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20fill%3D%22%23222%22%20width%3D%22200%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22%23bbb%22%20font-family%3D%22Inter%2C%20sans-serif%22%20font-size%3D%2230%22%20text-anchor%3D%22middle%22%20x%3D%22100%22%20y%3D%22110%22%3ERajesh%20K.%3C%2Ftext%3E%3C%2Fsvg%3E"
+      },
+      {
+        id: 2,
+        name: "Priya Sharma",
+        age: 32,
+        gender: "female",
+        lastSeen: "Marine Drive, Mumbai",
+        description: "Height: 5'4\", Black hair, brown eyes, wearing a red saree with gold border",
+        contact: "+91 9123456780",
+        reportedBy: "9123456780",
+        image: "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20fill%3D%22%23222%22%20width%3D%22200%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22%23bbb%22%20font-family%3D%22Inter%2C%20sans-serif%22%20font-size%3D%2230%22%20text-anchor%3D%22middle%22%20x%3D%22100%22%20y%3D%22110%22%3EPriya%20S.%3C%2Ftext%3E%3C%2Fsvg%3E"
+      },
+      {
+        id: 3,
+        name: "Arjun Singh",
+        age: 16,
+        gender: "male",
+        lastSeen: "MG Road, Bangalore",
+        description: "Height: 5'6\", Short black hair, wearing school uniform (white shirt blue pants)",
+        contact: "+91 8765432109",
+        reportedBy: "8765432109",
+        image: "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20fill%3D%22%23222%22%20width%3D%22200%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22%23bbb%22%20font-family%3D%22Inter%2C%20sans-serif%22%20font-size%3D%2230%22%20text-anchor%3D%22middle%22%20x%3D%22100%22%20y%3D%22110%22%3EArjun%20S.%3C%2Ftext%3E%3C%2Fsvg%3E"
+      },
+      {
+        id: 4,
+        name: "Sunita Patel",
+        age: 68,
+        gender: "female",
+        lastSeen: "Sabarmati Riverfront, Ahmedabad",
+        description: "Height: 5'2\", Grey hair, wearing green saree, speaks Gujarati",
+        contact: "+91 9876543210",
+        reportedBy: "9876543210",
+        image: "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20fill%3D%22%23222%22%20width%3D%22200%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22%23bbb%22%20font-family%3D%22Inter%2C%20sans-serif%22%20font-size%3D%2225%22%20text-anchor%3D%22middle%22%20x%3D%22100%22%20y%3D%22110%22%3ESunita%20P.%3C%2Ftext%3E%3C%2Fsvg%3E"
+      },
+      {
+        id: 5,
+        name: "Vikram Malhotra",
+        age: 42,
+        gender: "male",
+        lastSeen: "Sector 17, Chandigarh",
+        description: "Height: 5'10\", Salt-pepper hair, beard, wearing formal office attire",
+        contact: "+91 9123456780",
+        reportedBy: "9123456780",
+        image: "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Crect%20fill%3D%22%23222%22%20width%3D%22200%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22%23bbb%22%20font-family%3D%22Inter%2C%20sans-serif%22%20font-size%3D%2225%22%20text-anchor%3D%22middle%22%20x%3D%22100%22%20y%3D%22110%22%3EVikram%20M.%3C%2Ftext%3E%3C%2Fsvg%3E"
+      }
+    ];
+
+    // DOM elements
+    const loginSection = document.getElementById('login-section');
+    const reportSection = document.getElementById('report-section');
+    const otpGroup = document.getElementById('otp-group');
+    const requestOtpBtn = document.getElementById('request-otp');
+    const verifyOtpBtn = document.getElementById('verify-otp');
+    const reportBtn = document.getElementById('report-btn');
+    const userInfo = document.getElementById('user-info');
+    const userPhone = document.getElementById('user-phone');
+    const missingPersonsList = document.getElementById('missing-persons-list');
+    const successAlert = document.getElementById('success-alert');
+    const errorAlert = document.getElementById('error-alert');
+    const successMessage = document.getElementById('success-message');
+    const errorMessage = document.getElementById('error-message');
+    const photoUpload = document.getElementById('photo-upload');
+    const photoInput = document.getElementById('photo-input');
+    const imagePreview = document.getElementById('image-preview');
+    const myReportsSection = document.getElementById('my-reports-section');
+    const myReportsList = document.getElementById('my-reports-list');
+    const confirmationModal = document.getElementById('confirmation-modal');
+    const confirmFoundBtn = document.getElementById('confirm-found');
+    const cancelFoundBtn = document.getElementById('cancel-found');
+    const logoutBtn = document.getElementById('logout-btn');
+    const totalReportsMobile = document.getElementById('total-reports-mobile');
+    const resolvedMobile = document.getElementById('resolved-mobile');
+
+    let currentUser = null;
+    let currentImageData = null;
+    let personToMarkFound = null;
+    let userResolvedCount = 0;
+
+    function init() {
+      renderMissingPersons();
+      // Events
+      requestOtpBtn.addEventListener('click', requestOtp);
+      verifyOtpBtn.addEventListener('click', verifyOtp);
+      reportBtn.addEventListener('click', submitReport);
+      photoUpload.addEventListener('click', () => photoInput.click());
+      photoInput.addEventListener('change', handleImageUpload);
+      confirmFoundBtn.addEventListener('click', confirmMarkAsFound);
+      cancelFoundBtn.addEventListener('click', closeModal);
+      logoutBtn.addEventListener('click', logout);
+      logoutBtnMobile.addEventListener('click', () => { logout(); closeMobile(); });
+      // Recreate icons after dynamic changes
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // Request OTP
+    function requestOtp() {
+      const phone = document.getElementById('phone').value.trim();
+      if (!phone) return showError('Please enter your phone number');
+      if (phone.length !== 10 || isNaN(phone)) return showError('Please enter a valid 10-digit Indian phone number');
+
+      otpGroup.style.display = 'block';
+      requestOtpBtn.style.display = 'none';
+      verifyOtpBtn.style.display = 'inline-flex';
+
+      showSuccess(`OTP sent to +91 ${phone}. Use ${demoCredentials[phone] || '123456'} to login`);
+    }
+
+    // Verify OTP
+    function verifyOtp() {
+      const phone = document.getElementById('phone').value.trim();
+      const otp = document.getElementById('otp').value.trim();
+      if (!otp) return showError('Please enter the OTP');
+
+      if (demoCredentials[phone] === otp) {
+        currentUser = phone;
+        showSuccess('Login successful!');
+        loginSection.style.display = 'none';
+        reportSection.style.display = 'block';
+        userInfo.style.display = 'block';
+        myReportsSection.style.display = 'block';
+        logoutBtn.style.display = 'inline-flex';
+        logoutBtnMobile.style.display = 'inline-flex';
+        userPhone.textContent = `+91 ${phone}`;
+        renderUserReports();
+        if (window.lucide) lucide.createIcons();
+      } else {
+        showError('Invalid OTP. Please try again.');
+      }
+    }
+
+    // Logout
+    function logout() {
+      currentUser = null;
+      userResolvedCount = 0;
+      loginSection.style.display = 'block';
+      reportSection.style.display = 'none';
+      userInfo.style.display = 'none';
+      myReportsSection.style.display = 'none';
+      logoutBtn.style.display = 'none';
+      logoutBtnMobile.style.display = 'none';
+      otpGroup.style.display = 'none';
+      requestOtpBtn.style.display = 'inline-flex';
+      verifyOtpBtn.style.display = 'none';
+      document.getElementById('phone').value = '';
+      document.getElementById('otp').value = '';
+      clearForm();
+      document.getElementById('user-report-count').textContent = '0';
+      document.getElementById('user-resolved-count').textContent = '0';
+      showSuccess('You have been logged out successfully.');
+    }
+
+    // Image upload
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.match('image.*')) return showError('Please select an image file');
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        currentImageData = evt.target.result;
+        imagePreview.src = currentImageData;
+        imagePreview.classList.remove('hidden');
+        const p = photoUpload.querySelector('p');
+        if (p) p.textContent = 'Image selected. Click to change.';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Submit report
+    function submitReport() {
+      if (!currentUser) return showError('Please login first');
+      const name = document.getElementById('name').value.trim();
+      const age = document.getElementById('age').value.trim();
+      const gender = document.getElementById('gender').value;
+      const lastSeen = document.getElementById('last-seen').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const contact = document.getElementById('contact').value.trim();
+
+      if (!name || !age || !gender || !lastSeen || !description || !contact) return showError('Please fill all fields');
+      if (!currentImageData) return showError('Please upload a photo');
+
+      const newReport = {
+        id: missingPersons.length + 1,
+        name, age, gender, lastSeen, description, contact,
+        reportedBy: currentUser,
+        image: currentImageData
+      };
+      missingPersons.unshift(newReport);
+      renderMissingPersons();
+      renderUserReports();
+      clearForm();
+      showSuccess('Report submitted successfully!');
+    }
+
+    function markAsFound(id) {
+      personToMarkFound = id;
+      confirmationModal.style.display = 'flex';
+    }
+
+    function confirmMarkAsFound() {
+      if (!currentUser || !personToMarkFound) return showError('Please login first');
+      const person = missingPersons.find(p => p.id === personToMarkFound);
+      if (!person) return closeModal();
+      if (person.reportedBy !== currentUser) return showError('You can only mark your own reports as found');
+
+      missingPersons = missingPersons.filter(p => p.id !== personToMarkFound);
+      userResolvedCount += 1;
+      renderMissingPersons();
+      renderUserReports();
+
+      document.getElementById('resolved').textContent = String(parseInt(document.getElementById('resolved').textContent) + 1);
+      resolvedMobile.textContent = document.getElementById('resolved').textContent;
+
+      document.getElementById('user-resolved-count').textContent = String(userResolvedCount);
+      showSuccess('Marked as found. Thank you for updating!');
+      closeModal();
+    }
+
+    function closeModal() {
+      confirmationModal.style.display = 'none';
+      personToMarkFound = null;
+    }
+
+    function cardTemplate(person) {
+      const canMark = person.reportedBy === currentUser;
+      return `
+        <div class="group overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-neutral-900/70 to-neutral-950/60">
+          <div class="relative aspect-[4/3] bg-black/40">
+            <img src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&q=80" alt="${person.name}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-white/10 border border-white/10">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 stroke-[1.5]"></i>
+                ${person.lastSeen}
+              </span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-base font-semibold tracking-tight">${person.name}</h3>
+            <div class="mt-1 grid grid-cols-3 gap-2 text-xs text-neutral-300">
+              <div class="rounded border border-white/10 bg-black/30 px-2 py-1">Age: <span class="text-white">${person.age}</span></div>
+              <div class="rounded border border-white/10 bg-black/30 px-2 py-1">Gender: <span class="text-white capitalize">${person.gender}</span></div>
+              <div class="rounded border border-white/10 bg-black/30 px-2 py-1">Reporter: <span class="text-white">+91 ${person.reportedBy}</span></div>
+            </div>
+            <p class="mt-2 text-sm text-neutral-300 line-clamp-3">${person.description}</p>
+          </div>
+          <div class="px-4 pb-4">
+            <div class="flex items-center justify-between rounded-lg border border-white/10 bg-black/30 px-3 py-2">
+              <span class="text-sm font-medium text-teal-300">${person.contact}</span>
+              ${canMark ? `
+                <button class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs font-medium bg-amber-300 text-black hover:bg-amber-200" onclick="markAsFound(${person.id})">
+                  <i data-lucide="check" class="w-3.5 h-3.5 stroke-[1.5]"></i>
+                  Mark Found
+                </button>` : ``}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMissingPersons() {
+      if (!missingPersonsList) return;
+      missingPersonsList.innerHTML = '';
+      if (missingPersons.length === 0) {
+        missingPersonsList.innerHTML = '<p class="text-sm text-neutral-400">No missing persons reported yet.</p>';
+      } else {
+        missingPersons.forEach(person => {
+          const wrapper = document.createElement('div');
+          wrapper.innerHTML = cardTemplate(person);
+          missingPersonsList.appendChild(wrapper.firstElementChild);
+        });
+      }
+      // Update totals
+      document.getElementById('total-reports').textContent = String(missingPersons.length);
+      totalReportsMobile.textContent = String(missingPersons.length);
+      // Refresh icons in newly injected content
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderUserReports() {
+      if (!currentUser) return;
+      const userReports = missingPersons.filter(p => p.reportedBy === currentUser);
+      const countEl = document.getElementById('user-report-count');
+      if (countEl) countEl.textContent = String(userReports.length);
+
+      myReportsList.innerHTML = '';
+      if (userReports.length === 0) {
+        myReportsList.innerHTML = '<p class="py-3 text-sm text-neutral-400">You have not reported any missing persons yet.</p>';
+        return;
+      }
+      userReports.forEach(person => {
+        const item = document.createElement('div');
+        item.className = 'py-3 flex items-center justify-between';
+        item.innerHTML = `
+          <span class="text-sm">${person.name}</span>
+          <button class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs font-medium bg-amber-300 text-black hover:bg-amber-200" onclick="markAsFound(${person.id})">
+            <i data-lucide="check" class="w-3.5 h-3.5 stroke-[1.5]"></i>
+            Mark Found
+          </button>
+        `;
+        myReportsList.appendChild(item);
+      });
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function clearForm() {
+      document.getElementById('name').value = '';
+      document.getElementById('age').value = '';
+      document.getElementById('gender').value = '';
+      document.getElementById('last-seen').value = '';
+      document.getElementById('description').value = '';
+      document.getElementById('contact').value = '';
+      photoInput.value = '';
+      imagePreview.classList.add('hidden');
+      imagePreview.src = '';
+      const p = photoUpload.querySelector('p');
+      if (p) p.textContent = 'Click to upload a photo';
+      currentImageData = null;
+    }
+
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successAlert.style.display = 'flex';
+      errorAlert.style.display = 'none';
+      if (window.lucide) lucide.createIcons();
+      setTimeout(() => { successAlert.style.display = 'none'; }, 4500);
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorAlert.style.display = 'flex';
+      successAlert.style.display = 'none';
+      if (window.lucide) lucide.createIcons();
+      setTimeout(() => { errorAlert.style.display = 'none'; }, 5000);
+    }
+
+    // Initialize
+    window.onload = init;
+
+    // Expose for inline handlers
+    window.markAsFound = markAsFound;
+  </script>
+</body>
+</html>

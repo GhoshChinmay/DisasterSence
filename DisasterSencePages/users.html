@@ -1,0 +1,1798 @@
+<html lang="en"><head><meta charset="UTF-8">
+<title>Disaster Operations — Unified Response Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script></head>
+<body class="antialiased bg-black text-gray-100 selection:bg-teal-400/20 selection:text-teal-200" style="font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'">
+  <!-- Scroll Progress -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-teal-400 to-cyan-400 w-0 z-[60]" style="width:0%"></div>
+
+  <!-- Header -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b bg-black/70 border-white/10 transition-transform duration-300 will-change-transform" style="transform: translateY(0)">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16">
+      <div class="h-full flex items-center justify-between">
+        <!-- Brand -->
+        <a href="#home" class="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md">
+          <div class="h-6 w-6 rounded-md bg-gradient-to-br from-teal-500 to-cyan-400"></div>
+          <span class="text-lg font-medium tracking-tight" style="font-family:'Plus Jakarta Sans', Inter, sans-serif; letter-spacing:-0.02em;">Disaster Operations</span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-8">
+          <a href="/index.html" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300 text-white" aria-current="page" style="background-size:100% 2px">Home</a>
+          <a href="#roles" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size:0% 2px">Roles</a>
+          <a href="#dashboards" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size:0% 2px">Dashboards</a>
+          <a href="#contact" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size:0% 2px">Contact</a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+          <div id="user-info" class="hidden items-center gap-2 text-xs sm:text-sm">
+            <span id="username-display" class="text-gray-300"></span>
+            <button id="header-logout" class="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1.5 text-xs ring-1 ring-white/10 hover:bg-white/15">
+              <i data-lucide="log-out" class="h-4 w-4"></i> Logout
+            </button>
+          </div>
+          <button id="nav-toggle" aria-expanded="false" aria-controls="mobile-panel" class="md:hidden p-2 rounded-md transition-colors hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+            <i data-lucide="x" class="w-5 h-5 hidden"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Panel -->
+    <div id="mobile-panel" class="fixed inset-0 z-40 pointer-events-none opacity-0 transition-opacity duration-300">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close-overlay=""></div>
+      <div class="absolute inset-x-0 top-0 bg-gray-950/95 border-b border-white/10 px-4 sm:px-6 pt-20 pb-8 translate-y-[-8px] opacity-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid gap-4">
+            <a href="#home" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-gray-100">Home</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+            <a href="#roles" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-gray-100">Roles</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+            <a href="#dashboards" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-gray-100">Dashboards</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+            <a href="#contact" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-white/10 transition-colors">
+              <span class="text-base font-medium text-gray-100">Contact</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero / Intro -->
+  <section id="home" class="relative overflow-hidden pt-24 sm:pt-28 pb-10 bg-[url('https://images.unsplash.com/photo-1495465798138-718f86fcf1f3?q=80&amp;w=1600&amp;auto=format&amp;fit=crop')] bg-cover bg-center">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/70 to-black"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider text-teal-300/90">Unified Emergency Operations</p>
+          <h1 class="mt-4 text-4xl sm:text-5xl lg:text-6xl leading-tight font-medium tracking-tight" style="font-family:'Plus Jakarta Sans', Inter, sans-serif; letter-spacing:-0.02em;">
+            Coordinate Government, NGOs, First Responders, and the Public
+          </h1>
+          <p class="mt-6 text-lg text-gray-300 max-w-xl">
+            Real-time allocations, alerts, deployments, and incident reporting—centralized in one place.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a href="#roles" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+              Start Now
+              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </a>
+            <a href="#dashboards" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]">
+              View Dashboards
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+            </a>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gray-900/40">
+            <img src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&amp;q=80" alt="Operations" class="w-full h-[420px] object-cover">
+            <div class="absolute top-4 right-4 backdrop-blur-sm rounded-xl p-4 shadow-lg bg-black/80 border border-white/10">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 flex bg-gray-800 rounded-full items-center justify-center">
+                  <i data-lucide="activity" class="w-5 h-5 text-gray-200"></i>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-300">Active Alerts</p>
+                  <p id="hero-alerts-count" class="text-lg font-semibold text-white">0</p>
+                </div>
+              </div>
+            </div>
+            <div class="absolute bottom-4 left-4 backdrop-blur-sm rounded-xl p-4 shadow-lg bg-black/80 border border-white/10">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 flex bg-gray-800 rounded-full items-center justify-center">
+                  <i data-lucide="users" class="w-5 h-5 text-gray-300"></i>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-300">Teams Deployed</p>
+                  <p id="hero-teams-count" class="text-lg font-semibold text-white">0</p>
+                </div>
+              </div>
+              <div class="mt-3 w-44 h-16">
+                <div class="w-full h-full">
+                  <canvas id="miniChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- grid -->
+    </div>
+  </section>
+
+  <!-- Role Selection -->
+  <section id="roles" class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="bg-black/40 shadow-sm border border-white/10 rounded-2xl p-6 sm:p-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-3xl sm:text-4xl font-medium tracking-tight text-white" style="letter-spacing:-0.02em; font-family:'Plus Jakarta Sans', Inter, sans-serif;">
+          Select a Role to Continue
+        </h2>
+        <p class="mt-3 text-gray-400 text-[15px]">
+          Authenticate as a Government Agency, NGO, First Responder, or General Public.
+        </p>
+      </div>
+
+      <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Government -->
+        <button id="role-gov" class="role-btn group h-full w-full rounded-xl bg-white/5 hover:bg-white/10 transition shadow-sm border border-white/10 p-4 text-left">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-md bg-teal-500/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
+              <i data-lucide="building-2" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-[15px] font-semibold tracking-tight">Government Agency</p>
+              <p class="text-[12.5px] text-gray-400">Allocate, alert, approve, coordinate</p>
+            </div>
+          </div>
+        </button>
+
+        <!-- NGO -->
+        <button id="role-ngo" class="role-btn group h-full w-full rounded-xl bg-white/5 hover:bg-white/10 transition shadow-sm border border-white/10 p-4 text-left">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-md bg-emerald-500/10 border border-emerald-400/20 flex items-center justify-center text-emerald-300">
+              <i data-lucide="hand-heart" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-[15px] font-semibold tracking-tight">NGO / Relief Organization</p>
+              <p class="text-[12.5px] text-gray-400">Request, deploy, report, map</p>
+            </div>
+          </div>
+        </button>
+
+        <!-- First Responder -->
+        <button id="role-fr" class="role-btn group h-full w-full rounded-xl bg-white/5 hover:bg-white/10 transition shadow-sm border border-white/10 p-4 text-left">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-md bg-amber-500/10 border border-amber-400/20 flex items-center justify-center text-amber-300">
+              <i data-lucide="ambulance" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-[15px] font-semibold tracking-tight">First Responder</p>
+              <p class="text-[12.5px] text-gray-400">Receive orders and update live</p>
+            </div>
+          </div>
+        </button>
+
+        <!-- Public -->
+        <button id="role-public" class="role-btn group h-full w-full rounded-xl bg-white/5 hover:bg-white/10 transition shadow-sm border border-white/10 p-4 text-left">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-md bg-indigo-500/10 border border-indigo-400/20 flex items-center justify-center text-indigo-300">
+              <i data-lucide="users" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-[15px] font-semibold tracking-tight">General Public</p>
+              <p class="text-[12.5px] text-gray-400">Get alerts, report incidents</p>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Auth Panels -->
+  <section id="auth-panels" class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Government Auth -->
+    <div id="auth-gov" class="hidden bg-black/40 rounded-2xl p-5 border border-white/10 shadow-sm">
+      <div class="flex items-center gap-2 mb-3">
+        <i data-lucide="shield-check" class="h-5 w-5 text-teal-300"></i>
+        <h3 class="text-[18px] font-semibold tracking-tight text-white">Government Login</h3>
+      </div>
+      <form id="form-gov" class="space-y-3">
+        <div>
+          <label class="text-[13px] font-medium text-gray-300">Official Email</label>
+          <input required="" type="email" name="email" placeholder="name@agency.gov.in" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40">
+        </div>
+        <div>
+          <label class="text-[13px] font-medium text-gray-300">Password</label>
+          <input required="" type="password" name="password" placeholder="••••••••" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40">
+        </div>
+        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-md bg-teal-400 hover:bg-teal-300 text-black text-[14px] font-semibold py-2.5 transition">
+          <i data-lucide="log-in" class="h-4 w-4"></i> Login
+        </button>
+      </form>
+      <p class="mt-3 text-xs text-gray-400">Tip: Actions here will be visible to NGOs and First Responders where relevant.</p>
+    </div>
+
+    <!-- NGO Auth -->
+    <div id="auth-ngo" class="hidden bg-black/40 rounded-2xl p-5 border border-white/10 shadow-sm">
+      <div class="flex items-center gap-2 mb-3">
+        <i data-lucide="hand-heart" class="h-5 w-5 text-emerald-300"></i>
+        <h3 class="text-[18px] font-semibold tracking-tight text-white">NGO / Relief Login</h3>
+      </div>
+      <form id="form-ngo" class="space-y-3">
+        <div>
+          <label class="text-[13px] font-medium text-gray-300">Organization Email</label>
+          <input required="" type="email" name="email" placeholder="name@organization.org" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
+        </div>
+        <div>
+          <label class="text-[13px] font-medium text-gray-300">Password</label>
+          <input required="" type="password" name="password" placeholder="••••••••" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
+        </div>
+        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-black text-[14px] font-semibold py-2.5 transition">
+          <i data-lucide="log-in" class="h-4 w-4"></i> Login
+        </button>
+      </form>
+      <p class="mt-3 text-xs text-gray-400">Requests are visible to Government; helplines/camps are visible to the Public.</p>
+    </div>
+
+    <!-- First Responder Auth -->
+    <div id="auth-fr" class="hidden bg-black/40 rounded-2xl p-5 border border-white/10 shadow-sm">
+      <div class="flex items-center gap-2 mb-3">
+        <i data-lucide="ambulance" class="h-5 w-5 text-amber-300"></i>
+        <h3 class="text-[18px] font-semibold tracking-tight text-white">First Responder Login</h3>
+      </div>
+      <form id="form-fr" class="space-y-3">
+        <div>
+          <label class="text-[13px] font-medium text-gray-300">Responder ID</label>
+          <input required="" type="text" name="id" placeholder="FR-XXXX" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40">
+        </div>
+        <div>
+          <label class="text-[13px] font-medium text-gray-300">Password</label>
+          <input required="" type="password" name="password" placeholder="••••••••" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40">
+        </div>
+        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-md bg-amber-500 hover:bg-amber-400 text-black text-[14px] font-semibold py-2.5 transition">
+          <i data-lucide="log-in" class="h-4 w-4"></i> Login
+        </button>
+      </form>
+      <p class="mt-3 text-xs text-gray-400">Orders and alerts from Government/NGOs will appear in your queue.</p>
+    </div>
+
+    <!-- Public Auth -->
+    <div id="auth-public" class="hidden bg-black/40 rounded-2xl p-5 border border-white/10 shadow-sm">
+      <div class="flex items-center gap-2 mb-3">
+        <i data-lucide="users" class="h-5 w-5 text-indigo-300"></i>
+        <h3 class="text-[18px] font-semibold tracking-tight text-white">Public Portal</h3>
+      </div>
+      <form id="form-public" class="space-y-3">
+        <div>
+          <label class="text-[13px] font-medium text-gray-300">Mobile Number</label>
+          <input required="" type="tel" name="phone" placeholder="+91 XXXXX XXXXX" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+        </div>
+        <div>
+          <label class="text-[13px] font-medium text-gray-300">OTP</label>
+          <input required="" type="text" name="otp" placeholder="123456" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+        </div>
+        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-md bg-indigo-500 hover:bg-indigo-400 text-black text-[14px] font-semibold py-2.5 transition">
+          <i data-lucide="log-in" class="h-4 w-4"></i> Verify &amp; Enter
+        </button>
+      </form>
+      <p class="mt-3 text-xs text-gray-400">You can also report an incident anonymously inside the portal.</p>
+    </div>
+  </section>
+
+  <!-- Dashboards -->
+  <main id="dashboards" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6 pb-16">
+    <!-- GOV DASH -->
+    <section id="dash-gov" class="hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="h-10 w-10 rounded-md bg-teal-500/10 border border-teal-400/20 flex items-center justify-center text-teal-300">
+            <i data-lucide="building-2" class="h-5 w-5"></i>
+          </div>
+          <h2 class="text-2xl font-semibold tracking-tight" style="letter-spacing:-0.02em; font-family:'Plus Jakarta Sans', Inter, sans-serif;">Government Dashboard</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 text-xs text-gray-300 rounded-md bg-white/5 px-2 py-1 border border-white/10">
+            Visible: NGOs, First Responders, Public (alerts)
+          </span>
+          <button id="logout-gov" class="inline-flex items-center gap-1 text-[13px] rounded-md px-3 py-1.5 border border-white/10 bg-white/5 hover:bg-white/10">
+            <i data-lucide="log-out" class="h-4 w-4"></i> Logout
+          </button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-xl bg-black/40 border border-white/10 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[12.5px] text-gray-400">Resources Allocated</p>
+            <i data-lucide="boxes" class="h-4 w-4 text-gray-400"></i>
+          </div>
+          <p id="kpi-gov-allocations" class="mt-2 text-xl font-semibold tracking-tight">0</p>
+        </div>
+        <div class="rounded-xl bg-black/40 border border-white/10 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[12.5px] text-gray-400">Open NGO Requests</p>
+            <i data-lucide="inbox" class="h-4 w-4 text-gray-400"></i>
+          </div>
+          <p id="kpi-gov-requests" class="mt-2 text-xl font-semibold tracking-tight">0</p>
+        </div>
+        <div class="rounded-xl bg-black/40 border border-white/10 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[12.5px] text-gray-400">Active Alerts</p>
+            <i data-lucide="siren" class="h-4 w-4 text-gray-400"></i>
+          </div>
+          <p id="kpi-gov-alerts" class="mt-2 text-xl font-semibold tracking-tight">0</p>
+        </div>
+        <div class="rounded-xl bg-black/40 border border-white/10 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[12.5px] text-gray-400">Teams Deployed</p>
+            <i data-lucide="route" class="h-4 w-4 text-gray-400"></i>
+          </div>
+          <p id="kpi-gov-teams" class="mt-2 text-xl font-semibold tracking-tight">0</p>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Resources & Allocation -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="package" class="h-5 w-5 text-teal-300"></i>
+                <h3 class="text-[16.5px] font-semibold tracking-tight">Allocate &amp; Track Resources</h3>
+              </div>
+              <span class="text-xs text-gray-400">Food, Medicine, Shelters, Equipment</span>
+            </div>
+            <form id="form-gov-allocate" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div>
+                <label class="text-[12.5px] text-gray-300">Type</label>
+                <select name="type" required="" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px]">
+                  <option>Food</option>
+                  <option>Medicine</option>
+                  <option>Shelter Kits</option>
+                  <option>Equipment</option>
+                  <option>Water</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Region</label>
+                <input name="region" required="" placeholder="e.g., Odisha / Cuttack" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px]">
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Quantity</label>
+                <input name="quantity" required="" type="number" min="1" value="100" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px]">
+              </div>
+              <div class="flex items-end">
+                <button class="w-full inline-flex items-center justify-center gap-2 rounded-md bg-teal-400 hover:bg-teal-300 text-black text-[14px] font-semibold py-2.5">
+                  <i data-lucide="plus" class="h-4 w-4"></i> Allocate
+                </button>
+              </div>
+            </form>
+            <div class="mt-4 overflow-x-auto">
+              <table class="min-w-full text-sm">
+                <thead>
+                  <tr class="text-left text-gray-400">
+                    <th class="py-2">Type</th>
+                    <th class="py-2">Region</th>
+                    <th class="py-2">Qty</th>
+                    <th class="py-2">Time</th>
+                  </tr>
+                </thead>
+                <tbody id="table-gov-alloc" class="divide-y divide-white/10"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Government Map Section -->
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2">
+              <i data-lucide="map" class="h-5 w-5 text-teal-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Resource &amp; Incident Tracking Map</h3>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">Track resources and incidents across affected regions.</p>
+            <div id="map-container" class="h-96 rounded-xl overflow-hidden mt-4 border border-white/10"></div>
+          </div>
+
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2">
+              <i data-lucide="chart-bar" class="h-5 w-5 text-teal-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Allocation by Region</h3>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">Aggregated quantities by target region.</p>
+            <div class="mt-4 max-w-xl">
+              <div class="w-full rounded-lg border border-white/10 p-3">
+                <div>
+                  <canvas id="chart-alloc" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts / Requests / Coordination -->
+        <div class="space-y-6">
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="megaphone" class="h-5 w-5 text-teal-300"></i>
+                <h3 class="text-[16.5px] font-semibold tracking-tight">Issue Alerts</h3>
+              </div>
+              <span class="text-xs text-gray-400">SMS • Broadcast • In-app • Multilingual</span>
+            </div>
+            <form id="form-gov-alert" class="mt-3 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Hazard Type</label>
+                  <select name="hazard" required="" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                    <option>Flood</option>
+                    <option>Earthquake</option>
+                    <option>Cyclone</option>
+                    <option>Landslide</option>
+                    <option>Fire</option>
+                    <option>Industrial Accident</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Severity</label>
+                  <select name="severity" required="" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                    <option>Advisory</option>
+                    <option>Watch</option>
+                    <option>Warning</option>
+                    <option>Critical</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Message</label>
+                <textarea name="message" rows="3" required="" placeholder="Include location, time window, and protective actions." class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60"></textarea>
+              </div>
+
+              <!-- Channels (custom checkboxes) -->
+              <div>
+                <p class="text-[12.5px] text-gray-300 mb-1">Channels</p>
+                <div class="flex flex-wrap gap-2">
+                  <label class="inline-flex items-center gap-2 text-[13px] bg-white/5 border border-white/10 rounded-md px-3 py-1.5 cursor-pointer hover:bg-white/10">
+                    <input type="checkbox" class="peer sr-only" checked="">
+                    <span class="h-4 w-4 rounded-[4px] border border-white/20 flex items-center justify-center peer-checked:bg-teal-400 peer-checked:border-teal-400">
+                      <i data-lucide="check" class="h-3 w-3 text-black"></i>
+                    </span>
+                    SMS
+                  </label>
+                  <label class="inline-flex items-center gap-2 text-[13px] bg-white/5 border border-white/10 rounded-md px-3 py-1.5 cursor-pointer hover:bg-white/10">
+                    <input type="checkbox" class="peer sr-only" checked="">
+                    <span class="h-4 w-4 rounded-[4px] border border-white/20 flex items-center justify-center peer-checked:bg-teal-400 peer-checked:border-teal-400">
+                      <i data-lucide="check" class="h-3 w-3 text-black"></i>
+                    </span>
+                    Broadcast
+                  </label>
+                  <label class="inline-flex items-center gap-2 text-[13px] bg-white/5 border border-white/10 rounded-md px-3 py-1.5 cursor-pointer hover:bg-white/10">
+                    <input type="checkbox" class="peer sr-only" checked="">
+                    <span class="h-4 w-4 rounded-[4px] border border-white/20 flex items-center justify-center peer-checked:bg-teal-400 peer-checked:border-teal-400">
+                      <i data-lucide="check" class="h-3 w-3 text-black"></i>
+                    </span>
+                    In-App
+                  </label>
+                </div>
+              </div>
+
+              <!-- Languages -->
+              <div>
+                <p class="text-[12.5px] text-gray-300 mb-1">Languages</p>
+                <div class="grid grid-cols-2 gap-2">
+                  <label class="inline-flex items-center gap-2 text-[13px]">
+                    <input type="checkbox" class="peer sr-only" checked="">
+                    <span class="h-4 w-4 rounded-[4px] border border-white/20 flex items-center justify-center peer-checked:bg-teal-400 peer-checked:border-teal-400">
+                      <i data-lucide="check" class="h-3 w-3 text-black"></i>
+                    </span>
+                    English
+                  </label>
+                  <label class="inline-flex items-center gap-2 text-[13px]">
+                    <input type="checkbox" class="peer sr-only" checked="">
+                    <span class="h-4 w-4 rounded-[4px] border border-white/20 flex items-center justify-center peer-checked:bg-teal-400 peer-checked:border-teal-400">
+                      <i data-lucide="check" class="h-3 w-3 text-black"></i>
+                    </span>
+                    Hindi
+                  </label>
+                  <label class="inline-flex items-center gap-2 text-[13px]">
+                    <input type="checkbox" class="peer sr-only">
+                    <span class="h-4 w-4 rounded-[4px] border border-white/20 flex items-center justify-center peer-checked:bg-teal-400 peer-checked:border-teal-400">
+                      <i data-lucide="check" class="h-3 w-3 text-black"></i>
+                    </span>
+                    Bengali
+                  </label>
+                  <label class="inline-flex items-center gap-2 text-[13px]">
+                    <input type="checkbox" class="peer sr-only">
+                    <span class="h-4 w-4 rounded-[4px] border border-white/20 flex items-center justify-center peer-checked:bg-teal-400 peer-checked:border-teal-400">
+                      <i data-lucide="check" class="h-3 w-3 text-black"></i>
+                    </span>
+                    Tamil
+                  </label>
+                </div>
+              </div>
+
+              <button class="w-full inline-flex items-center justify-center gap-2 rounded-md bg-teal-400 hover:bg-teal-300 text-black text-[14px] font-semibold py-2.5">
+                <i data-lucide="megaphone" class="h-4 w-4"></i> Send Alert
+              </button>
+            </form>
+            <div class="mt-4">
+              <h4 class="text-[13.5px] font-semibold tracking-tight">Recent Alerts</h4>
+              <div id="list-gov-alerts" class="mt-2 space-y-2"></div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <i data-lucide="inbox" class="h-5 w-5 text-teal-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Approve/Deny NGO Requests</h3>
+            </div>
+            <div id="list-gov-requests" class="space-y-2"></div>
+            <p class="text-xs text-gray-400 mt-2">Approvals notify the NGO and adjust your inventory records.</p>
+          </div>
+
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <i data-lucide="radar" class="h-5 w-5 text-teal-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Coordinate with Agencies</h3>
+            </div>
+            <form id="form-gov-coord" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-[12.5px] text-gray-300">Agency</label>
+                <select name="agency" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                  <option>Police</option>
+                  <option>Health Dept</option>
+                  <option>Disaster Authority</option>
+                  <option>Fire &amp; Emergency Services</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Task</label>
+                <input name="task" placeholder="e.g., Evacuation at Ward 12" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="text-[12.5px] text-gray-300">Notes</label>
+                <input name="notes" placeholder="Priority, location, comms channel..." class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+              </div>
+              <div class="sm:col-span-2 flex justify-end">
+                <button class="inline-flex items-center gap-2 rounded-md bg-teal-400 hover:bg-teal-300 text-black text-[14px] font-semibold px-4 py-2">
+                  <i data-lucide="send" class="h-4 w-4"></i> Dispatch Coordination
+                </button>
+              </div>
+            </form>
+            <div id="list-gov-coord" class="mt-3 space-y-2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NGO DASH -->
+    <section id="dash-ngo" class="hidden">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="h-10 w-10 rounded-md bg-emerald-500/10 border border-emerald-400/20 flex items-center justify-center text-emerald-300">
+            <i data-lucide="hand-heart" class="h-5 w-5"></i>
+          </div>
+          <h2 class="text-2xl font-semibold tracking-tight" style="letter-spacing:-0.02em; font-family:'Plus Jakarta Sans', Inter, sans-serif;">NGO / Relief Dashboard</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 text-xs text-gray-300 rounded-md bg-white/5 px-2 py-1 border border-white/10">
+            Visible: Government (requests/reports), First Responders (activities), Public (helplines/camps)
+          </span>
+          <button id="logout-ngo" class="inline-flex items-center gap-1 text-[13px] rounded-md px-3 py-1.5 border border-white/10 bg-white/5 hover:bg-white/10">
+            <i data-lucide="log-out" class="h-4 w-4"></i> Logout
+          </button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-xl bg-black/40 border border-white/10 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[12.5px] text-gray-400">Requests Submitted</p>
+            <i data-lucide="inbox" class="h-4 w-4 text-gray-400"></i>
+          </div>
+          <p id="kpi-ngo-requests" class="mt-2 text-xl font-semibold tracking-tight">0</p>
+        </div>
+        <div class="rounded-xl bg-black/40 border border-white/10 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[12.5px] text-gray-400">Approved</p>
+            <i data-lucide="check-circle-2" class="h-4 w-4 text-gray-400"></i>
+          </div>
+          <p id="kpi-ngo-approved" class="mt-2 text-xl font-semibold tracking-tight">0</p>
+        </div>
+        <div class="rounded-xl bg-black/40 border border-white/10 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[12.5px] text-gray-400">Volunteers Deployed</p>
+            <i data-lucide="users" class="h-4 w-4 text-gray-400"></i>
+          </div>
+          <p id="kpi-ngo-volunteers" class="mt-2 text-xl font-semibold tracking-tight">0</p>
+        </div>
+        <div class="rounded-xl bg-black/40 border border-white/10 p-4">
+          <div class="flex items-center justify-between">
+            <p class="text-[12.5px] text-gray-400">Camps Open</p>
+            <i data-lucide="tent" class="h-4 w-4 text-gray-400"></i>
+          </div>
+          <p id="kpi-ngo-camps" class="mt-2 text-xl font-semibold tracking-tight">0</p>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Requests & Reports -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2">
+              <i data-lucide="package-plus" class="h-5 w-5 text-emerald-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Request Relief Resources</h3>
+            </div>
+            <form id="form-ngo-request" class="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+              <div class="lg:col-span-2">
+                <label class="text-[12.5px] text-gray-300">Resource</label>
+                <input name="resource" required="" placeholder="e.g., Water, Tents, Antibiotics" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Quantity</label>
+                <input name="quantity" required="" type="number" min="1" value="100" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Urgency</label>
+                <select name="urgency" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                  <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Region</label>
+                <input name="region" required="" placeholder="e.g., Assam / Dibrugarh" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+              </div>
+              <div class="lg:col-span-5">
+                <button class="w-full inline-flex items-center justify-center gap-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-black text-[14px] font-semibold py-2.5">
+                  <i data-lucide="send" class="h-4 w-4"></i> Submit Request
+                </button>
+              </div>
+            </form>
+            <div class="mt-3">
+              <h4 class="text-[13.5px] font-semibold tracking-tight">Your Requests</h4>
+              <div id="list-ngo-requests" class="mt-2 space-y-2"></div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2">
+              <i data-lucide="file-text" class="h-5 w-5 text-emerald-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Share Ground Reports</h3>
+            </div>
+            <form id="form-ngo-report" class="mt-3 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Location</label>
+                  <input name="location" required="" placeholder="Area / Landmark" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Needs</label>
+                  <input name="needs" required="" placeholder="e.g., 200 blankets, 50 ORS kits" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Description</label>
+                <textarea name="description" rows="3" required="" placeholder="Situation overview..." class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60"></textarea>
+              </div>
+              <div class="flex justify-end">
+                <button class="inline-flex items-center gap-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-black text-[14px] font-semibold px-4 py-2">
+                  <i data-lucide="upload" class="h-4 w-4"></i> Submit Report
+                </button>
+              </div>
+            </form>
+            <div id="list-ngo-reports" class="mt-3 space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- Deploy & Camps -->
+        <div class="space-y-6">
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2">
+              <i data-lucide="route" class="h-5 w-5 text-emerald-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Deploy Volunteers &amp; Aid Teams</h3>
+            </div>
+            <form id="form-ngo-deploy" class="mt-3 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Team Name</label>
+                  <input name="team" required="" placeholder="e.g., Relief Team A" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Size</label>
+                  <input name="size" required="" type="number" min="1" value="10" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Task</label>
+                  <input name="task" required="" placeholder="e.g., Food Distribution" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Target Area</label>
+                  <input name="area" required="" placeholder="e.g., Ward 7 / Shelter-03" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+              </div>
+              <div class="flex justify-end">
+                <button class="inline-flex items-center gap-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-black text-[14px] font-semibold px-4 py-2">
+                  <i data-lucide="send" class="h-4 w-4"></i> Deploy
+                </button>
+              </div>
+            </form>
+            <div id="list-ngo-deployments" class="mt-3 space-y-2"></div>
+          </div>
+
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="map-pin" class="h-5 w-5 text-emerald-300"></i>
+                <h3 class="text-[16.5px] font-semibold tracking-tight">Shelters &amp; Supply Depots</h3>
+              </div>
+              <span class="text-xs text-gray-400">Public sees helplines &amp; camps</span>
+            </div>
+            <form id="form-ngo-camp" class="mt-3 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Camp/Shelter Name</label>
+                  <input name="name" required="" placeholder="e.g., Community Hall Shelter" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Helpline</label>
+                  <input name="helpline" required="" placeholder="e.g., 1800-xxxx-xxx" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Location</label>
+                <input name="location" required="" placeholder="Address / Map Link" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+              </div>
+              <div class="flex justify-end">
+                <button class="inline-flex items-center gap-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-black text-[14px] font-semibold px-4 py-2">
+                  <i data-lucide="plus" class="h-4 w-4"></i> Add Camp
+                </button>
+              </div>
+            </form>
+            <div id="list-ngo-camps" class="mt-3 space-y-2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FIRST RESPONDER DASH -->
+    <section id="dash-fr" class="hidden">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="h-10 w-10 rounded-md bg-amber-500/10 border border-amber-400/20 flex items-center justify-center text-amber-300">
+            <i data-lucide="ambulance" class="h-5 w-5"></i>
+          </div>
+          <h2 class="text-2xl font-semibold tracking-tight" style="letter-spacing:-0.02em; font-family:'Plus Jakarta Sans', Inter, sans-serif;">First Responder Dashboard</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 text-xs text-gray-300 rounded-md bg-white/5 px-2 py-1 border border-white/10">
+            Visible: Government &amp; NGOs see your updates
+          </span>
+          <button id="logout-fr" class="inline-flex items-center gap-1 text-[13px] rounded-md px-3 py-1.5 border border-white/10 bg-white/5 hover:bg-white/10">
+            <i data-lucide="log-out" class="h-4 w-4"></i> Logout
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Incoming -->
+          <div class="rounded-2xl bg-black/40 border          border-white/10 p-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="inbox" class="h-5 w-5 text-amber-300"></i>
+                <h3 class="text-[16.5px] font-semibold tracking-tight">Incoming Orders &amp; Tasks</h3>
+              </div>
+              <span class="text-xs text-gray-400">From Government &amp; NGOs</span>
+            </div>
+            <div id="fr-tasks" class="mt-3 space-y-2"></div>
+            <p class="text-xs text-gray-400 mt-2">Accept tasks to confirm assignment, then mark as completed when done.</p>
+          </div>
+
+          <!-- Updates -->
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2">
+              <i data-lucide="activity" class="h-5 w-5 text-amber-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Status &amp; Activity Update</h3>
+            </div>
+            <form id="form-fr-update" class="mt-3 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Current Status</label>
+                  <select name="status" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                    <option>Available</option>
+                    <option>En-route</option>
+                    <option>On-scene</option>
+                    <option>Transporting</option>
+                    <option>Standby</option>
+                    <option>Completed</option>
+                  </select>
+                </div>
+                <div class="flex items-end gap-2">
+                  <button type="button" id="btn-fr-gps" class="inline-flex items-center gap-2 rounded-md bg-white/5 hover:bg-white/10 text-[13px] px-3 py-2 border border-white/10">
+                    <i data-lucide="crosshair" class="h-4 w-4"></i> Use GPS
+                  </button>
+                  <span id="fr-gps-status" class="text-xs text-gray-400 ml-auto">Location: unknown</span>
+                </div>
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Notes</label>
+                <textarea name="notes" rows="2" placeholder="Short update..." class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60"></textarea>
+              </div>
+              <div class="flex justify-end">
+                <button class="inline-flex items-center gap-2 rounded-md bg-amber-500 hover:bg-amber-400 text-black text-[14px] font-semibold px-4 py-2">
+                  <i data-lucide="save" class="h-4 w-4"></i> Save Update
+                </button>
+              </div>
+            </form>
+            <div id="list-fr-updates" class="mt-3 space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="space-y-6">
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="map-pin" class="h-5 w-5 text-amber-300"></i>
+                <h3 class="text-[16.5px] font-semibold tracking-tight">My Map &amp; Location</h3>
+              </div>
+              <span class="text-xs text-gray-400">Private to your device</span>
+            </div>
+            <div id="map-fr" class="mt-3 h-80 rounded-xl overflow-hidden border border-white/10"></div>
+          </div>
+
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2">
+              <i data-lucide="clipboard-list" class="h-5 w-5 text-amber-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Assignment Summary</h3>
+            </div>
+            <div class="grid grid-cols-3 gap-3 mt-3">
+              <div class="rounded-lg bg-white/5 border border-white/10 p-3">
+                <p class="text-[12px] text-gray-400">Total</p>
+                <p id="kpi-fr-total" class="text-lg font-semibold">0</p>
+              </div>
+              <div class="rounded-lg bg-white/5 border border-white/10 p-3">
+                <p class="text-[12px] text-gray-400">Active</p>
+                <p id="kpi-fr-active" class="text-lg font-semibold">0</p>
+              </div>
+              <div class="rounded-lg bg-white/5 border border-white/10 p-3">
+                <p class="text-[12px] text-gray-400">Completed</p>
+                <p id="kpi-fr-completed" class="text-lg font-semibold">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PUBLIC DASH -->
+    <section id="dash-public" class="hidden">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="h-10 w-10 rounded-md bg-indigo-500/10 border border-indigo-400/20 flex items-center justify-center text-indigo-300">
+            <i data-lucide="users" class="h-5 w-5"></i>
+          </div>
+          <h2 class="text-2xl font-semibold tracking-tight" style="letter-spacing:-0.02em; font-family:'Plus Jakarta Sans', Inter, sans-serif;">Public Portal</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 text-xs text-gray-300 rounded-md bg-white/5 px-2 py-1 border border-white/10">
+            View alerts, camps &amp; report incidents
+          </span>
+          <button id="logout-public" class="inline-flex items-center gap-1 text-[13px] rounded-md px-3 py-1.5 border border-white/10 bg-white/5 hover:bg-white/10">
+            <i data-lucide="log-out" class="h-4 w-4"></i> Logout
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left: Alerts and report -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="alert-triangle" class="h-5 w-5 text-indigo-300"></i>
+                <h3 class="text-[16.5px] font-semibold tracking-tight">Active Alerts</h3>
+              </div>
+              <span class="text-xs text-gray-400">From Government</span>
+            </div>
+            <div id="public-alerts" class="mt-3 space-y-2"></div>
+          </div>
+
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center gap-2">
+              <i data-lucide="file-warning" class="h-5 w-5 text-indigo-300"></i>
+              <h3 class="text-[16.5px] font-semibold tracking-tight">Report an Incident</h3>
+            </div>
+            <form id="form-public-incident" class="mt-3 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="text-[12.5px] text-gray-300">Type</label>
+                  <select name="type" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                    <option>Medical</option>
+                    <option>Fire</option>
+                    <option>Flooded Area</option>
+                    <option>Missing Person</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="sm                &lt;div class=" sm:col-span-1"="">
+                  <label class="text-[12.5px] text-gray-300">Location</label>
+                  <input name="location" required="" placeholder="Area / Landmark" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+                <div class="sm:col-span-1">
+                  <label class="text-[12.5px] text-gray-300">Contact (optional)</label>
+                  <input name="contact" type="tel" placeholder="+91 XXXXX XXXXX" class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60">
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" id="btn-public-gps" class="inline-flex items-center gap-2 rounded-md bg-white/5 hover:bg-white/10 text-[13px] px-3 py-2 border border-white/10">
+                  <i data-lucide="crosshair" class="h-4 w-4"></i> Use my location
+                </button>
+                <span id="public-gps-status" class="text-xs text-gray-400">Location: unknown</span>
+              </div>
+              <div>
+                <label class="text-[12.5px] text-gray-300">Description</label>
+                <textarea name="description" rows="3" placeholder="Describe what happened, people affected, landmarks..." class="mt-1 w-full rounded-md border border-white/10 px-3 py-2 text-[14px] bg-black/60"></textarea>
+              </div>
+              <div class="flex justify-end">
+                <button class="inline-flex items-center gap-2 rounded-md bg-indigo-500 hover:bg-indigo-400 text-black text-[14px] font-semibold px-4 py-2">
+                  <i data-lucide="send" class="h-4 w-4"></i> Submit Incident
+                </button>
+              </div>
+            </form>
+            <div id="list-public-incidents" class="mt-3 space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- Right: Camps and Map -->
+        <div class="space-y-6">
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="lifebuoy" class="h-5 w-5 text-indigo-300"></i>
+                <h3 class="text-[16.5px] font-semibold tracking-tight">Helplines &amp; Nearby Camps</h3>
+              </div>
+              <span class="text-xs text-gray-400">From NGOs</span>
+            </div>
+            <div id="public-camps" class="mt-3 space-y-2"></div>
+          </div>
+
+          <div class="rounded-2xl bg-black/40 border border-white/10 p-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="map" class="h-5 w-5 text-indigo-300"></i>
+                <h3 class="text-[16.5px] font-semibold tracking-tight">Public Map</h3>
+              </div>
+              <span class="text-xs text-gray-400">Incidents • Camps • Alerts areas</span>
+            </div>
+            <div id="map-public" class="mt-3 h-80 rounded-xl overflow-hidden border border-white/10"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Contact -->
+  <section id="contact" class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 mt-6 mb-16">
+    <div class="rounded-2xl border border-white/10 bg-black/40 p-6 sm:p-8">
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-2xl font-semibold tracking-tight" style="letter-spacing:-0.02em; font-family:'Plus Jakarta Sans', Inter, sans-serif;">Contact &amp; Support</h3>
+          <p class="mt-2 text-gray-400 text-sm">For integration requests, support, or feedback, reach out to the coordination team.</p>
+          <div class="mt-4 space-y-3 text-sm">
+            <div class="flex items-center gap-2 text-gray-300">
+              <i data-lucide="mail" class="h-4 w-4 text-teal-300"></i>
+              support@disaster-ops.example
+            </div>
+            <div class="flex items-center gap-2 text-gray-300">
+              <i data-lucide="phone" class="h-4 w-4 text-teal-300"></i>
+              +91 1800-000-000
+            </div>
+            <div class="flex items-center gap-2 text-gray-300">
+              <i data-lucide="map-pin" class="h-4 w-4 text-teal-300"></i>
+              Coordination Center, New Delhi, IN
+            </div>
+          </div>
+        </div>
+        <form id="form-contact" class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-[12.5px] text-gray-300">Name</label>
+              <input name="name" required="" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px]">
+            </div>
+            <div>
+              <label class="text-[12.5px] text-gray-">Email</label>
+              <input name="email" type="email" required="" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px]">
+            </div>
+          </div>
+          <div>
+            <label class="text-[12.5px] text-gray-300">Message</label>
+            <textarea name="message" rows="4" required="" class="mt-1 w-full rounded-md border border-white/10 bg-black/60 px-3 py-2 text-[14px]"></textarea>
+          </div>
+          <div class="flex justify-end">
+            <button class="inline-flex items-center gap-2 rounded-md bg-teal-400 hover:bg-teal-300 text-black text-[14px] font-semibold px-4 py-2">
+              <i data-lucide="send" class="h-4 w-4"></i> Send
+            </button>
+          </div>
+          <p id="contact-status" class="text-xs text-gray-400"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-xs text-gray-500">© <span id="year"></span> Disaster Operations Platform. For coordination and public awareness purposes.</p>
+      <div class="flex items-center gap-3 text-xs text-gray-500">
+        <a href="#home" class="hover:text-gray-300">Home</a>
+        <span>•</span>
+        <a href="#roles" class="hover:text-gray-300">Roles</a>
+        <span>•</span>
+        <a href="#dashboards" class="hover:text-gray-300">Dashboards</a>
+        <span>•</span>
+        <a href="#contact" class="hover:text-gray-300">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Utilities
+    const $ = (s, p = document) => p.querySelector(s);
+    const $$ = (s, p = document) => [...p.querySelectorAll(s)];
+    const fmtTime = d => new Date(d).toLocaleString();
+    const state = {
+      role: null,
+      user: null,
+      allocations: [],
+      regionTotals: {},
+      alerts: [],
+      ngoRequests: [],
+      ngoReports: [],
+      ngoDeployments: [],
+      camps: [],
+      frTasks: [],
+      frUpdates: [],
+      incidents: [],
+      coords: { fr: null, public: null }
+    };
+
+    // Header year
+    $('#year').textContent = new Date().getFullYear();
+
+    // Scroll progress
+    const progressEl = $('#scroll-progress');
+    window.addEventListener('scroll', () => {
+      const scrolled = Math.min(1, (window.scrollY) / (document.body.scrollHeight - window.innerHeight));
+      progressEl.style.width = (scrolled * 100).toFixed(2) + '%';
+    }, { passive: true });
+
+    // Mobile menu
+    const mobile = {
+      toggle: $('#nav-toggle'),
+      panel: $('#mobile-panel'),
+      open() {
+        this.panel.classList.remove('pointer-events-none', 'opacity-0');
+        this.panel.classList.add('pointer-events-auto', 'opacity-100');
+        const [menuIcon, closeIcon] = this.toggle.querySelectorAll('i');
+        menuIcon.classList.add('hidden'); closeIcon.classList.remove('hidden');
+        this.toggle.setAttribute('aria-expanded', 'true');
+      },
+      close() {
+        this.panel.classList.add('pointer-events-none', 'opacity-0');
+        this.panel.classList.remove('pointer-events-auto', 'opacity-100');
+        const [menuIcon, closeIcon] = this.toggle.querySelectorAll('i');
+        menuIcon.classList.remove('hidden'); closeIcon.classList.add('hidden');
+        this.toggle.setAttribute('aria-expanded', 'false');
+      }
+    };
+    mobile.toggle.addEventListener('click', () => {
+      const expanded = mobile.toggle.getAttribute('aria-expanded') === 'true';
+      expanded ? mobile.close() : mobile.open();
+    });
+    $('[data-close-overlay]', $('#mobile-panel')).addEventListener('click', mobile.close.bind(mobile));
+    $$('#mobile-panel [data-mobile-link]').forEach(a => a.addEventListener('click', mobile.close.bind(mobile)));
+
+    // Smooth nav active underline updates
+    const navLinks = $$('[data-nav-link]');
+    function setActiveNav(hash) {
+      navLinks.forEach(a => {
+        const active = a.getAttribute('href') === hash;
+        a.style.backgroundSize = active ? '100% 2px' : '0% 2px';
+        a.setAttribute('aria-current', active ? 'page' : 'false');
+        a.classList.toggle('text-white', active);
+      });
+    }
+    $$('#site-header a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+      setActiveNav(a.getAttribute('href'));
+    }));
+
+    // Icon rendering
+    function renderIcons() {
+      window.lucide && window.lucide.createIcons();
+    }
+
+    // Mini chart
+    let miniChart;
+    function initMiniChart() {
+      const ctx = $('#miniChart');
+      if (!ctx) return;
+      const data = Array.from({length: 10}, () => 10 + Math.floor(Math.random()*10));
+      miniChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: data.map((_, i) => i+1), datasets: [{ data, borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.2)', fill: true, tension: 0.35, pointRadius: 0 }]},
+        options: { plugins: { legend: { display: false }}, scales: { x: { display: false }, y: { display: false }}, responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    // GOV allocation chart
+    let allocChart;
+    function initAllocChart() {
+      const ctx = $('#chart-alloc');
+      if (!ctx) return;
+      allocChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: [], datasets: [{ label: 'Qty', data: [], backgroundColor: '#2dd4bf' }] },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+          }
+        }
+      });
+    }
+    function updateAllocChart() {
+      if (!allocChart) return;
+      const labels = Object.keys(state.regionTotals);
+      allocChart.data.labels = labels;
+      allocChart.data.datasets[0].data = labels.map(r => state.regionTotals[r]);
+      allocChart.update();
+    }
+
+    // Leaflet maps
+    let mapGov, mapFR, mapPublic;
+    const layersGov = { allocations: null, incidents: null, camps: null };
+    function initMaps() {
+      const osm = (map) => L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      const centerIN = [21.15, 79.09];
+
+      if ($('#map-container')) {
+        mapGov = L.map('map-container', { zoomControl: true, scrollWheelZoom: false }).setView(centerIN, 5);
+        osm(mapGov);
+        layersGov.allocations = L.layerGroup().addTo(mapGov);
+        layersGov.incidents = L.layerGroup().addTo(mapGov);
+        layersGov.camps = L.layerGroup().addTo(mapGov);
+      }
+      if ($('#map-fr')) {
+        mapFR = L.map('map-fr', { zoomControl: true }).setView(centerIN, 5);
+        osm(mapFR);
+      }
+      if ($('#map-public')) {
+        mapPublic = L.map('map-public', { zoomControl: true }).setView(centerIN, 5);
+        osm(mapPublic);
+      }
+    }
+    function addMarker(map, group, lat, lng, content) {
+      if (!map || !group) return;
+      L.marker([lat, lng]).addTo(group).bindPopup(content);
+    }
+
+    // UI helpers
+    function show(el) { el.classList.remove('hidden'); }
+    function hide(el) { el.classList.add('hidden'); }
+    function clearNode(el) { if (!el) return; el.innerHTML = ''; }
+
+    // Role UI
+    const roleButtons = {
+      gov: $('#role-gov'),
+      ngo: $('#role-ngo'),
+      fr: $('#role-fr'),
+      public: $('#role-public')
+    };
+    const authPanels = {
+      gov: $('#auth-gov'),
+      ngo: $('#auth-ngo'),
+      fr: $('#auth-fr'),
+      public: $('#auth-public')
+    };
+    const dashboards = {
+      gov: $('#dash-gov'),
+      ngo: $('#dash-ngo'),
+      fr: $('#dash-fr'),
+      public: $('#dash-public')
+    };
+
+    Object.entries(roleButtons).forEach(([key, btn]) => {
+      btn.addEventListener('click', () => {
+        Object.values(authPanels).forEach(hide);
+        show(authPanels[key]);
+        authPanels[key].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Login/Logout gate
+    function applySession() {
+      const stored = localStorage.getItem('session');
+      if (stored) {
+        const sess = JSON.parse(stored);
+        state.role = sess.role;
+        state.user = sess.user;
+        // Header user display
+        const ui = $('#user-info');
+        const name = $('#username-display');
+        name.textContent = sess.user || sess.role.toUpperCase();
+        ui.classList.remove('hidden', 'md:hidden');
+        ui.classList.add('flex');
+        // Show dashboard
+        openDashboard(sess.role);
+      } else {
+        // Reset UI
+        $('#user-info').classList.add('hidden');
+        Object.values(dashboards).forEach(hide);
+        setActiveNav('#home');
+      }
+      renderIcons();
+    }
+
+    function login(role, user) {
+      localStorage.setItem('session', JSON.stringify({ role, user }));
+      applySession();
+      // Jump to dashboards
+      document.location.hash = '#dashboards';
+      setActiveNav('#dashboards');
+    }
+
+    function logout() {
+      localStorage.removeItem('session');
+      state.role = null; state.user = null;
+      // Hide dashboards
+      Object.values(dashboards).forEach(hide);
+      // Hide user info
+      $('#user-info').classList.add('hidden');
+      // Scroll to home
+      document.location.hash = '#home';
+      setActiveNav('#home');
+    }
+
+    // Open dashboard
+    function openDashboard(role) {
+      Object.values(dashboards).forEach(hide);
+      const el = dashboards[role];
+      if (el) show(el);
+    }
+
+    // Auth forms
+    $('#form-gov')?.addEventListener('submit', e => { e.preventDefault(); login('gov', new FormData(e.target).get('email')); });
+    $('#form-ngo')?.addEventListener('submit', e => { e.preventDefault(); login('ngo', new FormData(e.target).get('email')); });
+    $('#form-fr')?.addEventListener('submit', e => { e.preventDefault(); login('fr', new FormData(e.target).get('id')); });
+    $('#form-public')?.addEventListener('submit', e => { e.preventDefault(); login('public', new FormData(e.target).get('phone')); });
+
+    // Header and dash logouts
+    $('#header-logout')?.addEventListener('click', logout);
+    $('#logout-gov')?.addEventListener('click', logout);
+    $('#logout-ngo')?.addEventListener('click', logout);
+    $('#logout-fr')?.addEventListener('click', logout);
+    $('#logout-public')?.addEventListener('click', logout);
+
+    // GOV: Allocate resources
+    $('#form-gov-allocate')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const entry = {
+        type: fd.get('type'),
+        region: fd.get('region'),
+        quantity: Number(fd.get('quantity')),
+        time: Date.now()
+      };
+      state.allocations.unshift(entry);
+      state.regionTotals[entry.region] = (state.regionTotals[entry.region] || 0) + entry.quantity;
+
+      // Update KPIs
+      $('#kpi-gov-allocations').textContent = state.allocations.reduce((a,b)=>a+b.quantity,0);
+
+      // Table
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="py-2">${entry.type}</td>
+        <td class="py-2">${entry.region}</td>
+        <td class="py-2">${entry.quantity}</td>
+        <td class="py-2 text-gray-400">${fmtTime(entry.time)}</td>
+      `;
+      $('#table-gov-alloc').prepend(row);
+      updateAllocChart();
+
+      // Map marker (mock random coords around India)
+      if (mapGov && layersGov.allocations) {
+        const lat = 20 + Math.random() * 10;
+        const lng = 72 + Math.random() * 10;
+        addMarker(mapGov, layersGov.allocations, lat, lng, `<strong>${entry.type}</strong><br>${entry.region}<br>Qty: ${entry.quantity}`);
+      }
+      e.target.reset();
+      renderIcons();
+    });
+
+    // GOV: Issue alerts
+    $('#form-gov-alert')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const alert = {
+        hazard: fd.get('hazard'),
+        severity: fd.get('severity'),
+        message: fd.get('message'),
+        id: 'A' + Math.floor(Math.random()*10000),
+        time: Date.now()
+      };
+      state.alerts.unshift(alert);
+      // KPI + hero
+      $('#kpi-gov-alerts').textContent = state.alerts.length;
+      $('#hero-alerts-count').textContent = state.alerts.length;
+
+      // Gov recent
+      const card = document.createElement('div');
+      card.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+      card.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-[13px] font-semibold">${alert.hazard} — <span class="text-${alert.severity==='Critical'?'red':'teal'}-300">${alert.severity}</span></p>
+            <p class="text-xs text-gray-300 mt-1">${alert.message}</p>
+            <p class="text-[11px] text-gray-400 mt-1">${fmtTime(alert.time)}</p>
+          </div>
+          <i data-lucide="siren" class="h-4 w-4 text-teal-300"></i>
+        </div>
+      `;
+      $('#list-gov-alerts').prepend(card);
+
+      // Public feed
+      renderPublicAlerts();
+      renderIcons();
+      e.target.reset();
+    });
+
+    function renderPublicAlerts() {
+      const list = $('#public-alerts');
+      if (!list) return;
+      clearNode(list);
+      state.alerts.forEach(a => {
+        const el = document.createElement('div');
+        el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+        el.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-[13px] font-semibold">${a.hazard} — <span class="text-${a.severity==='Critical'?'red':'indigo'}-300">${a.severity}</span></p>
+              <p class="text-xs text-gray-300 mt-1">${a.message}</p>
+              <p class="text-[11px] text-gray-400 mt-1">${fmtTime(a.time)}</p>
+            </div>
+            <i data-lucide="alert-triangle" class="h-4 w-4 text-indigo-300"></i>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+      renderIcons();
+    }
+
+    // NGO: Requests
+    $('#form-ngo-request')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const req = {
+        id: 'R' + Math.floor(Math.random()*10000),
+        resource: fd.get('resource'),
+        quantity: Number(fd.get('quantity')),
+        urgency: fd.get('urgency'),
+        region: fd.get('region'),
+        status: 'Pending',
+        time: Date.now()
+      };
+      state.ngoRequests.unshift(req);
+      renderNgoRequests();
+      renderGovRequests();
+      // KPIs
+      $('#kpi-ngo-requests').textContent = state.ngoRequests.length;
+      $('#kpi-gov-requests').textContent = state.ngoRequests.filter(r=>r.status==='Pending').length;
+      e.target.reset();
+      renderIcons();
+    });
+
+    function renderNgoRequests() {
+      const list = $('#list-ngo-requests');
+      if (!list) return;
+      clearNode(list);
+      state.ngoRequests.forEach(r => {
+        const el = document.createElement('div');
+        el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+        el.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-[13px] font-semibold">${r.resource} • Qty ${r.quantity}</p>
+              <p class="text-xs text-gray-400">${r.region} • Urgency: ${r.urgency} • <span class="${r.status==='Approved'?'text-emerald-300':r.status==='Denied'?'text-red-300':'text-yellow-300'}">${r.status}</span></p>
+            </div>
+            <p class="text-[11px] text-gray-500">${fmtTime(r.time)}</p>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+    }
+
+    function renderGovRequests() {
+      const list = $('#list-gov-requests');
+      if (!list) return;
+      clearNode(list);
+      state.ngoRequests.forEach(r => {
+        const el = document.createElement('div');
+        el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+        el.innerHTML = `
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-[13px] font-semibold">${r.resource} • Qty ${r.quantity} — <span class="text-xs text-gray-400">${r.region}</span></p>
+              <p class="text-[12px] text-gray-400">Urgency: ${r.urgency} • Status: <span class="${r.status==='Approved'?'text-emerald-300':r.status==='Denied'?'text-red-300':'text-yellow-300'}">${r.status}</span></p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button data-approve="${r.id}" class="inline-flex items-center gap-1 rounded-md bg-teal-400 hover:bg-teal-300 text-black text-[12px] font-semibold px-2 py-1">
+                <i data-lucide="check" class="h-3 w-3"></i> Approve
+              </button>
+              <button data-deny="${r.id}" class="inline-flex items-center gap-1 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 text-[12px] px-2 py-1">
+                <i data-lucide="x" class="h-3 w-3"></i> Deny
+              </button>
+            </div>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+      // Bind actions
+      $$('[data-approve]').forEach(b => b.addEventListener('click', () => setRequestStatus(b.dataset.approve, 'Approved')));
+      $$('[data-deny]').forEach(b => b.addEventListener('click', () => setRequestStatus(b.dataset.deny, 'Denied')));
+      renderIcons();
+    }
+
+    function setRequestStatus(id, status) {
+      const r = state.ngoRequests.find(x => x.id === id);
+      if (!r) return;
+      r.status = status;
+      // Update KPIs
+      $('#kpi-ngo-approved').textContent = state.ngoRequests.filter(x=>x.status==='Approved').length;
+      $('#kpi-gov-requests').textContent = state.ngoRequests.filter(x=>x.status==='Pending').length;
+      renderNgoRequests();
+      renderGovRequests();
+      // Optionally create a FR task on approval
+      if (status === 'Approved') {
+        const task = {
+          id: 'T' + Math.floor(Math.random()*10000),
+          title: `Deliver ${r.resource} (${r.quantity})`,
+          from: 'Government',
+          area: r.region,
+          status: 'New',
+          time: Date.now()
+        };
+        state.frTasks.unshift(task);
+        renderFrTasks();
+      }
+    }
+
+    // NGO: Reports
+    $('#form-ngo-report')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const rep = {
+        location: fd.get('location'),
+        needs: fd.get('needs'),
+        description: fd.get('description'),
+        time: Date.now()
+      };
+      state.ngoReports.unshift(rep);
+      const list = $('#list-ngo-reports');
+      const el = document.createElement('div');
+      el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+      el.innerHTML = `
+        <p class="text-[13px] font-semibold">${rep.location} — <span class="text-xs text-gray-400">${fmtTime(rep.time)}</span></p>
+        <p class="text-xs text-gray-300 mt-1">Needs: ${rep.needs}</p>
+        <p class="text-xs text-gray-400 mt-1">${rep.description}</p>
+      `;
+      list.prepend(el);
+
+      // Add to gov map as incident (mock coords)
+      if (mapGov && layersGov.incidents) {
+        const lat = 18 + Math.random() * 12;
+        const lng = 73 + Math.random() * 10;
+        addMarker(mapGov, layersGov.incidents, lat, lng, `<strong>Report</strong><br>${rep.location}<br>${rep.needs}`);
+      }
+      renderIcons();
+      e.target.reset();
+    });
+
+    // NGO: Deploy
+    $('#form-ngo-deploy')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const dep = {
+        team: fd.get('team'),
+        size: Number(fd.get('size')),
+        task: fd.get('task'),
+        area: fd.get('area'),
+        time: Date.now()
+      };
+      state.ngoDeployments.unshift(dep);
+      const list = $('#list-ngo-deployments');
+      const el = document.createElement('div');
+      el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+      el.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-[13px] font-semibold">${dep.team} • ${dep.task}</p>
+            <p class="text-xs text-gray-400">${dep.area} • Size ${dep.size}</p>
+          </div>
+          <p class="text-[11px] text-gray-500">${fmtTime(dep.time)}</p>
+        </div>
+      `;
+      list.prepend(el);
+      // KPIs and hero
+      $('#kpi-ngo-volunteers').textContent = state.ngoDeployments.reduce((a,b)=>a+b.size,0);
+      $('#kpi-gov-teams').textContent = state.ngoDeployments.length;
+      $('#hero-teams-count').textContent = state.ngoDeployments.length;
+
+      // Create FR task
+      state.frTasks.unshift({
+        id: 'T' + Math.floor(Math.random()*10000),
+        title: `${dep.task} — ${dep.team}`,
+        from: 'NGO',
+        area: dep.area,
+        status: 'New',
+        time: Date.now()
+      });
+      renderFrTasks();
+      renderIcons();
+      e.target.reset();
+    });
+
+    // NGO: Camps
+    $('#form-ngo-camp')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const camp = {
+        name: fd.get('name'),
+        helpline: fd.get('helpline'),
+        location: fd.get('location'),
+        id: 'C' + Math.floor(Math.random()*10000),
+        time: Date.now()
+      };
+      state.camps.unshift(camp);
+      renderNgoCamps();
+      renderPublicCamps();
+
+      // Markers on maps (mock coords)
+      const lat = 19 + Math.random()*10;
+      const lng = 75 + Math.random()*9;
+      if (mapGov && layersGov.camps) addMarker(mapGov, layersGov.camps, lat, lng, `<strong>Camp</strong><br>${camp.name}<br>${camp.helpline}`);
+      if (mapPublic) L.marker([lat, lng]).addTo(mapPublic).bindPopup(`<strong>${camp.name}</strong><br>${camp.location}<br>${camp.helpline}`);
+
+      // KPI
+      $('#kpi-ngo-camps').textContent = state.camps.length;
+      renderIcons();
+      e.target.reset();
+    });
+
+    function renderNgoCamps() {
+      const list = $('#list-ngo-camps');
+      if (!list) return;
+      clearNode(list);
+      state.camps.forEach(c => {
+        const el = document.createElement('div');
+        el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+        el.innerHTML = `
+          <p class="text-[13px] font-semibold">${c.name} — <span class="text-xs text-gray-400">${fmtTime(c.time)}</span></p>
+          <p class="text-xs text-gray-300">Helpline: ${c.helpline}</p>
+          <p class="text-xs text-gray-400">${c.location}</p>
+        `;
+        list.appendChild(el);
+      });
+    }
+    function renderPublicCamps() {
+      const list = $('#public-camps');
+      if (!list) return;
+      clearNode(list);
+      state.camps.forEach(c => {
+        const el = document.createElement('div');
+        el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+        el.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-[13px] font-semibold">${c.name}</p>
+              <p class="text-xs text-gray-400">${c.location}</p>
+              <p class="text-xs text-gray-300 mt-1">Helpline: ${c.helpline}</p>
+            </div>
+            <i data-lucide="lifebuoy" class="h-4 w-4 text-indigo-300"></i>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+      renderIcons();
+    }
+
+    // FR: Tasks
+    function renderFrTasks() {
+      const list = $('#fr-tasks');
+      if (!list) return;
+      clearNode(list);
+      state.frTasks.forEach(t => {
+        const el = document.createElement('div');
+        el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+        el.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-[13px] font-semibold">${t.title}</p>
+              <p class="text-xs text-gray-400">${t.area} • From: ${t.from} • Status: <span class="${t.status==='Completed'?'text-emerald-300':t.status==='Active'?'text-amber-300':'text-gray-300'}">${t.status}</span></p>
+              <p class="text-[11px] text-gray-500">${fmtTime(t.time)}</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2">
+              ${t.status==='New' ? `
+                <button data-accept="${t.id}" class="inline-flex items-center gap-1 rounded-md bg-amber-500 hover:bg-amber-400 text-black text-[12px] font-semibold px-2 py-1"><i data-lucide="check" class="h-3 w-3"></i> Accept</button>` : ''}
+              ${t.status!=='Completed' ? `
+                <button data-complete="${t.id}" class="inline-flex items-center gap-1 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 text-[12px] px-2 py-1"><i data-lucide="check-circle-2" class="h-3 w-3"></i> Complete</button>` : ''}
+            </div>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+      // KPIs
+      $('#kpi-fr-total').textContent = state.frTasks.length;
+      $('#kpi-fr-active').textContent = state.frTasks.filter(t=>t.status==='Active').length;
+      $('#kpi-fr-completed').textContent = state.frTasks.filter(t=>t.status==='Completed').length;
+
+      // Bind
+      $$('[data-accept]').forEach(b => b.addEventListener('click', () => {
+        const t = state.frTasks.find(x=>x.id===b.dataset.accept);
+        if (t) t.status = 'Active';
+        renderFrTasks();
+      }));
+      $$('[data-complete]').forEach(b => b.addEventListener('click', () => {
+        const t = state.frTasks.find(x=>x.id===b.dataset.complete);
+        if (t) t.status = 'Completed';
+        renderFrTasks();
+      }));
+      renderIcons();
+    }
+
+    // FR: Status updates
+    $('#form-fr-update')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const upd = {
+        status: fd.get('status'),
+        notes: fd.get('notes'),
+        coords: state.coords.fr,
+        time: Date.now()
+      };
+      state.frUpdates.unshift(upd);
+      const list = $('#list-fr-updates');
+      const el = document.createElement('div');
+      el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+      el.innerHTML = `
+        <p class="text-[13px] font-semibold">${upd.status} — <span class="text-xs text-gray-400">${fmtTime(upd.time)}</span></p>
+        <p class="text-xs text-gray-300 mt-1">${upd.notes || 'No notes'}</p>
+        <p class="text-[11px] text-gray-500 mt-1">${upd.coords ? `Lat ${upd.coords.lat.toFixed(4)}, Lng ${upd.coords.lng.toFixed(4)}` : 'No location'}</p>
+      `;
+      list.prepend(el);
+      renderIcons();
+      e.target.reset();
+    });
+
+    // FR & Public GPS buttons
+    function getGPS(cb, statusEl) {
+      if (!navigator.geolocation) {
+        statusEl.textContent = 'Location: not supported';
+        return;
+      }
+      statusEl.textContent = 'Locating...';
+      navigator.geolocation.getCurrentPosition(pos => {
+        const { latitude, longitude } = pos.coords;
+        cb({ lat: latitude, lng: longitude });
+        statusEl.textContent = `Location: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+      }, () => {
+        statusEl.textContent = 'Location: permission denied';
+      }, { enableHighAccuracy: true, timeout: 10000 });
+    }
+    $('#btn-fr-gps')?.addEventListener('click', () => {
+      const statusEl = $('#fr-gps-status');
+      getGPS(coords => {
+        state.coords.fr = coords;
+        if (mapFR) {
+          L.marker([coords.lat, coords.lng]).addTo(mapFR).bindPopup('My position').openPopup();
+          mapFR.setView([coords.lat, coords.lng], 13);
+        }
+      }, statusEl);
+    });
+    $('#btn-public-gps')?.addEventListener('click', () => {
+      const statusEl = $('#public-gps-status');
+      getGPS(coords => {
+        state.coords.public = coords;
+        if (mapPublic) {
+          L.marker([coords.lat, coords.lng]).addTo(mapPublic).bindPopup('Your position').openPopup();
+          mapPublic.setView([coords.lat, coords.lng], 13);
+        }
+      }, statusEl);
+    });
+
+    // Public: Incident submit
+    $('#form-public-incident')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const inc = {
+        type: fd.get('type'),
+        location: fd.get('location'),
+        contact: fd.get('contact'),
+        description: fd.get('description'),
+        coords: state.coords.public,
+        time: Date.now()
+      };
+      state.incidents.unshift(inc);
+      const list = $('#list-public-incidents');
+      const el = document.createElement('div');
+      el.className = 'rounded-lg border border-white/10 bg-white/5 p-3';
+      el.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-[13px] font-semibold">${inc.type} — <span class="text-xs text-gray-400">${fmtTime(inc.time)}</span></p>
+            <p class="text-xs text-gray-300">${inc.location}${inc.contact ? ' • ' + inc.contact : ''}</p>
+            <p class="text-xs text-gray-400 mt-1">${inc.description || ''}</p>
+          </div>
+          <i data-lucide="file-warning" class="h-4 w-4 text-indigo-300"></i>
+        </div>
+      `;
+      list.prepend(el);
+      // Show on maps if have coords
+      if (inc.coords) {
+        if (mapPublic) L.marker([inc.coords.lat, inc.coords.lng]).addTo(mapPublic).bindPopup(`<strong>${inc.type}</strong><br>${inc.location}`);
+        if (mapGov && layersGov.incidents) addMarker(mapGov, layersGov.incidents, inc.coords.lat, inc.coords.lng, `<strong>${inc.type}</strong><br>${inc.location}`);
+      }
+      renderIcons();
+      e.target.reset();
+    });
+
+    // Contact form (demo)
+    $('#form-contact')?.addEventListener('submit', e => {
+      e.preventDefault();
+      $('#contact-status').textContent = 'Thanks! Your message has been recorded.';
+      setTimeout(()=> $('#contact-status').textContent = '', 4000);
+      e.target.reset();
+    });
+
+    // Initializers
+    document.addEventListener('DOMContentLoaded', () => {
+      renderIcons();
+      initMiniChart();
+      initAllocChart();
+      initMaps();
+      renderPublicAlerts();
+      renderNgoRequests();
+      renderGovRequests();
+      renderNgoCamps();
+      renderPublicCamps();
+      renderFrTasks();
+      applySession();
+    });
+  </script>
+
+</body></html>

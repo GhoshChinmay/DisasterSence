@@ -1,0 +1,837 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Management Dashboard - Real-time India</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)", 
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                }
+            }
+        }
+    };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --background: hsl(210 40% 98%);
+            --foreground: hsl(222 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222 84% 4.9%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222 84% 4.9%);
+            --primary: hsl(221 83% 53%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222 84% 4.9%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215 16% 46.9%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(222 84% 4.9%);
+            --destructive: hsl(0 84% 60%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214 32% 91%);
+            --input: hsl(214 32% 91%);
+            --ring: hsl(221 83% 53%);
+            --radius: 0.5rem;
+            --font-sans: 'Inter', sans-serif;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: hsl(222 84% 4.9%);
+                --foreground: hsl(210 40% 98%);
+                --card: hsl(222 84% 4.9%);
+                --card-foreground: hsl(210 40% 98%);
+                --popover: hsl(222 84% 4.9%);
+                --popover-foreground: hsl(210 40% 98%);
+                --primary: hsl(221 83% 53%);
+                --primary-foreground: hsl(210 40% 98%);
+                --secondary: hsl(217 32% 17%);
+                --secondary-foreground: hsl(210 40% 98%);
+                --muted: hsl(217 32% 17%);
+                --muted-foreground: hsl(215 20% 65%);
+                --accent: hsl(217 32% 17%);
+                --accent-foreground: hsl(210 40% 98%);
+                --destructive: hsl(0 62% 30%);
+                --destructive-foreground: hsl(210 40% 98%);
+                --border: hsl(217 32% 17%);
+                --input: hsl(217 32% 17%);
+                --ring: hsl(221 83% 53%);
+            }
+        }
+        
+        * {
+            border-color: hsl(var(--border));
+        }
+        
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: var(--font-sans);
+        }
+
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .severity-critical { background-color: #DC2626; }
+        .severity-high { background-color: #EA580C; }
+        .severity-medium { background-color: #CA8A04; }
+        .severity-low { background-color: #16A34A; }
+        .severity-info { background-color: #2563EB; }
+    </style>
+</head>
+<body>
+    <!-- @COMPONENT: Header [Navigation and controls] -->
+    <header class="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-shield-alt text-primary text-2xl"></i>
+                    <div>
+                        <h1 class="text-xl font-bold text-foreground">Disaster Watch India</h1>
+                        <p class="text-sm text-muted-foreground">Real-time Emergency Monitoring</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <div class="flex items-center space-x-1">
+                            <div class="pulse-dot w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span>Live</span>
+                        </div>
+                        <span data-bind="lastUpdated">Updated 2 min ago</span>
+                    </div>
+                    
+                    <button data-event="click:refreshData" class="flex items-center space-x-2 px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Refresh</span>
+                    </button>
+                    
+                    <button data-event="click:toggleNotifications" class="p-2 text-muted-foreground hover:text-foreground">
+                        <i class="fas fa-bell text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <div class="container mx-auto px-4 py-6">
+        <!-- @COMPONENT: AlertSummary [Overview statistics] -->
+        <div class="mb-8">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="bg-card rounded-lg p-4 border border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-2xl font-bold text-destructive" data-bind="criticalAlerts">3</p>
+                            <p class="text-sm text-muted-foreground">Critical</p>
+                        </div>
+                        <div class="w-3 h-3 bg-destructive rounded-full pulse-dot"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-card rounded-lg p-4 border border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-2xl font-bold text-orange-600" data-bind="highAlerts">12</p>
+                            <p class="text-sm text-muted-foreground">High</p>
+                        </div>
+                        <div class="w-3 h-3 bg-orange-600 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-card rounded-lg p-4 border border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-2xl font-bold text-yellow-600" data-bind="mediumAlerts">28</p>
+                            <p class="text-sm text-muted-foreground">Medium</p>
+                        </div>
+                        <div class="w-3 h-3 bg-yellow-600 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-card rounded-lg p-4 border border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-2xl font-bold text-green-600" data-bind="lowAlerts">45</p>
+                            <p class="text-sm text-muted-foreground">Low</p>
+                        </div>
+                        <div class="w-3 h-3 bg-green-600 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-card rounded-lg p-4 border border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-2xl font-bold text-primary" data-bind="totalAlerts">88</p>
+                            <p class="text-sm text-muted-foreground">Total Active</p>
+                        </div>
+                        <i class="fas fa-exclamation-triangle text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: AlertSummary -->
+
+        <!-- @COMPONENT: FilterControls [Search and filter options] -->
+        <div class="mb-6">
+            <div class="bg-card rounded-lg p-4 border border-border">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"></i>
+                            <input 
+                                type="text" 
+                                placeholder="Search by location, disaster type, or keywords..."
+                                class="w-full pl-10 pr-4 py-2 bg-background border border-input rounded-md focus:ring-2 focus:ring-ring focus:border-transparent"
+                                data-bind="searchQuery"
+                            >
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <select class="px-3 py-2 bg-background border border-input rounded-md focus:ring-2 focus:ring-ring" data-bind="severityFilter">
+                            <option>All Severities</option>
+                            <option>Critical</option>
+                            <option>High</option>
+                            <option>Medium</option>
+                            <option>Low</option>
+                        </select>
+                        
+                        <select class="px-3 py-2 bg-background border border-input rounded-md focus:ring-2 focus:ring-ring" data-bind="typeFilter">
+                            <option>All Types</option>
+                            <option>Earthquake</option>
+                            <option>Flood</option>
+                            <option>Cyclone</option>
+                            <option>Fire</option>
+                            <option>Landslide</option>
+                        </select>
+                        
+                        <select class="px-3 py-2 bg-background border border-input rounded-md focus:ring-2 focus:ring-ring" data-bind="stateFilter">
+                            <option>All States</option>
+                            <option>Maharashtra</option>
+                            <option>Kerala</option>
+                            <option>Tamil Nadu</option>
+                            <option>Gujarat</option>
+                            <option>West Bengal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: FilterControls -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- @COMPONENT: MapVisualization [Interactive disaster map] -->
+            <div class="lg:col-span-2">
+                <div class="bg-card rounded-lg border border-border overflow-hidden">
+                    <div class="p-4 border-b border-border">
+                        <h2 class="text-lg font-semibold text-foreground flex items-center gap-2">
+                            <i class="fas fa-map text-primary"></i>
+                            Disaster Map - India
+                        </h2>
+                        <p class="text-sm text-muted-foreground">Real-time visualization of active disasters</p>
+                    </div>
+                    
+                    <div class="relative h-96 bg-muted">
+                        <!-- Map placeholder - would integrate with Leaflet/MapBox -->
+                        <!-- Satellite view of India showing various disaster locations -->
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=600" 
+                             alt="India map satellite view" 
+                             class="w-full h-full object-cover" 
+                             data-mock="true">
+                        
+                        <!-- Map Markers Overlay -->
+                        <div class="absolute inset-0">
+                            <!-- Critical Alert Marker - Mumbai -->
+                            <div class="absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/2" data-mock="true">
+                                <div class="relative">
+                                    <div class="w-6 h-6 bg-destructive rounded-full border-2 border-white shadow-lg pulse-dot flex items-center justify-center">
+                                        <i class="fas fa-exclamation text-white text-xs"></i>
+                                    </div>
+                                    <div class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-destructive text-white px-2 py-1 rounded text-xs whitespace-nowrap">
+                                        Flood - Mumbai
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- High Alert Marker - Kerala -->
+                            <div class="absolute bottom-1/3 left-1/5 transform -translate-x-1/2 -translate-y-1/2" data-mock="true">
+                                <div class="w-5 h-5 bg-orange-600 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
+                                    <i class="fas fa-water text-white text-xs"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Medium Alert Marker - Gujarat -->
+                            <div class="absolute top-1/3 left-1/6 transform -translate-x-1/2 -translate-y-1/2" data-mock="true">
+                                <div class="w-4 h-4 bg-yellow-600 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
+                                    <i class="fas fa-wind text-white text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Map Controls -->
+                        <div class="absolute top-4 right-4 flex flex-col gap-2">
+                            <button class="w-8 h-8 bg-card border border-border rounded shadow-sm hover:bg-accent flex items-center justify-center">
+                                <i class="fas fa-plus text-sm"></i>
+                            </button>
+                            <button class="w-8 h-8 bg-card border border-border rounded shadow-sm hover:bg-accent flex items-center justify-center">
+                                <i class="fas fa-minus text-sm"></i>
+                            </button>
+                            <button class="w-8 h-8 bg-card border border-border rounded shadow-sm hover:bg-accent flex items-center justify-center">
+                                <i class="fas fa-expand text-sm"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Map Legend -->
+                        <div class="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-3">
+                            <h4 class="text-sm font-medium mb-2">Severity Levels</h4>
+                            <div class="space-y-1 text-xs">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-destructive rounded-full"></div>
+                                    <span>Critical</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-orange-600 rounded-full"></div>
+                                    <span>High</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-yellow-600 rounded-full"></div>
+                                    <span>Medium</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-green-600 rounded-full"></div>
+                                    <span>Low</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: MapVisualization -->
+
+            <!-- @COMPONENT: ActiveAlerts [Current disaster alerts] -->
+            <div class="space-y-6">
+                <div class="bg-card rounded-lg border border-border">
+                    <div class="p-4 border-b border-border">
+                        <h2 class="text-lg font-semibold text-foreground flex items-center gap-2">
+                            <i class="fas fa-exclamation-triangle text-destructive"></i>
+                            Active Alerts
+                        </h2>
+                    </div>
+                    
+                    <div class="max-h-96 overflow-y-auto" data-mock="true">
+                        <!-- @MAP: alerts.map(alert => ( -->
+                        <div class="p-4 border-b border-border last:border-b-0 hover:bg-accent/50 transition-colors">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="severity-critical text-white text-xs px-2 py-1 rounded-full font-medium">CRITICAL</span>
+                                        <span class="text-sm text-muted-foreground">NDMA</span>
+                                    </div>
+                                    <h3 class="font-medium text-foreground">Severe Flooding in Mumbai Metropolitan Area</h3>
+                                    <p class="text-sm text-muted-foreground mt-1">Heavy rainfall causing waterlogging in multiple districts. Evacuation advisory issued for low-lying areas.</p>
+                                    <div class="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                        <span><i class="fas fa-map-marker-alt"></i> Maharashtra, Mumbai</span>
+                                        <span><i class="fas fa-clock"></i> 15 min ago</span>
+                                        <span><i class="fas fa-users"></i> 50K+ affected</span>
+                                    </div>
+                                </div>
+                                <button class="text-primary hover:text-primary/80">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-4 border-b border-border hover:bg-accent/50 transition-colors">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="severity-high text-white text-xs px-2 py-1 rounded-full font-medium">HIGH</span>
+                                        <span class="text-sm text-muted-foreground">IMD</span>
+                                    </div>
+                                    <h3 class="font-medium text-foreground">Cyclone Warning - Eastern Coast</h3>
+                                    <p class="text-sm text-muted-foreground mt-1">Tropical cyclone approaching Odisha and West Bengal coasts. Wind speeds up to 120 km/h expected.</p>
+                                    <div class="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                        <span><i class="fas fa-map-marker-alt"></i> Odisha, West Bengal</span>
+                                        <span><i class="fas fa-clock"></i> 1 hour ago</span>
+                                        <span><i class="fas fa-users"></i> 2M+ at risk</span>
+                                    </div>
+                                </div>
+                                <button class="text-primary hover:text-primary/80">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-4 border-b border-border hover:bg-accent/50 transition-colors">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="severity-medium text-white text-xs px-2 py-1 rounded-full font-medium">MEDIUM</span>
+                                        <span class="text-sm text-muted-foreground">Social Media</span>
+                                    </div>
+                                    <h3 class="font-medium text-foreground">Forest Fire Reports - Uttarakhand</h3>
+                                    <p class="text-sm text-muted-foreground mt-1">Multiple social media reports of forest fires in hill regions. Verification pending.</p>
+                                    <div class="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                        <span><i class="fas fa-map-marker-alt"></i> Uttarakhand</span>
+                                        <span><i class="fas fa-clock"></i> 3 hours ago</span>
+                                        <span><i class="fas fa-twitter"></i> 15 reports</span>
+                                    </div>
+                                </div>
+                                <button class="text-primary hover:text-primary/80">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+                
+                <!-- @COMPONENT: SocialMediaFeed [Crowdsourced reports] -->
+                <div class="bg-card rounded-lg border border-border">
+                    <div class="p-4 border-b border-border">
+                        <h2 class="text-lg font-semibold text-foreground flex items-center gap-2">
+                            <i class="fab fa-twitter text-blue-500"></i>
+                            Social Media Reports
+                        </h2>
+                        <p class="text-sm text-muted-foreground">Crowdsourced disaster reports</p>
+                    </div>
+                    
+                    <div class="max-h-80 overflow-y-auto" data-mock="true">
+                        <!-- @MAP: socialReports.map(report => ( -->
+                        <div class="p-4 border-b border-border last:border-b-0">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <i class="fab fa-twitter text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-sm font-medium" data-bind="report.author">@emergency_mumbai</span>
+                                        <span class="text-xs text-muted-foreground" data-bind="report.timestamp">2 min ago</span>
+                                        <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">Unverified</span>
+                                    </div>
+                                    <p class="text-sm text-foreground" data-bind="report.content">Heavy waterlogging near Bandra station. Traffic completely stopped. Need immediate assistance. #MumbaiFloods #Emergency</p>
+                                    <div class="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                        <span><i class="fas fa-map-marker-alt"></i> Mumbai, Maharashtra</span>
+                                        <span><i class="fas fa-retweet"></i> 23</span>
+                                        <span><i class="fas fa-heart"></i> 45</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <button class="text-green-600 hover:bg-green-50 p-1 rounded" data-event="click:verifyReport">
+                                        <i class="fas fa-check text-sm"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:bg-red-50 p-1 rounded" data-event="click:flagReport">
+                                        <i class="fas fa-flag text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 border-b border-border">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <i class="fab fa-twitter text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-sm font-medium">@kerala_rescue</span>
+                                        <span class="text-xs text-muted-foreground">12 min ago</span>
+                                        <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Verified</span>
+                                    </div>
+                                    <p class="text-sm text-foreground">Landslide reported on NH-85 near Wayanad. Road blocked. Emergency teams dispatched. Avoid this route.</p>
+                                    <div class="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                        <span><i class="fas fa-map-marker-alt"></i> Kerala, Wayanad</span>
+                                        <span><i class="fas fa-retweet"></i> 156</span>
+                                        <span><i class="fas fa-heart"></i> 89</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: SocialMediaFeed -->
+            </div>
+            <!-- @END_COMPONENT: MapVisualization -->
+
+            <!-- @COMPONENT: DetailedAlertsList [Comprehensive alert information] -->
+            <div>
+                <div class="bg-card rounded-lg border border-border">
+                    <div class="p-4 border-b border-border">
+                        <h2 class="text-lg font-semibold text-foreground flex items-center gap-2">
+                            <i class="fas fa-list text-primary"></i>
+                            Detailed Alerts
+                        </h2>
+                        <p class="text-sm text-muted-foreground">Comprehensive disaster information</p>
+                    </div>
+                    
+                    <div class="divide-y divide-border max-h-96 overflow-y-auto" data-mock="true">
+                        <!-- @MAP: detailedAlerts.map(alert => ( -->
+                        <div class="p-4 hover:bg-accent/50 transition-colors">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-water text-blue-500"></i>
+                                        <span class="font-medium text-sm">Flood Alert</span>
+                                    </div>
+                                    <span class="severity-critical text-white text-xs px-2 py-1 rounded-full">CRITICAL</span>
+                                </div>
+                                
+                                <div class="space-y-1">
+                                    <p class="text-sm font-medium text-foreground">Mumbai - Severe Urban Flooding</p>
+                                    <p class="text-xs text-muted-foreground">Issued by: National Disaster Management Authority</p>
+                                </div>
+                                
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between">
+                                        <span class="text-muted-foreground">Affected Population:</span>
+                                        <span class="font-medium" data-bind="alert.affectedPopulation">500,000+</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted-foreground">Alert Level:</span>
+                                        <span class="font-medium text-destructive" data-bind="alert.level">Red</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted-foreground">Duration:</span>
+                                        <span class="font-medium" data-bind="alert.duration">Next 24 hours</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-2 border-t border-border">
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="text-muted-foreground" data-bind="alert.timestamp">Updated 15 min ago</span>
+                                        <button class="text-primary hover:text-primary/80 font-medium">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 hover:bg-accent/50 transition-colors">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-wind text-green-500"></i>
+                                        <span class="font-medium text-sm">Cyclone Warning</span>
+                                    </div>
+                                    <span class="severity-high text-white text-xs px-2 py-1 rounded-full">HIGH</span>
+                                </div>
+                                
+                                <div class="space-y-1">
+                                    <p class="text-sm font-medium text-foreground">Cyclone 'Biparjoy' - Eastern Coast</p>
+                                    <p class="text-xs text-muted-foreground">Issued by: India Meteorological Department</p>
+                                </div>
+                                
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between">
+                                        <span class="text-muted-foreground">Wind Speed:</span>
+                                        <span class="font-medium">120-140 km/h</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted-foreground">Landfall ETA:</span>
+                                        <span class="font-medium">18 hours</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted-foreground">States at Risk:</span>
+                                        <span class="font-medium">Odisha, WB</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-2 border-t border-border">
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="text-muted-foreground">Updated 1 hour ago</span>
+                                        <button class="text-primary hover:text-primary/80 font-medium">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 hover:bg-accent/50 transition-colors">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-fire text-red-500"></i>
+                                        <span class="font-medium text-sm">Wildfire</span>
+                                    </div>
+                                    <span class="severity-medium text-white text-xs px-2 py-1 rounded-full">MEDIUM</span>
+                                </div>
+                                
+                                <div class="space-y-1">
+                                    <p class="text-sm font-medium text-foreground">Forest Fire - Uttarakhand Hills</p>
+                                    <p class="text-xs text-muted-foreground">Reported by: Social Media Monitoring</p>
+                                </div>
+                                
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between">
+                                        <span class="text-muted-foreground">Area Affected:</span>
+                                        <span class="font-medium">200 hectares</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted-foreground">Verification Status:</span>
+                                        <span class="font-medium text-yellow-600">Pending</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted-foreground">Reports Count:</span>
+                                        <span class="font-medium">12 sources</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-2 border-t border-border">
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="text-muted-foreground">Updated 3 hours ago</span>
+                                        <button class="text-primary hover:text-primary/80 font-medium">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: DetailedAlertsList -->
+        </div>
+
+        <!-- @COMPONENT: DataSources [Information about data providers] -->
+        <div class="mt-8">
+            <div class="bg-card rounded-lg border border-border p-4">
+                <h2 class="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <i class="fas fa-database text-primary"></i>
+                    Data Sources & System Status
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-3 bg-accent/30 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-sm font-medium">NDMA API</span>
+                            </div>
+                            <span class="text-xs text-muted-foreground">Online</span>
+                        </div>
+                        <p class="text-xs text-muted-foreground">National Disaster Management Authority</p>
+                        <p class="text-xs text-muted-foreground mt-1">Last sync: 30 sec ago</p>
+                    </div>
+                    
+                    <div class="p-3 bg-accent/30 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-sm font-medium">IMD API</span>
+                            </div>
+                            <span class="text-xs text-muted-foreground">Online</span>
+                        </div>
+                        <p class="text-xs text-muted-foreground">India Meteorological Department</p>
+                        <p class="text-xs text-muted-foreground mt-1">Last sync: 1 min ago</p>
+                    </div>
+                    
+                    <div class="p-3 bg-accent/30 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-sm font-medium">Twitter API</span>
+                            </div>
+                            <span class="text-xs text-muted-foreground">Online</span>
+                        </div>
+                        <p class="text-xs text-muted-foreground">Social Media Monitoring</p>
+                        <p class="text-xs text-muted-foreground mt-1">Last sync: 45 sec ago</p>
+                    </div>
+                    
+                    <div class="p-3 bg-accent/30 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <span class="text-sm font-medium">ISRO BHUVAN</span>
+                            </div>
+                            <span class="text-xs text-muted-foreground">Delayed</span>
+                        </div>
+                        <p class="text-xs text-muted-foreground">Satellite Imagery</p>
+                        <p class="text-xs text-muted-foreground mt-1">Last sync: 15 min ago</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-border">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+                        <div class="flex items-center gap-6">
+                            <span>System Health: <span class="text-green-600 font-medium">Operational</span></span>
+                            <span>Total Reports Today: <span class="font-medium text-foreground" data-bind="dailyReports">1,247</span></span>
+                            <span>Response Time: <span class="font-medium text-foreground">2.3s avg</span></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-green-500"></i>
+                            <span>Secure Connection</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: DataSources -->
+
+        <!-- @COMPONENT: QuickActions [Emergency response buttons] -->
+        <div class="mt-8">
+            <div class="bg-card rounded-lg border border-border p-6">
+                <h2 class="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <i class="fas fa-bolt text-primary"></i>
+                    Quick Actions
+                </h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button data-event="click:reportDisaster" class="flex flex-col items-center p-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+                        <i class="fas fa-plus text-2xl mb-2"></i>
+                        <span class="text-sm font-medium">Report Disaster</span>
+                    </button>
+                    
+                    <button data-event="click:sendAlert" class="flex flex-col items-center p-4 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors">
+                        <i class="fas fa-megaphone text-2xl mb-2"></i>
+                        <span class="text-sm font-medium">Send Alert</span>
+                    </button>
+                    
+                    <button data-event="click:viewAnalytics" class="flex flex-col items-center p-4 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors">
+                        <i class="fas fa-chart-bar text-2xl mb-2"></i>
+                        <span class="text-sm font-medium">Analytics</span>
+                    </button>
+                    
+                    <button data-event="click:exportData" class="flex flex-col items-center p-4 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors">
+                        <i class="fas fa-download text-2xl mb-2"></i>
+                        <span class="text-sm font-medium">Export Data</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: QuickActions -->
+    </div>
+
+    <!-- @COMPONENT: Footer [Attribution and links] -->
+    <footer class="bg-card border-t border-border mt-12">
+        <div class="container mx-auto px-4 py-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h3 class="font-semibold text-foreground mb-2">Emergency Contacts</h3>
+                    <div class="space-y-1 text-sm text-muted-foreground">
+                        <p>NDRF: <span class="font-medium">9711077372</span></p>
+                        <p>Police: <span class="font-medium">100</span></p>
+                        <p>Fire: <span class="font-medium">101</span></p>
+                        <p>Medical: <span class="font-medium">108</span></p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-foreground mb-2">Official Sources</h3>
+                    <div class="space-y-1 text-sm">
+                        <a href="#" class="block text-primary hover:underline">NDMA.gov.in</a>
+                        <a href="#" class="block text-primary hover:underline">IMD.gov.in</a>
+                        <a href="#" class="block text-primary hover:underline">ISRO Bhuvan</a>
+                        <a href="#" class="block text-primary hover:underline">Emergency.gov.in</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-foreground mb-2">System Information</h3>
+                    <div class="space-y-1 text-sm text-muted-foreground">
+                        <p>API Status: <span class="text-green-600 font-medium">Operational</span></p>
+                        <p>Data Accuracy: <span class="font-medium">94.7%</span></p>
+                        <p>Uptime: <span class="font-medium">99.8%</span></p>
+                        <p class="text-xs pt-2">© 2024 Disaster Management System India</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+    // TODO: Implement real-time data fetching from APIs
+    // TODO: Add WebSocket connection for live updates
+    // TODO: Implement map integration with disaster markers
+    // TODO: Add form validation for crowdsourced reports
+    // TODO: Handle API rate limiting and error states
+    
+    (function() {
+        // Mock real-time updates for demonstration
+        const updateTimestamps = () => {
+            const elements = document.querySelectorAll('[data-bind*="timestamp"], [data-bind*="lastUpdated"]');
+            elements.forEach(el => {
+                const now = new Date();
+                const randomMinutes = Math.floor(Math.random() * 60);
+                el.textContent = `${randomMinutes} min ago`;
+            });
+        };
+
+        // Simulate periodic updates every 30 seconds
+        setInterval(updateTimestamps, 30000);
+        
+        // Mock loading states
+        document.querySelectorAll('[data-event*="refresh"]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const icon = button.querySelector('i');
+                icon.classList.add('fa-spin');
+                setTimeout(() => {
+                    icon.classList.remove('fa-spin');
+                    updateTimestamps();
+                }, 2000);
+            });
+        });
+
+        // Mock alert severity updates
+        const severityBadges = document.querySelectorAll('.severity-critical, .severity-high, .severity-medium, .severity-low');
+        severityBadges.forEach(badge => {
+            badge.style.cursor = 'help';
+            badge.title = 'Click for severity criteria';
+        });
+
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+Build me a full-stack web application for Disaster Prediction in India.
+
+Tech Stack
+
+Frontend: React (TailwindCSS for styling, Recharts for graphs, Leaflet/Mapbox for India map).
+
+Backend: Node.js + Express.
+
+ML Models: XGBoost (trained beforehand on cyclone, flood, earthquake, and landslide datasets). Export models to a JSON/ONNX format so they can run inside Node.js.
+
+Features
+
+Landing Page:
+
+Modern hero section with title: “AI-powered Disaster Prediction for India”.
+
+Buttons: View Predictions, About Project.
+
+Prediction Dashboard:
+
+An interactive India map (Leaflet).
+
+For each state/district, show 7-day prediction markers (Cyclone, Flood, Earthquake, Landslide).
+
+Severity levels:
+
+🟢 Low
+
+🟡 Medium
+
+🔴 High
+
+Weather-based Predictions (7 Days):
+
+Fetch 7-day weather forecast from OpenWeatherMap API (or a similar free API).
+
+Features: temperature, rainfall, wind speed, soil moisture proxy (from rainfall), seismic activity (historical trend).
+
+For each day (Day 1 → Day 7), run data through trained XGBoost models.
+
+Convert predictions → severity categories.
+
+Analytics Section:
+
+Line graph of predicted severity for 7 days (per disaster).
+
+Table view:
+
+Date | Cyclone | Flood | Earthquake | Landslide
+-----------------------------------------------
+Day 1 | Medium  | High  | Low        | Low
+Day 2 | Low     | Medium| Low        | Medium
+...
+
+
+API Endpoints (Node.js backend):
+
+/predict/:disaster?days=7&location=india
+
+Disaster = cyclone/flood/earthquake/landslide
+
+Returns array of 7 predictions with severity.
+
+Backend fetches weather forecast, preprocesses features, and runs model inference.
+
+About Page:
+
+Short description: “This system predicts cyclone, flood, earthquake, and landslide risks across India for the next 7 days, powered by AI + weather forecasts.”
+
+Responsive UI:
+
+Cards for each disaster should look like Amazon product cards (adaptive grid).
+
+Mobile: stacked view.
+
+Desktop: grid view with 4 cards side-by-side.
+
+⚡ Final User Flow:
+
+User opens app → Sees dashboard.
+
+
+System fetches 7-day forecast, runs prediction with XGBoost, and updates map + graphs.
+
+User can compare disaster risks day by day.

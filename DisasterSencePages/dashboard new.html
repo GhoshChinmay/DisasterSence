@@ -1,0 +1,1369 @@
+<html lang="en" class="dark"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DisasterSense — Disaster Reporting System</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+
+  <!-- Libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="antialiased bg-black text-gray-100 min-h-screen selection:bg-teal-400/20 selection:text-teal-200" style="font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
+  <div id="app" class="min-h-screen">
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-full bg-gray-950 border-r border-gray-900 z-50 transition-all duration-300 w-16">
+      <div class="flex flex-col h-full">
+        <!-- Brand -->
+        <div class="p-4 border-b border-gray-900">
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-400 flex-shrink-0"></div>
+            <span id="brand-text" class="text-lg font-medium tracking-tight transition-opacity duration-300 whitespace-nowrap" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif; opacity:0;">
+              DisasterSense
+            </span>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-2">
+          <div class="space-y-2">
+            <button class="nav-item w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-white/5 transition-colors text-left group active bg-white/5" data-page="live">
+              <i data-lucide="target" class="flex-shrink-0 w-5 h-5 text-teal-400"></i>
+              <span class="nav-text transition-opacity duration-300 whitespace-nowrap" style="opacity:0;">Live</span>
+            </button>
+
+            <button class="nav-item w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-white/5 transition-colors text-left group" data-page="evacuate">
+              <i data-lucide="siren" class="flex-shrink-0 w-5 h-5 text-gray-400"></i>
+              <span class="nav-text transition-opacity duration-300 whitespace-nowrap" style="opacity:0;">Evacuate</span>
+            </button>
+
+            <button class="nav-item w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-white/5 transition-colors text-left group" data-page="prepare">
+              <i data-lucide="file-text" class="flex-shrink-0 w-5 h-5 text-gray-400"></i>
+              <span class="nav-text transition-opacity duration-300 whitespace-nowrap" style="opacity:0;">Prepare</span>
+            </button>
+
+            <button class="nav-item w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-white/5 transition-colors text-left group" data-page="kit">
+              <i data-lucide="first-aid-kit" class="flex-shrink-0 w-5 h-5 text-gray-400"></i>
+              <span class="nav-text transition-opacity duration-300 whitespace-nowrap" style="opacity:0;">Emergency Kit</span>
+            </button>
+
+            <button class="nav-item w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-white/5 transition-colors text-left group" data-page="contact">
+              <i data-lucide="phone" class="flex-shrink-0 w-5 h-5 text-gray-400"></i>
+              <span class="nav-text transition-opacity duration-300 whitespace-nowrap" style="opacity:0;">Contact</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Sidebar Toggle -->
+        <div class="p-2 border-t border-gray-900">
+          <button id="sidebar-toggle" class="w-full flex items-center justify-center p-3 rounded-lg hover:bg-white/5 transition-colors">
+            <i data-lucide="chevron-right" class="text-gray-400 w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn" class="fixed top-4 left-4 z-[60] md:hidden p-2 rounded-lg bg-gray-950 border border-gray-900 hover:bg-white/5 transition-colors">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+
+    <!-- Main Content -->
+    <main id="main-content" class="transition-all duration-300" style="margin-left: 64px;">
+      <!-- Top Navbar -->
+      <nav class="sticky top-0 z-40 border-b border-gray-900 bg-black/70 backdrop-blur-md">
+        <div class="flex items-center justify-between h-16 px-6">
+          <!-- Website Name -->
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-400 flex-shrink-0"></div>
+            <h1 class="text-xl font-medium tracking-tight text-white" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">DisasterSense</h1>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Header -->
+      <header class="sticky top-16 z-30 border-b border-gray-900 bg-black/70 backdrop-blur-md">
+        <div class="flex items-center justify-between h-16 px-6">
+          <!-- Page Title -->
+          <div class="flex items-center gap-3">
+            <h1 id="page-title" class="text-xl font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Live</h1>
+          </div>
+
+          <!-- Disaster Category Dropdown (hidden on some pages for "separate page" feel) -->
+          <div class="relative" id="filter-container">
+            <button id="disaster-dropdown-btn" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-950 border border-gray-900 hover:bg-white/5 transition-colors text-sm font-medium">
+              <i data-lucide="package" class="w-4 h-4 text-teal-400"></i>
+              <span id="selected-disaster">🆘 All Disasters</span>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+            </button>
+
+            <div id="disaster-dropdown" class="absolute right-0 mt-2 w-56 rounded-xl border border-gray-900 bg-gray-950/95 backdrop-blur p-2 shadow-xl z-50 hidden">
+              <div class="px-3 py-2 text-xs uppercase tracking-wide text-gray-400 border-b border-gray-900 mb-2">
+                Disaster Categories
+              </div>
+              <div class="space-y-1">
+                <button class="disaster-option w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-sm transition-colors bg-white/10" data-disaster="all">🆘 All Disasters</button>
+                <button class="disaster-option w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-sm transition-colors" data-disaster="flood">🌊 Flood</button>
+                <button class="disaster-option w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-sm transition-colors" data-disaster="landslide">⛰️ Landslide</button>
+                <button class="disaster-option w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-sm transition-colors" data-disaster="earthquake">🌍 Earthquake</button>
+                <button class="disaster-option w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-sm transition-colors" data-disaster="wildfire">🔥 Wildfire</button>
+                <button class="disaster-option w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-sm transition-colors" data-disaster="drought">🏜️ Drought</button>
+                <button class="disaster-option w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-sm transition-colors" data-disaster="urban-fire">🏢 Urban Fire</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="p-6">
+        <!-- Live Page -->
+        <div id="live-page" class="page-content space-y-6">
+          <div>
+            <h2 class="text-2xl font-medium tracking-tight mb-2" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Real-time Disaster Monitoring</h2>
+            <p class="text-gray-400">
+              Monitor active disasters and emergency situations in real-time. Use the dropdown above to filter by disaster type.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div class="lg:col-span-3">
+              <div class="rounded-xl p-8 bg-gradient-to-br from-gray-800/70 to-gray-900/70 border border-white/10">
+                <div class="text-center min-h-[480px] flex flex-col items-center justify-center">
+                  <i data-lucide="map-pin" class="w-12 h-12 text-teal-400 mb-4"></i>
+                  <h3 class="text-xl font-medium tracking-tight mb-2" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Interactive Disaster Map</h3>
+                  <p class="text-gray-400 mb-4 max-w-md">
+                    This interactive map displays real-time disaster locations and severity levels.
+                    Map filtering is active based on selected disaster type.
+                  </p>
+                  <div id="disaster-count" class="text-sm text-teal-300 bg-teal-400/10 px-3 py-1 rounded-full border border-teal-400/20">
+                    Showing 6 disasters
+                  </div>
+
+                  <div id="map-disasters" class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-4xl">
+                    <!-- Cards injected -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enhanced Stats -->
+            <div class="space-y-4">
+              <div class="rounded-xl p-4 border border-white/10 bg-black/40">
+                <div class="flex items-center gap-2 mb-2">
+                  <i data-lucide="alert-triangle" class="w-4 h-4 text-red-400"></i>
+                  <h4 class="font-medium text-sm uppercase tracking-wide text-gray-400">Active Alerts</h4>
+                </div>
+                <div id="stats-active-alerts" class="text-2xl font-semibold text-red-400">3</div>
+                <p class="text-xs text-gray-500">High/Critical severity</p>
+              </div>
+
+              <div class="rounded-xl p-4 border border-white/10 bg-black/40">
+                <div class="flex items-center gap-2 mb-2">
+                  <i data-lucide="map-pin" class="w-4 h-4 text-orange-400"></i>
+                  <h4 class="font-medium text-sm uppercase tracking-wide text-gray-400">Areas Affected</h4>
+                </div>
+                <div id="stats-affected-areas" class="text-2xl font-semibold text-orange-400">6</div>
+                <p class="text-xs text-gray-500">Active disaster zones</p>
+              </div>
+
+              <div class="rounded-xl p-4 border border-white/10 bg-black/40">
+                <div class="flex items-center gap-2 mb-2">
+                  <i data-lucide="users" class="w-4 h-4 text-green-400"></i>
+                  <h4 class="font-medium text-sm uppercase tracking-wide text-gray-400">Response Teams</h4>
+                </div>
+                <div id="stats-response-teams" class="text-2xl font-semibold text-green-400">450+</div>
+                <p class="text-xs text-gray-500">Personnel deployed</p>
+              </div>
+
+              <div class="rounded-xl p-4 border border-white/10 bg-black/40">
+                <div class="flex items-center gap-2 mb-2">
+                  <i data-lucide="clock" class="w-4 h-4 text-blue-400"></i>
+                  <h4 class="font-medium text-sm uppercase tracking-wide text-gray-400">Avg Response Time</h4>
+                </div>
+                <div class="text-2xl font-semibold text-blue-400">12m</div>
+                <p class="text-xs text-gray-500">Emergency response</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <h3 class="text-lg font-semibold tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Recent Disaster Reports</h3>
+            <div id="recent-disasters" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <!-- Recent cards injected -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Evacuate Page -->
+        <div id="evacuate-page" class="page-content space-y-6 hidden">
+          <div>
+            <h2 class="text-2xl font-medium tracking-tight mb-2" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Evacuation Guidance</h2>
+            <p class="text-gray-400">
+              Comprehensive evacuation procedures and safety guidelines. Select a disaster type above for tailored evacuation routes and specific safety measures.
+            </p>
+          </div>
+
+          <!-- Emergency Alert Banner -->
+          <div class="rounded-xl p-4 border border-red-500/20 bg-red-500/5">
+            <div class="flex items-center gap-3">
+              <i data-lucide="siren" class="w-6 h-6 text-red-400"></i>
+              <div>
+                <h3 class="font-semibold text-red-400">Emergency Evacuation Alert</h3>
+                <p class="text-sm text-gray-300">If you receive an evacuation order, leave immediately. Do not delay or wait for confirmation.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Immediate Actions -->
+            <div class="lg:col-span-2 rounded-xl p-6 border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <i data-lucide="alert-triangle" class="w-5 h-5 text-red-400"></i>
+                </div>
+                <h3 class="font-semibold tracking-tight">Immediate Actions</h3>
+              </div>
+              <ul class="space-y-3 text-gray-300">
+                <li class="flex gap-3">
+                  <i data-lucide="radio" class="w-4 h-4 text-teal-400 mt-0.5"></i>
+                  <div>
+                    <span class="font-medium">Stay Informed:</span> Monitor local radio, TV, and emergency alert systems for updates.
+                  </div>
+                </li>
+                <li class="flex gap-3">
+                  <i data-lucide="map" class="w-4 h-4 text-teal-400 mt-0.5"></i>
+                  <div>
+                    <span class="font-medium">Know Your Routes:</span> Identify primary and secondary evacuation routes. Avoid flooded roads.
+                  </div>
+                </li>
+                <li class="flex gap-3">
+                  <i data-lucide="users" class="w-4 h-4 text-teal-400 mt-0.5"></i>
+                  <div>
+                    <span class="font-medium">Account for Everyone:</span> Include pets, elderly, and disabled family members in your plan.
+                  </div>
+                </li>
+                <li class="flex gap-3">
+                  <i data-lucide="truck" class="w-4 h-4 text-teal-400 mt-0.5"></i>
+                  <div>
+                    <span class="font-medium">Vehicle Preparation:</span> Keep gas tank full, emergency kit loaded, and important documents ready.
+                  </div>
+                </li>
+                <li class="flex gap-3">
+                  <i data-lucide="phone" class="w-4 h-4 text-teal-400 mt-0.5"></i>
+                  <div>
+                    <span class="font-medium">Communication Plan:</span> Designate an out-of-area contact person for family coordination.
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Assembly Points -->
+            <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                  <i data-lucide="map-pin" class="w-5 h-5 text-yellow-400"></i>
+                </div>
+                <h3 class="font-semibold tracking-tight">Assembly Points</h3>
+              </div>
+              <p class="text-gray-400 text-sm mb-4">
+                Pre-arranged meeting locations for family members and neighbors.
+              </p>
+              <div class="space-y-3 text-sm">
+                <div class="rounded-lg p-3 bg-white/5 border border-white/10">
+                  <div class="text-gray-400 text-xs uppercase tracking-wide">Primary Location</div>
+                  <div class="font-medium">Community Center</div>
+                  <div class="text-xs text-gray-500">123 Main St, Downtown</div>
+                </div>
+                <div class="rounded-lg p-3 bg-white/5 border border-white/10">
+                  <div class="text-gray-400 text-xs uppercase tracking-wide">Secondary Location</div>
+                  <div class="font-medium">Library Parking Lot</div>
+                  <div class="text-xs text-gray-500">456 Oak Ave, Midtown</div>
+                </div>
+                <div class="rounded-lg p-3 bg-white/5 border border-white/10">
+                  <div class="text-gray-400 text-xs uppercase tracking-wide">Out-of-Area Contact</div>
+                  <div class="font-medium">Aunt Sarah</div>
+                  <div class="text-xs text-gray-500">(555) 123-4567</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evacuation Routes -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <i data-lucide="navigation" class="w-5 h-5 text-blue-400"></i>
+                </div>
+                <h3 class="font-semibold tracking-tight">Evacuation Routes</h3>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5">
+                  <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                  <div>
+                    <div class="font-medium">Route A (Primary)</div>
+                    <div class="text-sm text-gray-400">Highway 101 North → Exit 15 → County Road 7</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5">
+                  <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div>
+                    <div class="font-medium">Route B (Secondary)</div>
+                    <div class="text-sm text-gray-400">Main Street → Oak Avenue → Highway 280</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5">
+                  <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                  <div>
+                    <div class="font-medium">Route C (Emergency)</div>
+                    <div class="text-sm text-gray-400">Side streets → Industrial Park → Highway 85</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                  <i data-lucide="shield" class="w-5 h-5 text-purple-400"></i>
+                </div>
+                <h3 class="font-semibold tracking-tight">Safety Checklist</h3>
+              </div>
+              <div class="space-y-2 text-sm">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+                  <span>Turn off gas, water, and electricity</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+                  <span>Lock all doors and windows</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+                  <span>Take emergency kit and medications</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+                  <span>Bring important documents</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+                  <span>Inform neighbors if safe to do so</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+                  <span>Follow designated evacuation routes</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prepare Page -->
+        <div id="prepare-page" class="page-content space-y-6 hidden">
+          <div>
+            <h2 class="text-2xl font-medium tracking-tight mb-2" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Disaster Preparedness Guide</h2>
+            <p class="text-gray-400">
+              Comprehensive guides to help you prepare for various disaster scenarios. Select a disaster type above to view specific guidance tailored to your area's risks.
+            </p>
+          </div>
+
+          <!-- Risk Assessment -->
+          <div class="rounded-xl p-6 border border-orange-500/20 bg-orange-500/5">
+            <div class="flex items-center gap-3 mb-4">
+              <i data-lucide="alert-circle" class="w-5 h-5 text-orange-400"></i>
+              <h3 class="font-semibold text-orange-400">Know Your Risk</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div class="flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-4 h-4 text-orange-400"></i>
+                <span>Identify hazards in your area</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="calendar" class="w-4 h-4 text-orange-400"></i>
+                <span>Understand seasonal risks</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="home" class="w-4 h-4 text-orange-400"></i>
+                <span>Assess your home's vulnerability</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+            <h3 id="prepare-title" class="text-xl font-semibold mb-4 flex items-center gap-2 text-teal-400">
+              🆘 General Emergency Preparedness
+            </h3>
+
+            <div id="prepare-content">
+              <!-- Guides injected -->
+            </div>
+          </div>
+
+          <!-- Additional Resources -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <i data-lucide="book-open" class="w-5 h-5 text-blue-400"></i>
+                </div>
+                <h3 class="font-semibold tracking-tight">Additional Resources</h3>
+              </div>
+              <div class="space-y-3 text-sm">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="external-link" class="w-4 h-4 text-blue-400"></i>
+                  <span>FEMA Emergency Preparedness Guide</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="external-link" class="w-4 h-4 text-blue-400"></i>
+                  <span>Red Cross Disaster Preparedness</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="external-link" class="w-4 h-4 text-blue-400"></i>
+                  <span>NOAA Weather Safety</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="external-link" class="w-4 h-4 text-blue-400"></i>
+                  <span>USGS Earthquake Information</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <i data-lucide="users" class="w-5 h-5 text-green-400"></i>
+                </div>
+                <h3 class="font-semibold tracking-tight">Community Preparedness</h3>
+              </div>
+              <div class="space-y-3 text-sm">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="heart" class="w-4 h-4 text-green-400"></i>
+                  <span>Join local CERT program</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4 text-green-400"></i>
+                  <span>Organize neighborhood watch</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="megaphone" class="w-4 h-4 text-green-400"></i>
+                  <span>Share preparedness information</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="calendar" class="w-4 h-4 text-green-400"></i>
+                  <span>Practice evacuation drills</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency Kit Page -->
+        <div id="kit-page" class="page-content space-y-6 hidden">
+          <div>
+            <h2 class="text-2xl font-medium tracking-tight mb-2 flex items-center gap-2" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">
+              <i data-lucide="first-aid-kit" class="w-6 h-6 text-teal-400"></i>
+              Emergency Kit
+            </h2>
+            <p class="text-gray-400">
+              Comprehensive emergency supplies for at least 72 hours. Customize quantities based on household size and specific disaster risks in your area.
+            </p>
+          </div>
+
+          <!-- Kit Overview -->
+          <div class="rounded-xl p-6 border border-teal-500/20 bg-teal-500/5">
+            <div class="flex items-center gap-3 mb-4">
+              <i data-lucide="info" class="w-5 h-5 text-teal-400"></i>
+              <h3 class="font-semibold text-teal-400">Kit Guidelines</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div class="flex items-center gap-2">
+                <i data-lucide="clock" class="w-4 h-4 text-teal-400"></i>
+                <span>72-hour minimum supply</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="users" class="w-4 h-4 text-teal-400"></i>
+                <span>Plan for each family member</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="refresh-cw" class="w-4 h-4 text-teal-400"></i>
+                <span>Check and rotate supplies quarterly</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Core Supplies -->
+            <div class="lg:col-span-2 rounded-xl p-6 border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-teal-500/10 border border-teal-500/20">
+                  <i data-lucide="first-aid-kit" class="w-5 h-5 text-teal-400"></i>
+                </div>
+                <h3 class="font-semibold tracking-tight">Core Supplies</h3>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 class="font-medium text-sm text-gray-300 mb-2">Water & Food</h4>
+                  <ul class="space-y-2 text-sm text-gray-400">
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="droplet" class="w-3 h-3 text-blue-400"></i>
+                      <span>1 gallon per person per day (3+ days)</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="utensils" class="w-3 h-3 text-blue-400"></i>
+                      <span>Non-perishable food (3+ days)</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="baby" class="w-3 h-3 text-blue-400"></i>
+                      <span>Baby formula and food</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="dog" class="w-3 h-3 text-blue-400"></i>
+                      <span>Pet food and water</span>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-medium text-sm text-gray-300 mb-2">Communication & Light</h4>
+                  <ul class="space-y-2 text-sm text-gray-400">
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="radio" class="w-3 h-3 text-yellow-400"></i>
+                      <span>Battery-powered radio</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="flashlight" class="w-3 h-3 text-yellow-400"></i>
+                      <span>Flashlight and extra batteries</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="phone" class="w-3 h-3 text-yellow-400"></i>
+                      <span>Portable phone charger</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="whistle" class="w-3 h-3 text-yellow-400"></i>
+                      <span>Whistle for signaling</span>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-medium text-sm text-gray-300 mb-2">First Aid & Health</h4>
+                  <ul class="space-y-2 text-sm text-gray-400">
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="heart" class="w-3 h-3 text-red-400"></i>
+                      <span>First aid kit</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="pill" class="w-3 h-3 text-red-400"></i>
+                      <span>Prescription medications</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="thermometer" class="w-3 h-3 text-red-400"></i>
+                      <span>Thermometer</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="mask" class="w-3 h-3 text-red-400"></i>
+                      <span>Face masks (N95)</span>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-medium text-sm text-gray-300 mb-2">Tools & Safety</h4>
+                  <ul class="space-y-2 text-sm text-gray-400">
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="wrench" class="w-3 h-3 text-orange-400"></i>
+                      <span>Multi-tool or wrench</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="scissors" class="w-3 h-3 text-orange-400"></i>
+                      <span>Scissors or knife</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="rope" class="w-3 h-3 text-orange-400"></i>
+                      <span>Duct tape and rope</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <i data-lucide="shield" class="w-3 h-3 text-orange-400"></i>
+                      <span>Work gloves</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Documents & Specialized Items -->
+            <div class="space-y-4">
+              <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                    <i data-lucide="notebook-pen" class="w-5 h-5 text-purple-400"></i>
+                  </div>
+                  <h3 class="font-semibold tracking-tight">Important Documents</h3>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-300">
+                  <li class="flex gap-2">
+                    <i data-lucide="id-card" class="w-4 h-4 text-purple-400 mt-0.5"></i>
+                    <span>IDs, passports, birth certificates</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4 text-purple-400 mt-0.5"></i>
+                    <span>Insurance policies and medical records</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <i data-lucide="home" class="w-4 h-4 text-purple-400 mt-0.5"></i>
+                    <span>Property deeds and rental agreements</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <i data-lucide="credit-card" class="w-4 h-4 text-purple-400 mt-0.5"></i>
+                    <span>Bank account information</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <i data-lucide="phone" class="w-4 h-4 text-purple-400 mt-0.5"></i>
+                    <span>Emergency contact list</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-green-400"></i>
+                  </div>
+                  <h3 class="font-semibold tracking-tight">Specialized Items</h3>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-300">
+                  <li class="flex gap-2">
+                    <i data-lucide="baby" class="w-4 h-4 text-green-400 mt-0.5"></i>
+                    <span>Diapers, bottles, pacifiers</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <i data-lucide="dog" class="w-4 h-4 text-green-400 mt-0.5"></i>
+                    <span>Pet carrier, leash, vaccination records</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <i data-lucide="wheelchair" class="w-4 h-4 text-green-400 mt-0.5"></i>
+                    <span>Medical equipment and supplies</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <i data-lucide="book" class="w-4 h-4 text-green-400 mt-0.5"></i>
+                    <span>Books, games, comfort items</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <i data-lucide="cash" class="w-4 h-4 text-green-400 mt-0.5"></i>
+                    <span>Cash in small denominations</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kit Maintenance -->
+          <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                <i data-lucide="refresh-cw" class="w-5 h-5 text-blue-400"></i>
+              </div>
+              <h3 class="font-semibold tracking-tight">Kit Maintenance Schedule</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div class="rounded-lg p-3 bg-white/5 border border-white/10">
+                <div class="font-medium text-blue-400 mb-1">Monthly</div>
+                <div class="text-gray-400">Check expiration dates, rotate food and water</div>
+              </div>
+              <div class="rounded-lg p-3 bg-white/5 border border-white/10">
+                <div class="font-medium text-blue-400 mb-1">Quarterly</div>
+                <div class="text-gray-400">Test equipment, update contact information</div>
+              </div>
+              <div class="rounded-lg p-3 bg-white/5 border border-white/10">
+                <div class="font-medium text-blue-400 mb-1">Annually</div>
+                <div class="text-gray-400">Complete kit review, replace expired items</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contact-page" class="page-content space-y-6 hidden">
+          <div>
+            <h2 class="text-2xl font-medium tracking-tight mb-2" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif;">Emergency Contacts</h2>
+            <p class="text-gray-400">
+              Comprehensive emergency contact information organized by disaster type and service category. Select a specific disaster above for targeted contact information.
+            </p>
+          </div>
+
+          <!-- Quick Access Emergency Numbers -->
+          <div class="rounded-xl p-6 border border-red-500/20 bg-red-500/5">
+            <div class="flex items-center gap-3 mb-4">
+              <i data-lucide="phone" class="w-6 h-6 text-red-400"></i>
+              <h3 class="font-semibold text-red-400">Critical Emergency Numbers</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="text-center p-4 rounded-lg bg-white/5 border border-white/10">
+                <div class="text-2xl font-bold text-red-400 mb-1">911</div>
+                <div class="text-sm text-gray-400">Police, Fire, Medical</div>
+              </div>
+              <div class="text-center p-4 rounded-lg bg-white/5 border border-white/10">
+                <div class="text-lg font-bold text-orange-400 mb-1">1-800-621-3362</div>
+                <div class="text-sm text-gray-400">FEMA Disaster Assistance</div>
+              </div>
+              <div class="text-center p-4 rounded-lg bg-white/5 border border-white/10">
+                <div class="text-lg font-bold text-blue-400 mb-1">1-800-733-2767</div>
+                <div class="text-sm text-gray-400">Red Cross Emergency</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="contact-content" class="bg-teal-500/5 rounded-xl p-6 border border-teal-500/20 mb-6">
+            <h3 id="contact-title" class="text-xl font-semibold mb-4 text-teal-400">
+              🆘 General Emergency Contacts
+            </h3>
+
+            <div id="contact-sections" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Contact sections injected -->
+            </div>
+          </div>
+
+          <!-- Additional Resources -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <i data-lucide="smartphone" class="w-5 h-5 text-blue-400"></i>
+                </div>
+                <h3 class="font-semibold tracking-tight">Mobile Apps</h3>
+              </div>
+              <div class="space-y-3 text-sm">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="download" class="w-4 h-4 text-blue-400"></i>
+                  <span>FEMA Mobile App</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="download" class="w-4 h-4 text-blue-400"></i>
+                  <span>Red Cross Emergency App</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="download" class="w-4 h-4 text-blue-400"></i>
+                  <span>NOAA Weather App</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="download" class="w-4 h-4 text-blue-400"></i>
+                  <span>USGS Earthquake App</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <i data-lucide="globe" class="w-5 h-5 text-green-400"></i>
+                </div>
+                <h3 class="font-semibold tracking-tight">Online Resources</h3>
+              </div>
+              <div class="space-y-3 text-sm">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="external-link" class="w-4 h-4 text-green-400"></i>
+                  <span>Ready.gov - Emergency Preparedness</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="external-link" class="w-4 h-4 text-green-400"></i>
+                  <span>Weather.gov - NOAA Weather</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="external-link" class="w-4 h-4 text-green-400"></i>
+                  <span>Earthquake.usgs.gov - USGS</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="external-link" class="w-4 h-4 text-green-400"></i>
+                  <span>InciWeb - Wildfire Information</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Hidden safelist for dynamic classes -->
+  <div class="hidden">
+    bg-yellow-500/10 text-yellow-400 bg-orange-500/10 text-orange-400 bg-red-500/10 text-red-400 bg-purple-500/10 text-purple-400
+    text-teal-400 bg-teal-500/10 bg-teal-500/5 border-teal-500/20
+    text-blue-400 bg-blue-500/10 bg-blue-500/5 border-blue-500/20
+    text-amber-400 bg-amber-500/10 bg-amber-500/5 border-amber-500/20
+    text-orange-400 bg-orange-500/5 border-orange-500/20
+    text-red-400 bg-red-500/5 border-red-500/20
+    text-yellow-400 bg-yellow-500/5 border-yellow-500/20
+    text-purple-400 bg-purple-500/5 border-purple-500/20
+    text-green-400
+  </div>
+
+  <script>
+    // Data
+    const mockDisasters = [
+      {
+        id: 1,
+        type: "wildfire",
+        title: "Wildfire in Northern California",
+        description: "Large wildfire spreading rapidly through residential areas. Evacuation orders issued for Zone 7. Fire has consumed over 15,000 acres and is threatening 2,000 homes.",
+        severity: "high",
+        latitude: 37.7749,
+        longitude: -122.4194,
+        location: "San Francisco Bay Area",
+        reportedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+        isActive: "true",
+        metadata: { 
+          evacuationZones: ["Zone 7", "Zone 8"], 
+          estimatedContainment: "48 hours",
+          acresBurned: 15000,
+          homesThreatened: 2000,
+          firefightersDeployed: 450,
+          windSpeed: "25 mph",
+          humidity: "15%"
+        }
+      },
+      {
+        id: 2,
+        type: "flood",
+        title: "Flash Flood Warning",
+        description: "Heavy rainfall causing flash floods in urban areas. Road closures and traffic diversions in effect. Water levels rising rapidly in low-lying areas.",
+        severity: "medium",
+        latitude: 29.7604,
+        longitude: -95.3698,
+        location: "Houston, Texas",
+        reportedAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+        isActive: "true",
+        metadata: { 
+          roadClosures: 15, 
+          affectedDistricts: ["Downtown", "Heights", "Montrose"],
+          rainfallAmount: "8.5 inches",
+          waterLevel: "4.2 feet above normal",
+          sheltersOpened: 3,
+          rescuesPerformed: 12
+        }
+      },
+      {
+        id: 3,
+        type: "earthquake",
+        title: "Minor Earthquake Detected",
+        description: "3.2 magnitude earthquake recorded. No damage reported. Monitoring ongoing for potential aftershocks.",
+        severity: "low",
+        latitude: 34.0522,
+        longitude: -118.2437,
+        location: "Los Angeles, California",
+        reportedAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+        isActive: "true",
+        metadata: { 
+          magnitude: 3.2, 
+          depth: "10 km", 
+          epicenter: "Downtown LA",
+          aftershocks: 2,
+          feltBy: "5000 people",
+          damageAssessment: "None reported"
+        }
+      },
+      {
+        id: 4,
+        type: "landslide",
+        title: "Mudslide Blocks Highway 101",
+        description: "Heavy rains triggered mudslide blocking major highway. Emergency crews working to clear debris and restore traffic flow.",
+        severity: "medium",
+        latitude: 37.4419,
+        longitude: -122.1430,
+        location: "Palo Alto, California",
+        reportedAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+        isActive: "true",
+        metadata: {
+          highwayAffected: "Highway 101",
+          debrisVolume: "500 cubic yards",
+          estimatedClearance: "6 hours",
+          alternativeRoutes: ["Highway 280", "El Camino Real"],
+          equipmentDeployed: "3 bulldozers, 2 excavators"
+        }
+      },
+      {
+        id: 5,
+        type: "drought",
+        title: "Severe Drought Conditions",
+        description: "Extended dry period affecting agricultural regions. Water restrictions implemented and crop losses mounting.",
+        severity: "high",
+        latitude: 36.7783,
+        longitude: -119.4179,
+        location: "Central Valley, California",
+        reportedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+        isActive: "true",
+        metadata: {
+          droughtLevel: "Extreme (D4)",
+          daysWithoutRain: 45,
+          reservoirLevel: "23% capacity",
+          cropLosses: "$2.3 million",
+          waterRestrictions: "Level 3",
+          affectedCounties: ["Fresno", "Kern", "Tulare"]
+        }
+      },
+      {
+        id: 6,
+        type: "urban-fire",
+        title: "Apartment Complex Fire",
+        description: "Multi-alarm fire at residential complex. All residents evacuated safely. Fire under investigation.",
+        severity: "medium",
+        latitude: 40.7128,
+        longitude: -74.0060,
+        location: "Manhattan, New York",
+        reportedAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        isActive: "true",
+        metadata: {
+          alarms: "3-alarm fire",
+          unitsAffected: 12,
+          residentsEvacuated: 48,
+          injuries: 0,
+          fatalities: 0,
+          estimatedDamage: "$1.2 million",
+          cause: "Under investigation"
+        }
+      }
+    ];
+
+    const mockContacts = [
+      { id: 1, disasterType: "all", category: "immediate", name: "Emergency Services", phone: "911", description: "Fire, Police, Medical Emergency" },
+      { id: 2, disasterType: "all", category: "support", name: "FEMA", phone: "1-800-621-3362", description: "Federal Emergency Management Agency" },
+      { id: 3, disasterType: "all", category: "support", name: "Red Cross", phone: "1-800-733-2767", description: "Disaster Relief Services" },
+      { id: 4, disasterType: "all", category: "support", name: "National Weather Service", phone: "1-800-992-7433", description: "Weather alerts and forecasts" },
+      { id: 5, disasterType: "all", category: "recovery", name: "Disaster Recovery Center", phone: "1-800-462-9029", description: "Local recovery assistance" },
+      { id: 6, disasterType: "flood", category: "immediate", name: "Coast Guard Rescue", phone: "1-800-USCG-911", description: "Water rescue operations" },
+      { id: 7, disasterType: "flood", category: "recovery", name: "Flood Insurance Claims", phone: "1-800-638-6620", description: "National Flood Insurance Program" },
+      { id: 8, disasterType: "flood", category: "support", name: "Water Damage Restoration", phone: "1-800-222-1212", description: "Emergency water removal" },
+      { id: 9, disasterType: "earthquake", category: "immediate", name: "USGS Earthquake Info", phone: "1-888-275-8747", description: "Real-time earthquake information" },
+      { id: 10, disasterType: "earthquake", category: "support", name: "Structural Engineers", phone: "1-800-SEAOC-01", description: "Building safety assessment" },
+      { id: 11, disasterType: "earthquake", category: "recovery", name: "Earthquake Insurance", phone: "1-800-252-3439", description: "California Earthquake Authority" },
+      { id: 12, disasterType: "wildfire", category: "immediate", name: "Fire Department", phone: "911", description: "Wildfire emergency response" },
+      { id: 13, disasterType: "wildfire", category: "support", name: "Forest Service", phone: "1-800-832-1355", description: "Wildfire information and updates" },
+      { id: 14, disasterType: "wildfire", category: "recovery", name: "Wildfire Recovery", phone: "1-800-462-9029", description: "Post-fire cleanup and restoration" },
+      { id: 15, disasterType: "landslide", category: "immediate", name: "Geological Survey", phone: "1-800-654-4966", description: "Landslide monitoring and alerts" },
+      { id: 16, disasterType: "landslide", category: "support", name: "Emergency Management", phone: "1-800-621-3362", description: "Landslide response coordination" },
+      { id: 17, disasterType: "drought", category: "support", name: "Water Conservation", phone: "1-800-555-0123", description: "Water usage restrictions and tips" },
+      { id: 18, disasterType: "drought", category: "recovery", name: "Agricultural Services", phone: "1-800-234-3362", description: "Crop loss assistance" },
+      { id: 19, disasterType: "urban-fire", category: "immediate", name: "Fire Department", phone: "911", description: "Urban fire emergency response" },
+      { id: 20, disasterType: "urban-fire", category: "support", name: "Fire Investigation", phone: "1-800-555-0199", description: "Fire cause determination" }
+    ];
+
+    const mockGuides = [
+      { id: 1, disasterType: "all", phase: "before", title: "Emergency Kit Essentials", content: "Water (1 gallon per person per day for at least 3 days)\nNon-perishable food (3-day supply per person)\nBattery-powered or hand crank radio\nFlashlight and extra batteries\nFirst aid kit and medications\nWhistle for signaling help", priority: 1 },
+      { id: 2, disasterType: "all", phase: "before", title: "Family Emergency Plan", content: "Identify meeting points (local and out-of-area)\nDesignate an out-of-state contact person\nPractice evacuation routes regularly\nKeep important documents in waterproof container", priority: 2 },
+      { id: 3, disasterType: "flood", phase: "before", title: "Before a Flood", content: "Know your area's flood risk and evacuation routes\nPurchase flood insurance (takes 30 days to take effect)\nKeep sandbags, plastic sheeting, and lumber for emergency waterproofing\nInstall sump pumps and backup power sources", priority: 1 },
+      { id: 4, disasterType: "flood", phase: "during", title: "During a Flood", content: "Never drive through flooded roads - \"Turn Around, Don't Drown\"\nMove to higher ground immediately\nAvoid walking in moving water deeper than 6 inches\nStay away from downed power lines", priority: 1 },
+      { id: 5, disasterType: "earthquake", phase: "before", title: "Before an Earthquake", content: "Secure heavy furniture and appliances to walls\nPractice \"Drop, Cover, and Hold On\" drills\nIdentify safe spots in each room (under sturdy desks/tables)\nKeep shoes and flashlight by your bedside", priority: 1 },
+      { id: 6, disasterType: "earthquake", phase: "during", title: "During an Earthquake", content: "DROP to hands and knees immediately\nCOVER your head and neck under a sturdy table\nHOLD ON to your shelter and protect yourself\nIf outdoors, stay away from buildings, trees, and power lines", priority: 1 }
+    ];
+
+    const disasterCategories = [
+      { id: "all", label: "All Disasters", emoji: "🆘" },
+      { id: "flood", label: "Flood", emoji: "🌊" },
+      { id: "landslide", label: "Landslide", emoji: "⛰️" },
+      { id: "earthquake", label: "Earthquake", emoji: "🌍" },
+      { id: "wildfire", label: "Wildfire", emoji: "🔥" },
+      { id: "drought", label: "Drought", emoji: "🏜️" },
+      { id: "urban-fire", label: "Urban Fire", emoji: "🏢" }
+    ];
+
+    // App State
+    let currentPage = 'live';
+    let selectedDisaster = 'all';
+    let isSidebarExpanded = false;
+    let isMobile = window.innerWidth < 768;
+
+    // Utils
+    function getSeverityColor(severity) {
+      const colors = { low: 'yellow', medium: 'orange', high: 'red', critical: 'purple' };
+      return colors[severity] || 'yellow';
+    }
+    function getDisasterColor(type) {
+      const colors = { all: 'teal', flood: 'blue', landslide: 'yellow', earthquake: 'orange', wildfire: 'red', drought: 'amber', 'urban-fire': 'orange' };
+      return colors[type] || 'teal';
+    }
+    function getDisasterEmoji(type) {
+      const category = disasterCategories.find(cat => cat.id === type);
+      return category ? category.emoji : '🆘';
+    }
+    function formatTime(date) {
+      return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Sidebar
+    function updateSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('main-content');
+      const brandText = document.getElementById('brand-text');
+      const navTexts = document.querySelectorAll('.nav-text');
+      const toggleIcon = document.querySelector('#sidebar-toggle i');
+      const overlay = document.getElementById('mobile-overlay');
+
+      if (isMobile) {
+        sidebar.className = isSidebarExpanded
+          ? 'fixed left-0 top-0 h-full bg-gray-950 border-r border-gray-900 z-50 transition-all duration-300 w-full translate-x-0'
+          : 'fixed left-0 top-0 h-full bg-gray-950 border-r border-gray-900 z-50 transition-all duration-300 w-full -translate-x-full';
+        mainContent.style.marginLeft = '0';
+        if (isSidebarExpanded) {
+          overlay.classList.remove('opacity-0', 'pointer-events-none');
+          overlay.classList.add('opacity-100');
+        } else {
+          overlay.classList.add('opacity-0', 'pointer-events-none');
+          overlay.classList.remove('opacity-100');
+        }
+      } else {
+        sidebar.className = isSidebarExpanded
+          ? 'fixed left-0 top-0 h-full bg-gray-950 border-r border-gray-900 z-50 transition-all duration-300 w-64'
+          : 'fixed left-0 top-0 h-full bg-gray-950 border-r border-gray-900 z-50 transition-all duration-300 w-16';
+        mainContent.style.marginLeft = isSidebarExpanded ? '256px' : '64px';
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        overlay.classList.remove('opacity-100');
+      }
+
+      brandText.style.opacity = isSidebarExpanded ? '1' : '0';
+      navTexts.forEach(t => t.style.opacity = isSidebarExpanded ? '1' : '0');
+
+      toggleIcon.setAttribute('data-lucide', isSidebarExpanded ? 'chevron-left' : 'chevron-right');
+      lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    }
+
+    // Navigation
+    function updateNavigation() {
+      const navItems = document.querySelectorAll('.nav-item');
+      const pages = document.querySelectorAll('.page-content');
+      const pageTitle = document.getElementById('page-title');
+
+      navItems.forEach(item => {
+        const page = item.getAttribute('data-page');
+        const icon = item.querySelector('i');
+        if (page === currentPage) {
+          item.classList.add('active', 'bg-white/5');
+          icon.classList.remove('text-gray-400');
+          icon.classList.add('text-teal-400');
+        } else {
+          item.classList.remove('active', 'bg-white/5');
+          icon.classList.add('text-gray-400');
+          icon.classList.remove('text-teal-400');
+        }
+      });
+
+      pages.forEach(page => {
+        page.classList.toggle('hidden', !page.id.includes(currentPage));
+      });
+
+      const titles = {
+        'live': 'Live',
+        'evacuate': 'Evacuate',
+        'prepare': 'Prepare',
+        'kit': 'Emergency Kit',
+        'contact': 'Contact'
+      };
+      pageTitle.textContent = titles[currentPage] || 'DisasterSense';
+
+      // Show filter only on relevant pages to reinforce "separate page" feel
+      const filterContainer = document.getElementById('filter-container');
+      const showFilter = ['live', 'prepare', 'contact'].includes(currentPage);
+      if (filterContainer) filterContainer.classList.toggle('hidden', !showFilter);
+    }
+
+    // Filter
+    function updateDisasterFilter() {
+      const selectedCategory = disasterCategories.find(cat => cat.id === selectedDisaster);
+      const selectedText = document.getElementById('selected-disaster');
+      selectedText.textContent = `${selectedCategory.emoji} ${selectedCategory.label}`;
+
+      document.querySelectorAll('.disaster-option').forEach(option => {
+        const disaster = option.getAttribute('data-disaster');
+        if (disaster === selectedDisaster) {
+          option.classList.add('bg-white/10');
+        } else {
+          option.classList.remove('bg-white/10');
+        }
+      });
+
+      updatePageContent();
+    }
+
+    // Pages
+    function updatePageContent() {
+      if (currentPage === 'live') {
+        updateLivePage();
+      } else if (currentPage === 'prepare') {
+        updatePreparePage();
+      } else if (currentPage === 'contact') {
+        updateContactPage();
+      } else if (currentPage === 'kit') {
+        updateKitPage();
+      }
+      lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    }
+
+    function updateLivePage() {
+      const filtered = selectedDisaster === 'all' ? mockDisasters : mockDisasters.filter(d => d.type === selectedDisaster);
+      document.getElementById('disaster-count').textContent = `Showing ${filtered.length} disasters${selectedDisaster !== 'all' ? ` (${selectedDisaster})` : ''}`;
+      const activeAlerts = filtered.filter(d => d.severity === 'high' || d.severity === 'critical').length;
+      const affectedAreas = filtered.length;
+      document.getElementById('stats-active-alerts').textContent = activeAlerts;
+      document.getElementById('stats-affected-areas').textContent = affectedAreas;
+      
+      // Calculate total response teams from metadata
+      const totalResponseTeams = filtered.reduce((sum, disaster) => {
+        return sum + (disaster.metadata.firefightersDeployed || 0) + (disaster.metadata.rescuesPerformed || 0);
+      }, 0);
+      document.getElementById('stats-response-teams').textContent = totalResponseTeams > 0 ? `${totalResponseTeams}+` : '450+';
+
+      const mapContainer = document.getElementById('map-disasters');
+      mapContainer.innerHTML = filtered.map(d => `
+        <div class="rounded-lg p-4 border border-white/10 bg-black/40 hover:bg-black/50 transition-colors">
+          <div class="flex items-start justify-between mb-2">
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-${getSeverityColor(d.severity)}-500/10 text-${getSeverityColor(d.severity)}-400">${d.severity.charAt(0).toUpperCase() + d.severity.slice(1)} Severity</span>
+            <span class="text-xs text-gray-400">${formatTime(d.reportedAt)}</span>
+          </div>
+          <h4 class="font-medium mb-1">${d.title}</h4>
+          <p class="text-sm text-gray-400 mb-2">${d.description}</p>
+          <div class="flex items-center gap-2 text-xs text-gray-400">
+            <i data-lucide="map-pin" class="w-3 h-3"></i>
+            <span>${d.location}</span>
+          </div>
+        </div>
+      `).join('');
+
+      const recentContainer = document.getElementById('recent-disasters');
+      recentContainer.innerHTML = filtered.map(d => `
+        <div class="rounded-xl p-4 border border-white/10 bg-gradient-to-b from-gray-900/60 to-black hover:from-gray-900/70 transition-colors">
+          <div class="flex items-start justify-between mb-3">
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-${getSeverityColor(d.severity)}-500/10 text-${getSeverityColor(d.severity)}-400">${d.severity.charAt(0).toUpperCase() + d.severity.slice(1)} Severity</span>
+            <span class="text-xs text-gray-400">${formatTime(d.reportedAt)}</span>
+          </div>
+          <h4 class="font-medium mb-2">${d.title}</h4>
+          <p class="text-sm text-gray-400 mb-3">${d.description}</p>
+          <div class="flex items-center gap-2 text-xs text-gray-400">
+            <i data-lucide="map-pin" class="w-3 h-3"></i>
+            <span>${d.location}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updatePreparePage() {
+      const relevant = mockGuides.filter(g => g.disasterType === selectedDisaster || g.disasterType === "all");
+      const before = relevant.filter(g => g.phase === "before");
+      const during = relevant.filter(g => g.phase === "during");
+      const after = relevant.filter(g => g.phase === "after");
+      const color = getDisasterColor(selectedDisaster);
+      const emoji = getDisasterEmoji(selectedDisaster);
+      const title = selectedDisaster === "all" ? "General Emergency Preparedness" : `${selectedDisaster.charAt(0).toUpperCase() + selectedDisaster.slice(1)} Preparedness`;
+
+      const titleEl = document.getElementById('prepare-title');
+      titleEl.innerHTML = `${emoji} ${title}`;
+      titleEl.className = `text-xl font-semibold mb-4 flex items-center gap-2 text-${color}-400`;
+
+      function section(items, label) {
+        if (!items.length) return '';
+        return `
+          <div class="mb-8">
+            <h4 class="text-lg font-medium mb-4 text-${color}-400">${label}</h4>
+            <div class="space-y-4">
+              ${items.map(g => `
+                <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+                  <h5 class="font-semibold mb-3">${g.title}</h5>
+                  <ul class="space-y-2">
+                    ${g.content.split('\\n').map(item => `
+                      <li class="flex items-start gap-2">
+                        <span class="text-${color}-400 mt-1">•</span>
+                        <span class="text-gray-300">${item}</span>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      const content = `
+        ${section(before, "🏠 Before Disaster Strikes")}
+        ${section(during, "⚡ During the Emergency")}
+        ${section(after, "🔄 After the Emergency")}
+        ${relevant.length === 0 ? `
+          <div class="text-center py-8">
+            <p class="text-gray-400">No specific guides available. Please refer to general preparedness.</p>
+          </div>` : ''
+        }
+      `;
+      document.getElementById('prepare-content').innerHTML = content;
+    }
+
+    function updateKitPage() {
+      // Prefer the "Emergency Kit Essentials" guide
+      const kitGuide = mockGuides.find(g => g.title.toLowerCase().includes('emergency kit'));
+      const items = kitGuide ? kitGuide.content.split('\n') : [
+        'Water (1 gallon per person per day for at least 3 days)',
+        'Non-perishable food (3-day supply per person)',
+        'Flashlight and extra batteries',
+        'Battery-powered or hand crank radio',
+        'First aid kit and medications',
+        'Whistle for signaling help'
+      ];
+      const list = document.getElementById('kit-list');
+      list.innerHTML = items.map(it => `
+        <li class="flex gap-3">
+          <i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mt-0.5"></i>
+          ${it}
+        </li>
+      `).join('');
+    }
+
+    function updateContactPage() {
+      const relevant = mockContacts.filter(c => c.disasterType === selectedDisaster || c.disasterType === "all");
+      const immediate = relevant.filter(c => c.category === "immediate");
+      const support = relevant.filter(c => c.category === "support");
+      const recovery = relevant.filter(c => c.category === "recovery");
+      const color = getDisasterColor(selectedDisaster);
+      const emoji = getDisasterEmoji(selectedDisaster);
+
+      const title = selectedDisaster === "all" ? "General Emergency Contacts" : `${selectedDisaster.charAt(0).toUpperCase() + selectedDisaster.slice(1)} Emergency Contacts`;
+      const titleEl = document.getElementById('contact-title');
+      titleEl.innerHTML = `${emoji} ${title}`;
+      titleEl.className = `text-xl font-semibold mb-4 text-${color}-400`;
+
+      const wrap = document.getElementById('contact-content');
+      wrap.className = `bg-${color}-500/5 rounded-xl p-6 border border-${color}-500/20 mb-6`;
+
+      function block(items, label, icon) {
+        if (!items.length) return '';
+        return `
+          <div class="rounded-xl p-6 border border-white/10 bg-black/40">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="p-2 rounded-lg bg-${color}-500/10">
+                <i data-lucide="${icon}" class="w-5 h-5 text-${color}-400"></i>
+              </div>
+              <h3 class="font-semibold">${label}</h3>
+            </div>
+            <div class="space-y-3">
+              ${items.map(c => `
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="font-medium">${c.name}</div>
+                    ${c.description ? `<div class="text-xs text-gray-400">${c.description}</div>` : ''}
+                  </div>
+                  <div class="text-lg font-semibold ${c.name.toLowerCase().includes('emergency') ? 'text-red-400' : 'text-gray-200'}">${c.phone}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      const html = `
+        ${block(immediate, "Emergency Services", "phone")}
+        ${block(support, "Support Services", "shield")}
+        ${block(recovery, "Recovery Services", "check-circle")}
+        ${relevant.length === 0 ? `
+          <div class="text-center py-8">
+            <p class="text-gray-400">No specific contacts available. Please refer to general contacts.</p>
+          </div>` : ''
+        }
+      `;
+      document.getElementById('contact-sections').innerHTML = html;
+    }
+
+    // Events
+    function setupEventListeners() {
+      // Sidebar toggle (desktop)
+      document.getElementById('sidebar-toggle').addEventListener('click', () => {
+        isSidebarExpanded = !isSidebarExpanded;
+        updateSidebar();
+      });
+
+      // Hover to expand/collapse sidebar (desktop only)
+      const sidebarEl = document.getElementById('sidebar');
+      sidebarEl.addEventListener('mouseenter', () => {
+        if (!isMobile) {
+          isSidebarExpanded = true;
+          updateSidebar();
+        }
+      });
+      sidebarEl.addEventListener('mouseleave', () => {
+        if (!isMobile) {
+          isSidebarExpanded = false;
+          updateSidebar();
+        }
+      });
+
+      // Mobile menu button
+      document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+        isSidebarExpanded = !isSidebarExpanded;
+        updateSidebar();
+      });
+
+      // Mobile overlay
+      document.getElementById('mobile-overlay').addEventListener('click', () => {
+        isSidebarExpanded = false;
+        updateSidebar();
+      });
+
+      // Navigation items
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          currentPage = item.getAttribute('data-page');
+          updateNavigation();
+          updatePageContent();
+
+          if (isMobile) {
+            isSidebarExpanded = false;
+            updateSidebar();
+          }
+        });
+      });
+
+      // Disaster dropdown
+      const dropdownBtn = document.getElementById('disaster-dropdown-btn');
+      const dropdown = document.getElementById('disaster-dropdown');
+      dropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('hidden');
+      });
+      document.querySelectorAll('.disaster-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          selectedDisaster = opt.getAttribute('data-disaster');
+          updateDisasterFilter();
+          dropdown.classList.add('hidden');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target) && !dropdownBtn.contains(e.target)) {
+          dropdown.classList.add('hidden');
+        }
+      });
+
+      // Resize
+      window.addEventListener('resize', () => {
+        const wasMobile = isMobile;
+        isMobile = window.innerWidth < 768;
+        if (wasMobile !== isMobile) {
+          if (!isMobile) isSidebarExpanded = false;
+          updateSidebar();
+        }
+      });
+    }
+
+    // Init
+    function initApp() {
+      setupEventListeners();
+      updateSidebar();
+      updateNavigation();
+      updateDisasterFilter();
+      updatePageContent();
+      lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+
+</body></html>

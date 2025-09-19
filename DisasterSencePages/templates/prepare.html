@@ -1,0 +1,1072 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <title>DisasterSense — Disaster Preparedness (India)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="antialiased bg-black text-gray-100 selection:bg-teal-400/20 selection:text-teal-200" style="font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'">
+  <!-- Scroll Progress -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-teal-400 to-cyan-400 w-0 z-[60]" style="width:0%"></div>
+
+  <!-- Header -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b bg-black/70 border-white/10 transition-transform duration-300 will-change-transform" style="transform: translateY(0)">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16">
+      <div class="h-full flex items-center justify-between">
+        <!-- Brand -->
+        <a href="#overview" class="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md">
+          <div class="h-6 w-6 rounded-md bg-gradient-to-br from-teal-500 to-cyan-400"></div>
+          <span class="text-lg font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif">DisasterSense</span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-8">
+          <a href="{{ url_for('index') }}" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300">
+            <span>Home</span>
+          </a>
+          <a href="#overview" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300 text-white" aria-current="page" style="background-size:100% 2px">Overview</a>
+          <a href="#learn" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size:0% 2px">Learn</a>
+          <a href="{{ url_for('kit') }}" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size:0% 2px">Kit</a>
+          <a href="#scenarios" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size:0% 2px">Scenarios</a>
+          <a href="#quiz" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size:0% 2px">Quiz</a>
+          <a href="#resources" data-nav-link="" class="group text-sm font-medium text-gray-300 hover:text-gray-100 transition-colors bg-gradient-to-r from-teal-400 to-teal-400 bg-left-bottom bg-no-repeat bg-[length:0%_2px] group-hover:bg-[length:100%_2px] transition-[background-size] duration-300" aria-current="false" style="background-size:0% 2px">Resources</a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+          <button id="nav-toggle" aria-expanded="false" aria-controls="mobile-panel" class="md:hidden p-2 rounded-md transition-colors hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="menu" class="w-5 h-5" aria-hidden="true"></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5 hidden" aria-hidden="true"></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Panel -->
+    <div id="mobile-panel" class="fixed inset-0 z-40 pointer-events-none opacity-0 transition-opacity duration-300">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close-overlay=""></div>
+      <div class="absolute inset-x-0 top-0 bg-gray-950/95 border-b border-white/10 px-4 sm:px-6 pt-20 pb-8 translate-y-[-8px] opacity-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid gap-4">
+            <a href="{{ url_for('index') }}" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">Home</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide lucide-arrow-up-right w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+            </a>
+            <a href="#overview" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">Overview</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide lucide-arrow-up-right w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+            </a>
+            <a href="#learn" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">Learn</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide lucide-arrow-up-right w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+            </a>
+            <a href="{{ url_for('kit') }}" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">Kit</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide lucide-arrow-up-right w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+            </a>
+            <a href="#scenarios" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">Scenarios</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide lucide-arrow-up-right w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+            </a>
+            <a href="#quiz" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">Quiz</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide lucide-arrow-up-right w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+            </a>
+            <a href="#resources" data-mobile-link="" class="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-900 border border-transparent hover:border-gray-800 transition-colors">
+              <span class="text-base font-medium text-gray-100">Resources</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="lucide lucide-arrow-up-right w-4 h-4 text-gray-400"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero / Overview -->
+  <section id="overview" class="pt-24 sm:pt-28 pb-16 bg-cover bg-center" style="background-image: url('{{ url_for('static', filename='prepare_hero.jpg') }}');">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black pointer-events-none"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <p class="text-sm font-medium uppercase tracking-wider text-teal-300/90">Prepare for disasters. Stay safe.</p>
+        <h1 class="mt-4 text-4xl sm:text-5xl lg:text-6xl leading-tight font-medium tracking-tight" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif">
+          DisasterSense — Disaster Preparedness (India)
+        </h1>
+        <p class="mt-6 text-lg text-gray-300">
+          Learn how to prepare for earthquakes, floods, fires, cyclones, landslides, and heatwaves. Explore prevention tips, drills, laws, interactive kits, scenarios, and quizzes.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+          <a href="#learn" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+            Start preparing
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </a>
+          <a href="#resources" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]">
+            View resources
+            <i data-lucide="book-open" class="w-5 h-5"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Learn -->
+  <section id="learn" class="py-14 bg-gray-950 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-6">
+        <div>
+          <p class="text-sm font-medium uppercase tracking-wider text-teal-300/90">Choose a topic</p>
+          <h2 class="mt-3 text-3xl lg:text-4xl tracking-tight font-medium text-white" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif">Select a disaster to learn more</h2>
+        </div>
+      </div>
+
+      <div class="mt-8 grid gap-4 sm:max-w-lg">
+        <label for="disaster-select" class="block text-sm text-gray-300">Disaster type</label>
+        <div class="relative">
+          <select id="disaster-select" class="w-full appearance-none px-4 pr-10 py-3 rounded-lg bg-black/60 border border-white/10 text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <option value="">-- Select --</option>
+            <option value="earthquake">Earthquake</option>
+            <option value="flood">Flood</option>
+            <option value="fire">Fire</option>
+            <option value="cyclone">Cyclone</option>
+            <option value="landslide">Landslide</option>
+            <option value="heatwave">Heatwave</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+        </div>
+      </div>
+
+      <!-- Dynamic Content -->
+      <div id="dynamic-content" class="mt-10">
+        <div class="rounded-2xl border border-white/10 bg-black/40 p-6 sm:p-8">
+          <p class="text-gray-300">Please select a disaster from the dropdown above to view detailed preparedness information, drills, laws, videos, interactive kit builder, scenarios, and quizzes.</p>
+          <div class="mt-6 text-sm text-gray-500">Tip: After selecting, use the top navigation to jump to Kit, Scenarios, or Quiz.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resources / Footer -->
+  <footer id="resources" class="border-t border-white/10 bg-gray-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <a href="#overview" class="inline-flex items-center gap-2">
+            <div class="h-6 w-6 rounded-md bg-gradient-to-br from-teal-500 to-cyan-400"></div>
+            <span class="text-lg font-medium" style="font-family: 'Plus Jakarta Sans', Inter, sans-serif">DisasterSense</span>
+          </a>
+          <p class="mt-3 text-sm text-gray-400 max-w-md">Empowering communities through preparedness. For more resources, explore NDMA's "Suraksha Chakra" and "Exercise AIKYA" programs.</p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-300">Share</p>
+          <div class="mt-3 flex items-center gap-3">
+            <button id="share-page" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]">
+              Share this page
+              <i data-lucide="share-2" class="w-4 h-4"></i>
+            </button>
+            <a href="#learn" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-teal-200">
+              Jump to Learn
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+        <p>© <span id="year">2025</span> DisasterSense. All rights reserved.</p>
+        <div class="flex items-center gap-3">
+          <a href="#overview" class="hover:text-teal-300">Overview</a>
+          <span class="text-gray-700">•</span>
+          <a href="#learn" class="hover:text-teal-300">Learn</a>
+          <span class="text-gray-700">•</span>
+          <a href="#quiz" class="hover:text-teal-300">Quiz</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" role="status" aria-live="polite" class="pointer-events-none fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-black shadow-lg opacity-0 translate-y-2 transition-all"></div>
+
+  <!-- Scripts -->
+  <script>
+    // Icons
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      }
+    });
+
+    // Smooth anchor scroll
+    function smoothScrollTo(target) {
+      const el = document.querySelector(target);
+      if (!el) return;
+      const headerOffset = document.getElementById('site-header').offsetHeight;
+      const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerOffset + 1;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+    }
+
+    // Scroll progress
+    const progressEl = document.getElementById('scroll-progress');
+    const onScrollProgress = () => {
+      const h = document.documentElement;
+      const scrollTop = h.scrollTop || document.body.scrollTop;
+      const scrollHeight = h.scrollHeight - h.clientHeight;
+      const pct = Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100));
+      progressEl.style.width = pct + '%';
+    };
+    document.addEventListener('scroll', onScrollProgress, { passive: true });
+
+    // Header show/hide on scroll
+    const header = document.getElementById('site-header');
+    let lastY = window.pageYOffset;
+    let ticking = false;
+    function handleHeader() {
+      const y = window.pageYOffset;
+      const down = y > lastY && y > 80;
+      header.style.transform = down ? 'translateY(-100%)' : 'translateY(0)';
+      lastY = y;
+      ticking = false;
+    }
+    document.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(handleHeader);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Mobile panel
+    const toggleBtn = document.getElementById('nav-toggle');
+    const mobilePanel = document.getElementById('mobile-panel');
+    const panelInner = mobilePanel.querySelector('div.absolute.inset-x-0.top-0');
+    const overlay = mobilePanel.querySelector('[data-close-overlay]');
+
+    function openMobile() {
+      mobilePanel.classList.remove('pointer-events-none');
+      mobilePanel.classList.add('pointer-events-auto');
+      mobilePanel.style.opacity = '1';
+      panelInner.style.transform = 'translateY(0)';
+      panelInner.style.opacity = '1';
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      toggleBtn.querySelector('[data-lucide="menu"]').classList.add('hidden');
+      toggleBtn.querySelector('[data-lucide="x"]').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMobile() {
+      mobilePanel.style.opacity = '0';
+      panelInner.style.transform = 'translateY(-8px)';
+      panelInner.style.opacity = '0';
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.querySelector('[data-lucide="menu"]').classList.remove('hidden');
+      toggleBtn.querySelector('[data-lucide="x"]').classList.add('hidden');
+      setTimeout(() => {
+        mobilePanel.classList.remove('pointer-events-auto');
+        mobilePanel.classList.add('pointer-events-none');
+        document.body.style.overflow = '';
+      }, 250);
+    }
+    toggleBtn.addEventListener('click', () => {
+      const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      expanded ? closeMobile() : openMobile();
+    });
+    overlay.addEventListener('click', closeMobile);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMobile();
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) closeMobile();
+    });
+
+    // Nav link smooth scroll
+    document.querySelectorAll('[data-mobile-link]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = a.getAttribute('href');
+        closeMobile();
+        setTimeout(() => smoothScrollTo(href), 220);
+      });
+    });
+    document.querySelectorAll('[data-nav-link]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        smoothScrollTo(a.getAttribute('href'));
+      });
+    });
+
+    // Active link highlighting
+    const sections = Array.from(document.querySelectorAll('section[id], footer[id]'));
+    const navLinks = Array.from(document.querySelectorAll('[data-nav-link]'));
+    function setActive(id) {
+      navLinks.forEach(link => {
+        const match = link.getAttribute('href') === '#' + id;
+        link.setAttribute('aria-current', match ? 'page' : 'false');
+        link.style.backgroundSize = match ? '100% 2px' : '0% 2px';
+        link.classList.toggle('text-white', match);
+      });
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    }, { threshold: 0.5, rootMargin: '-20% 0px -20% 0px' });
+    sections.forEach(sec => observer.observe(sec));
+
+    // Toast
+    const toast = document.getElementById('toast');
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2200);
+    }
+
+    // Share page (footer)
+    document.getElementById('share-page').addEventListener('click', () => {
+      const shareText = 'DisasterSense — Prepare for disasters across major hazards.';
+      if (navigator.share) {
+        navigator.share({ title: 'DisasterSense', text: shareText, url: window.location.href })
+          .catch(() => showToast('Sharing failed. Copy the URL instead.'));
+      } else {
+        showToast('Sharing not supported. Copy the URL instead.');
+      }
+    });
+
+    // YEAR
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ---------- Comprehensive Disaster Data from Education.html ----------
+    const disasterData = {
+      earthquake: {
+        name: "Earthquake",
+        description: "An earthquake is the shaking of the Earth's surface caused by a sudden release of energy in the Earth's lithosphere that creates seismic waves. They can cause buildings to collapse, triggering landslides and tsunamis.",
+        prevention: "While earthquakes cannot be prevented, their impact can be mitigated by constructing earthquake-resistant buildings, securing heavy furniture, and preparing emergency kits.",
+        drill: '<strong>Drop, Cover, and Hold On:</strong> Drop to the ground, take cover under a sturdy table or desk, and hold on until the shaking stops. If outdoors, move to an open area away from buildings and power lines. After the shaking, calmly evacuate to a designated safe assembly point.',
+        law: 'Guided by the Disaster Management Act, 2005; the National Disaster Management Authority (NDMA) issues comprehensive earthquake safety guidelines, building codes (BIS codes), and conducts awareness campaigns.',
+        videoEmbed: 'https://www.youtube.com/embed/fFSZDRpHtFk',
+        kitEssentials: [
+          { item: 'Water (1 litre per person per day for at least 3 days)', checked: true },
+          { item: 'Non-perishable food (3-day supply)', checked: true },
+          { item: 'Battery-powered radio and extra batteries', checked: true },
+          { item: 'Flashlight and extra batteries', checked: true },
+          { item: 'First aid kit', checked: true },
+          { item: 'Whistle (to signal for help)', checked: true },
+          { item: 'Dust mask (to filter contaminated air)', checked: true },
+          { item: 'Plastic sheeting and duct tape (to shelter-in-place)', checked: true },
+          { item: 'Wrench or pliers (to turn off utilities)', checked: true },
+          { item: 'Manual can opener for food', checked: true },
+          { item: 'Local maps', checked: true },
+          { item: 'Cell phone with chargers and a backup battery', checked: true }
+        ]
+      },
+      flood: {
+        name: "Flood",
+        description: "A flood is an overflow of water that submerges land that is usually dry. Floods can be caused by heavy rainfall, overflowing rivers, storm surges, or dam failures, leading to loss of life, property damage, and displacement.",
+        prevention: "Measures include constructing levees, improving drainage systems, preserving wetlands, practicing proper waste management, and adhering to flood plain zoning regulations.",
+        drill: '<strong>Evacuate Safely:</strong> If advised to evacuate, do so immediately. Move to higher ground; never walk or drive through floodwaters as even shallow water can be dangerous. Disconnect electrical appliances and turn off utilities if safe to do so. If trapped, move to the highest point and signal for help.',
+        law: 'Flood response and mitigation are coordinated through the National Disaster Response Force (NDRF) and State Disaster Response Forces (SDRF) under the Disaster Management Act, 2005. The Central Water Commission (CWC) provides flood forecasting.',
+        videoEmbed: 'https://www.youtube.com/embed/hPcTaQZAa0w',
+        kitEssentials: [
+          { item: 'Water (1 litre per person per day for at least 3 days)', checked: true },
+          { item: 'Non-perishable food (3-day supply)', checked: true },
+          { item: 'Battery-powered radio and extra batteries', checked: true },
+          { item: 'Flashlight and extra batteries', checked: true },
+          { item: 'First aid kit', checked: true },
+          { item: 'Whistle (to signal for help)', checked: true },
+          { item: 'Water purification tablets or filter', checked: true },
+          { item: 'Warm blankets or sleeping bags', checked: true },
+          { item: 'Sturdy shoes and protective clothing', checked: true },
+          { item: 'Important documents in a waterproof bag', checked: true },
+          { item: 'Basic tools (wrench, pliers)', checked: true }
+        ]
+      },
+      fire: {
+        name: "Fire",
+        description: "A fire is a rapid oxidation process, a chemical reaction that releases heat, light, and various reaction products. Fires can be devastating, causing injuries, fatalities, and extensive property damage. They can be caused by electrical faults, cooking accidents, unattended candles, or natural causes like lightning.",
+        prevention: "Install smoke detectors and fire extinguishers, never leave cooking unattended, store flammable materials safely, plan and practice escape routes, and ensure electrical systems are maintained.",
+        drill: '<strong>"Stop, Drop, and Roll" (if clothes catch fire), "Get Down, Get Out, Stay Out":</strong> Raise the alarm immediately. If indoors, use stairs (never lifts), follow exit signs, and crawl low under smoke. Assemble at a designated safe point away from the building. Do not re-enter for belongings.',
+        law: 'Fire safety in India is primarily governed by Model Fire Service Regulations, various state-level fire safety acts, and the National Building Code of India (NBC) 2016. The Civil Defence Act, 1968 also plays a role in emergency response.',
+        videoEmbed: 'https://www.youtube.com/embed/9WIwlljva_s',
+        kitEssentials: [
+          { item: 'Smoke detectors with extra batteries', checked: true },
+          { item: 'Fire extinguishers (ABC type) on each floor', checked: true },
+          { item: 'Emergency ladder for upper floors', checked: true },
+          { item: 'Flashlight and extra batteries', checked: true },
+          { item: 'Whistle (to signal for help)', checked: true },
+          { item: 'First aid kit (especially for burns)', checked: true },
+          { item: 'Gloves and sturdy shoes', checked: true },
+          { item: 'Important documents (in a fireproof/waterproof bag)', checked: true },
+          { item: 'Emergency contact list', checked: true }
+        ]
+      },
+      cyclone: {
+        name: "Cyclone",
+        description: "A cyclone (also known as a hurricane or typhoon) is a rapidly rotating storm system characterized by a low-pressure center, strong winds, and a spiral arrangement of thunderstorms that produce heavy rain. They cause storm surges, high winds, and heavy rainfall leading to extensive damage.",
+        prevention: "Monitor weather forecasts, secure loose outdoor items, trim trees, reinforce vulnerable structures, and know your evacuation routes if living in coastal areas.",
+        drill: '<strong>Secure and Shelter:</strong> Before a cyclone, secure loose items outdoors, board up windows if possible, and listen to official advisories. If instructed, move to designated cyclone shelters or safe rooms. Stay away from windows and doors. Have an emergency kit ready and keep mobile phones charged.',
+        law: 'Cyclone warning and response are primarily managed by the India Meteorological Department (IMD) and included in NDMA and State Disaster Management Authority (SDMA) disaster plans under the Disaster Management Act, 2005. NDRF plays a crucial role in post-cyclone relief.',
+        videoEmbed: 'https://www.youtube.com/embed/XAAE2J1mXMw',
+        kitEssentials: [
+          { item: 'Water (1 litre per person per day for at least 3 days)', checked: true },
+          { item: 'Non-perishable food (3-day supply)', checked: true },
+          { item: 'Battery-powered radio and extra batteries', checked: true },
+          { item: 'Flashlight and extra batteries', checked: true },
+          { item: 'First aid kit', checked: true },
+          { item: 'Whistle (to signal for help)', checked: true },
+          { item: 'Important documents in a waterproof bag', checked: true },
+          { item: 'Warm clothes, blankets, sleeping bags', checked: true },
+          { item: 'Rain gear/waterproof clothing', checked: true },
+          { item: 'Sanitation and personal hygiene items', checked: true },
+          { item: 'Cash and copies of important papers', checked: true }
+        ]
+      },
+      landslide: {
+        name: "Landslide",
+        description: "A landslide is the movement of rock, debris, or earth down a slope. They can be triggered by heavy rainfall, earthquakes, volcanic eruptions, or human activities like deforestation and construction on unstable slopes.",
+        prevention: "Avoid building on steep slopes, plant vegetation to stabilize soil, ensure proper drainage, and monitor warning signs like cracks in the ground or sudden water seepage.",
+        drill: '<strong>Evacuate Immediately:</strong> If you are in an area prone to landslides or notice warning signs (e.g., unusual sounds, moving fences, cracks in foundations), evacuate immediately. If caught in a landslide, curl into a ball and protect your head. Move away from the path of the slide if possible.',
+        law: 'Landslide mitigation and management are addressed under the Disaster Management Act, 2005. Geological Survey of India (GSI) conducts landslide hazard zonation, and NDMA issues guidelines for prevention and response.',
+        videoEmbed: 'https://www.youtube.com/embed/l-kF1XwI-v8',
+        kitEssentials: [
+          { item: 'Water (1 litre per person per day for at least 3 days)', checked: true },
+          { item: 'Non-perishable food (3-day supply)', checked: true },
+          { item: 'Battery-powered radio and extra batteries', checked: true },
+          { item: 'Flashlight and extra batteries', checked: true },
+          { item: 'First aid kit', checked: true },
+          { item: 'Whistle (to signal for help)', checked: true },
+          { item: 'Sturdy shoes and protective clothing', checked: true },
+          { item: 'Dust mask/respirator', checked: true },
+          { item: 'Emergency shovel/tools', checked: true },
+          { item: 'Important documents in a waterproof bag', checked: true }
+        ]
+      },
+      heatwave: {
+        name: "Heatwave",
+        description: "A heatwave is a prolonged period of excessively hot weather, which may be accompanied by high humidity. They pose significant health risks, including heat stroke, dehydration, and can exacerbate existing medical conditions.",
+        prevention: "Stay hydrated by drinking plenty of water, avoid direct sun exposure during peak hours, wear light and loose-fitting clothing, use ORS (Oral Rehydration Solution), and check on vulnerable individuals.",
+        drill: '<strong>Stay Cool, Stay Hydrated:</strong> During a heatwave, stay indoors in a cool place, preferably air-conditioned. If not, use damp towels and fans. Drink plenty of fluids (water, ORS, fruit juices) even if you don\'t feel thirsty. Avoid strenuous activities. If feeling unwell, seek medical help immediately.',
+        law: 'While not a sudden onset disaster, heatwave management is part of public health initiatives coordinated by the Ministry of Health and Family Welfare and NDMA under broader disaster management frameworks. IMD issues heatwave warnings.',
+        videoEmbed: 'https://www.youtube.com/embed/mK9uJ3iJ94o',
+        kitEssentials: [
+          { item: 'Plenty of drinking water and ORS', checked: true },
+          { item: 'Light, loose-fitting cotton clothing', checked: true },
+          { item: 'Wide-brimmed hat and sunglasses', checked: true },
+          { item: 'Sunscreen', checked: true },
+          { item: 'Cooling towels or spray bottles', checked: true },
+          { item: 'First aid kit (including bandages for blisters/rashes)', checked: true },
+          { item: 'Electrolyte-rich drinks or powders', checked: true },
+          { item: 'Portable fan (battery-operated)', checked: true }
+        ]
+      }
+    };
+
+    const quizQuestions = {
+      earthquake: [
+        { q: 'What is the most crucial action during an earthquake?', options: ['Run out of the building immediately.', 'Drop, Cover, and Hold On.', 'Stand under a doorway.', 'Go to the highest floor.'], a: 1 },
+        { q: 'Which of these is a good practice AFTER an earthquake stops?', options: ['Immediately re-enter your home to check for damage.', 'Use the elevator to evacuate quickly.', 'Evacuate calmly to a pre-designated assembly point.', 'Call emergency services right away, even if there are no injuries.'], a: 2 }
+      ],
+      flood: [
+        { q: 'Is it safe to drive through floodwaters if they look shallow?', options: ['Yes, if you drive slowly.', 'No, water depth can be deceiving and roads may be washed out.', 'Only if you have an SUV.', 'Only if you know the road well.'], a: 1 },
+        { q: 'Where should you go if a flood warning is issued for your area?', options: ['To the lowest part of your house.', 'To an underground shelter.', 'To higher ground or a designated flood shelter.', 'Stay by a window to watch the water level.'], a: 2 }
+      ],
+      fire: [
+        { q: 'What is the correct way to exit a smoke-filled room?', options: ['Run upright to get out faster.', 'Crawl low under the smoke.', 'Hold your breath and run.', 'Open all windows to clear the smoke.'], a: 1 },
+        { q: 'After evacuating a building during a fire, what should you do?', options: ['Go back inside to save pets or belongings.', 'Wait near the entrance for firefighters.', 'Go to the designated assembly point and do not re-enter.', 'Call friends and family to tell them what happened.'], a: 2 }
+      ],
+      cyclone: [
+        { q: 'Before a cyclone hits, what is an important preparation?', options: ['Go to the beach to watch the waves.', 'Secure loose objects outside your home.', 'Leave windows open slightly to reduce pressure.', 'Stock up on ice cream.'], a: 1 },
+        { q: 'During a cyclone, where is the safest place to be?', options: ['Near a large window to see the storm.', 'In a designated cyclone shelter or a sturdy interior room.', 'Outside to help secure neighbors\' property.', 'On a rooftop for better visibility.'], a: 1 }
+      ],
+      landslide: [
+        { q: 'What is a common trigger for landslides?', options: ['Long periods of drought.', 'Heavy rainfall.', 'Strong winds.', 'Mild sunny weather.'], a: 1 },
+        { q: 'If you are caught in a landslide, what should you try to do?', options: ['Run uphill as fast as you can.', 'Lie flat on the ground and wait.', 'Curl into a ball and protect your head, trying to move out of the path.', 'Dig yourself into the ground.'], a: 2 }
+      ],
+      heatwave: [
+        { q: 'What is the most important thing to do during a heatwave?', options: ['Drink sugary drinks.', 'Spend as much time as possible in direct sunlight.', 'Stay hydrated by drinking plenty of water and ORS.', 'Wear dark, tight-fitting clothing.'], a: 2 },
+        { q: 'Who is most vulnerable during a heatwave?', options: ['Young adults who exercise outdoors.', 'Elderly people, infants, and people with chronic illnesses.', 'People who work in air-conditioned offices.', 'Athletes.'], a: 1 }
+      ]
+    };
+
+    const scenarioQuestions = {
+      earthquake: [
+        {
+          scenario: 'You are at home when you feel a sudden, violent shaking. Objects start falling from shelves.',
+          question: 'What is your immediate action?',
+          options: [
+            { text: 'Run outside as fast as possible.', correct: false, feedback: 'Running outside can be dangerous due to falling debris. Drop, Cover, and Hold On is safer indoors.' },
+            { text: 'Get under a sturdy table and hold on to it.', correct: true, feedback: 'Correct! "Drop, Cover, and Hold On" protects you from falling objects.' },
+            { text: 'Stand next to a window to see what is happening.', correct: false, feedback: 'Windows can break and cause injury. Stay away from them.' },
+            { text: 'Call emergency services immediately.', correct: false, feedback: 'Your immediate priority is personal safety. Call after the shaking stops if needed.' }
+          ]
+        },
+        {
+          scenario: 'After an earthquake, you notice a strong smell of gas in your house.',
+          question: 'What should you do?',
+          options: [
+            { text: 'Try to find the source of the leak.', correct: false, feedback: 'Do not attempt to find the source yourself. Any spark could cause an explosion.' },
+            { text: 'Open all windows and light a candle to see better.', correct: false, feedback: 'Lighting a flame is extremely dangerous near a gas leak.' },
+            { text: 'Evacuate immediately, leaving the door open, and report it to the gas company/authorities.', correct: true, feedback: 'Correct! Evacuate at once and report the leak. Do not use electrical switches or phones indoors.' },
+            { text: 'Turn on the exhaust fan to clear the air.', correct: false, feedback: 'Using electrical appliances could create a spark.' }
+          ]
+        }
+      ],
+      flood: [
+        {
+          scenario: 'You are driving and encounter a flooded road. The water looks about a foot deep.',
+          question: 'What is the safest course of action?',
+          options: [
+            { text: 'Drive through it slowly, as your car is tall enough.', correct: false, feedback: 'Even shallow water can hide hazards or stall your vehicle. "Turn Around, Don\'t Drown!"' },
+            { text: 'Get out of your car and walk through the water to check its depth.', correct: false, feedback: 'Walking through floodwaters is dangerous due to strong currents, hidden debris, and contamination.' },
+            { text: 'Turn around and find an alternate route.', correct: true, feedback: 'Correct! Never drive or walk through floodwaters. It\'s impossible to know the actual depth or if the road beneath is intact.' },
+            { text: 'Wait for other cars to cross first and follow them.', correct: false, feedback: 'Their safety is not guaranteed, and you put yourself at risk by following.' }
+          ]
+        },
+        {
+          scenario: 'Your home is starting to flood, and authorities have issued an evacuation order. You have limited time.',
+          question: 'What should be your priority?',
+          options: [
+            { text: 'Save all your valuable electronics and furniture.', correct: false, feedback: 'Your personal safety is the absolute priority over belongings.' },
+            { text: 'Quickly pack a large suitcase with all your favorite clothes.', correct: false, feedback: 'You need an emergency kit with essentials, not just clothes. Time is critical.' },
+            { text: 'Grab your pre-packed emergency kit, important documents, and evacuate to higher ground.', correct: true, feedback: 'Correct! Focus on essentials and personal safety, then evacuate immediately.' },
+            { text: 'Call all your relatives to inform them before leaving.', correct: false, feedback: 'Inform them once you are safe. Your immediate action should be to evacuate.' }
+          ]
+        }
+      ],
+      fire: [
+        {
+          scenario: 'You wake up to the smell of smoke and realize there is a fire downstairs. The smoke detector is blaring.',
+          question: 'What is your first step?',
+          options: [
+            { text: 'Open your bedroom door to see where the fire is.', correct: false, feedback: 'Never open a door if it feels hot or if you see smoke seeping from under it. It can feed the fire.' },
+            { text: 'Roll out of bed, get low to the floor, and crawl to your escape route.', correct: true, feedback: 'Correct! Smoke rises, so crawling low helps you breathe cleaner air and see better.' },
+            { text: 'Call 101 for the fire department from inside your burning house.', correct: false, feedback: 'Call once you are safely outside. Your immediate priority is to escape.' },
+            { text: 'Grab your pet and all valuables before leaving.', correct: false, feedback: 'Your life is more important than belongings. Get out first.' }
+          ]
+        },
+        {
+          scenario: 'You are safely outside your burning home, but you realize your younger sibling is still inside.',
+          question: 'What should you do?',
+          options: [
+            { text: 'Run back inside to rescue them.', correct: false, feedback: 'Never re-enter a burning building. This puts your life at extreme risk.' },
+            { text: 'Wait for the firefighters to arrive and inform them immediately.', correct: true, feedback: 'Correct! Tell the firefighters about anyone still inside. They are trained and equipped for rescue.' },
+            { text: 'Shout their name loudly, hoping they will come out.', correct: false, feedback: 'This is ineffective and won\'t help if they are trapped or unconscious.' },
+            { text: 'Call other family members for advice.', correct: false, feedback: 'Time is critical; alert professional rescuers immediately.' }
+          ]
+        }
+      ],
+      cyclone: [
+        {
+          scenario: 'A cyclone warning has been issued, and you live in a coastal area. Authorities advise immediate evacuation.',
+          question: 'What is your priority action?',
+          options: [
+            { text: 'Stay home to protect your property from damage.', correct: false, feedback: 'Your life is more valuable than property. Always follow evacuation orders.' },
+            { text: 'Head to the nearest beach to witness the storm surge.', correct: false, feedback: 'This is extremely dangerous and can lead to immediate loss of life.' },
+            { text: 'Gather your emergency kit, secure your home, and evacuate to the designated shelter or safe zone.', correct: true, feedback: 'Correct! Prepare your home as much as possible, then prioritize safe evacuation.' },
+            { text: 'Wait until the last minute to see if the cyclone changes path.', correct: false, feedback: 'Delaying evacuation can leave you stranded and cut off from safety.' }
+          ]
+        },
+        {
+          scenario: 'During a severe cyclone, your power goes out, and winds are extremely strong. Your phone battery is low.',
+          question: 'What should you do to stay informed?',
+          options: [
+            { text: 'Open a window to listen for news from outside.', correct: false, feedback: 'Opening windows during a cyclone is very dangerous and can cause further damage to your home.' },
+            { text: 'Try to charge your phone using your car battery.', correct: false, feedback: 'It\'s unsafe to go outside during strong winds, and your car might not be available.' },
+            { text: 'Use your battery-powered radio to listen for official updates.', correct: true, feedback: 'Correct! A battery-powered radio is essential for receiving emergency broadcasts when other communications fail.' },
+            { text: 'Go to a neighbor\'s house to check if they have power.', correct: false, feedback: 'Do not go outside during the peak of the storm.' }
+          ]
+        }
+      ],
+      landslide: [
+        {
+          scenario: 'You live in a hilly area, and after several days of heavy rain, you notice new cracks appearing in your house foundation and a fence suddenly shifting.',
+          question: 'What immediate action should you take?',
+          options: [
+            { text: 'Wait to see if the cracks get bigger before doing anything.', correct: false, feedback: 'These are warning signs; waiting could be too late.' },
+            { text: 'Try to reinforce the fence and fill the cracks yourself.', correct: false, feedback: 'This can be dangerous and is not a permanent solution to an active landslide threat.' },
+            { text: 'Alert your family and evacuate to a safer location immediately, then notify local authorities.', correct: true, feedback: 'Correct! These are critical warning signs; immediate evacuation is crucial, followed by reporting to authorities.' },
+            { text: 'Call a contractor to inspect the damage.', correct: false, feedback: 'While important eventually, immediate safety is the priority.' }
+          ]
+        },
+        {
+          scenario: 'You are driving on a mountain road and suddenly see rocks and mud starting to slide down the slope in front of you.',
+          question: 'What is the best course of action?',
+          options: [
+            { text: 'Speed up to try and drive past the sliding material.', correct: false, feedback: 'This is extremely risky. You could get caught or hit by debris.' },
+            { text: 'Get out of your car and try to clear a path.', correct: false, feedback: 'Do not exit your vehicle; the slide can be unpredictable and fast.' },
+            { text: 'Reverse quickly and move to a safe location away from the slide area.', correct: true, feedback: 'Correct! Back away from the danger zone immediately if possible, and alert authorities.' },
+            { text: 'Stop your car and wait for the slide to clear.', correct: false, feedback: 'Staying in the path of a slide is very dangerous; it could engulf your vehicle.' }
+          ]
+        }
+      ],
+      heatwave: [
+        {
+          scenario: 'It\'s a scorching summer day with a heatwave warning. Your elderly neighbor, who lives alone, looks pale and confused.',
+          question: 'What should be your immediate concern and action?',
+          options: [
+            { text: 'Tell them to take a cold shower immediately.', correct: false, feedback: 'While cooling is good, their confusion suggests a more serious issue that needs careful handling.' },
+            { text: 'Offer them a sugary drink to boost their energy.', correct: false, feedback: 'Sugary drinks can worsen dehydration. Water or ORS is better.' },
+            { text: 'Move them to a cooler environment, offer water/ORS, loosen their clothing, and seek medical help.', correct: true, feedback: 'Correct! These are signs of heat exhaustion or stroke, requiring immediate cooling and medical attention.' },
+            { text: 'Advise them to just rest and they\'ll be fine.', correct: false, feedback: 'Their symptoms are serious and require intervention.' }
+          ]
+        },
+        {
+          scenario: 'During a heatwave, you feel dizzy, nauseous, and have a severe headache after spending time outdoors.',
+          question: 'What should you do?',
+          options: [
+            { text: 'Keep exercising to sweat it out.', correct: false, feedback: 'This will worsen your condition. Stop all activity.' },
+            { text: 'Drink a cup of hot tea to warm yourself up.', correct: false, feedback: 'You need to cool down, not warm up.' },
+            { text: 'Move to a cool place, lie down, elevate your feet, drink water or ORS, and seek medical attention if symptoms persist or worsen.', correct: true, feedback: 'Correct! These are symptoms of heat exhaustion and require immediate cooling and rehydration.' },
+            { text: 'Ignore it and hope it passes.', correct: false, feedback: 'These symptoms can quickly escalate to heat stroke, which is a medical emergency.' }
+          ]
+        }
+      ]
+    };
+
+    // ---------- Dynamic Rendering ----------
+    const disasterSelect = document.getElementById('disaster-select');
+    disasterSelect.addEventListener('change', () => showDisasterInfo());
+
+    function sectionTitle(title) {
+      return `<h3 class="text-xl font-semibold tracking-tight text-white" style="font-family:'Plus Jakarta Sans', Inter, sans-serif">${title}</h3>`;
+    }
+
+    function pill(text) {
+      return `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-white/10 border border-white/10 text-gray-300">${text}</span>`;
+    }
+
+    function showDisasterInfo() {
+      const sel = document.getElementById('disaster-select').value;
+      const cont = document.getElementById('dynamic-content');
+      if (!sel || !disasterData[sel]) {
+        cont.innerHTML = `
+          <div class="rounded-2xl border border-white/10 bg-black/40 p-6 sm:p-8">
+            <p class="text-gray-300">Please select a disaster from the dropdown above to view detailed preparedness information, drills, laws, videos, interactive kit builder, scenarios, and quizzes.</p>
+            <div class="mt-6 text-sm text-gray-500">Tip: After selecting, use the top navigation to jump to Kit, Scenarios, or Quiz.</div>
+          </div>
+        `;
+        if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        return;
+      }
+
+      const data = disasterData[sel];
+      let html = `
+        <!-- Header Card -->
+        <div class="rounded-2xl border border-white/10 bg-gradient-to-b from-gray-950 to-black p-6 sm:p-8">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h2 class="text-2xl sm:text-3xl font-medium tracking-tight text-white" style="font-family:'Plus Jakarta Sans', Inter, sans-serif">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-cyan-300">${data.name}</span> Preparedness
+              </h2>
+              <div class="mt-3 flex items-center gap-2">${pill('Guidelines')} ${pill('Drills')} ${pill('Laws')}</div>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-sm text-gray-400">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              Verified by NDMA references
+            </div>
+          </div>
+
+          <!-- Understanding -->
+          <div class="mt-8 grid md:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-white/10 bg-black/40 p-5">
+              ${sectionTitle(`Understanding ${data.name}s`)}
+              <p class="mt-3 text-gray-300"><span class="font-medium text-gray-200">Description:</span> ${data.description}</p>
+              <p class="mt-3 text-gray-300"><span class="font-medium text-gray-200">Prevention & Mitigation:</span> ${data.prevention}</p>
+            </div>
+            <div class="rounded-xl border border-white/10 bg-black/40 p-5">
+              ${sectionTitle('Emergency Drills & Procedures')}
+              <p class="mt-3 text-gray-300"><span class="font-medium text-gray-200">Drill:</span> ${data.drill}</p>
+              <p class="mt-3 text-gray-300"><span class="font-medium text-gray-200">Relevant Law / Institution:</span> ${data.law}</p>
+            </div>
+          </div>
+
+          <!-- Video -->
+          <div class="mt-6 rounded-xl border border-white/10 bg-black/40 p-5">
+            ${sectionTitle('Watch a Safety Drill Video')}
+            <div class="mt-4 rounded-xl overflow-hidden border border-white/10">
+              <div class="relative w-full" style="padding-top:56.25%">
+                <iframe class="absolute inset-0 w-full h-full" src="${data.videoEmbed}?rel=0" title="${data.name} safety drill video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drag & Drop Kit -->
+        <section id="kit" class="mt-10 rounded-2xl border border-white/10 bg-black/40 p-6 sm:p-8">
+          <div class="flex items-start justify-between gap-4">
+            ${sectionTitle('Build Your Emergency Kit (Drag & Drop)')}
+          </div>
+          <p class="mt-2 text-gray-400">Drag the essential items to the emergency kit to prepare for a ${data.name}.</p>
+
+          <div class="mt-5 grid md:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-white/10 bg-gray-950 p-4">
+              <h4 class="text-base font-semibold text-white">Available Items</h4>
+              <div class="mt-3 min-h-[280px] rounded-lg border border-dashed border-white/10 bg-black/60 p-3" id="drag-items"></div>
+            </div>
+            <div class="rounded-xl border border-white/10 bg-gray-950 p-4">
+              <h4 class="text-base font-semibold text-white">Your Emergency Kit</h4>
+              <div class="mt-3 min-h-[280px] rounded-lg border border-dashed border-teal-500/40 bg-black/60 p-3" id="drop-target"></div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-col sm:flex-row gap-3">
+            <button type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]" onclick="checkDragDropKit('${sel}')">
+              <i data-lucide="check-circle-2" class="w-4 h-4"></i> Check My Kit
+            </button>
+            <button type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/10 text-gray-100 hover:bg-white/15 border border-white/10 transition-all hover:scale-[1.02]" onclick="resetDragDrop('${sel}')">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset
+            </button>
+          </div>
+          <div id="drag-drop-feedback" class="mt-4 text-sm"></div>
+        </section>
+
+        <!-- Quick Quiz -->
+        <section id="quiz" class="mt-10 rounded-2xl border border-white/10 bg-black/40 p-6 sm:p-8">
+          ${sectionTitle('Quick Safety Quiz')}
+          <form id="quick-quiz-form" class="mt-4 space-y-5"></form>
+          <div class="mt-4">
+            <button type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]" onclick="checkQuiz('${sel}')">
+              <i data-lucide="clipboard-check" class="w-4 h-4"></i> Submit Quick Quiz
+            </button>
+          </div>
+          <div id="quick-quiz-results" class="mt-4 hidden"></div>
+        </section>
+
+        <!-- Scenarios -->
+        <section id="scenarios" class="mt-10 rounded-2xl border border-white/10 bg-black/40 p-6 sm:p-8">
+          ${sectionTitle('Scenario-Based Learning')}
+          <p class="mt-2 text-gray-400">Test your decision-making skills in realistic emergency situations.</p>
+          <form id="scenario-quiz-form" class="mt-4 space-y-6"></form>
+          <div class="mt-4">
+            <button type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-teal-400 text-black hover:bg-teal-300 transition-all hover:scale-[1.02]" onclick="checkScenarioQuiz('${sel}')">
+              <i data-lucide="target" class="w-4 h-4"></i> Submit Scenarios
+            </button>
+          </div>
+          <div id="scenario-quiz-results" class="mt-4 hidden"></div>
+        </section>
+      `;
+      cont.innerHTML = html;
+
+      // Render interactive parts
+      renderDragDrop(sel);
+      renderQuickQuiz(sel);
+      renderScenarioQuiz(sel);
+
+      // Observe new sections for active link highlighting
+      document.querySelectorAll('#kit, #quiz, #scenarios').forEach(sec => observer.observe(sec));
+
+      // Re-init icons for dynamically injected content
+      if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    }
+
+    // ---------- Drag & Drop Kit ----------
+    let draggingEl = null;
+
+    function renderDragDrop(sel) {
+      const data = disasterData[sel];
+      const itemsWrap = document.getElementById('drag-items');
+      const dropTarget = document.getElementById('drop-target');
+      const feedback = document.getElementById('drag-drop-feedback');
+      if (!itemsWrap || !dropTarget) return;
+
+      itemsWrap.innerHTML = '';
+      dropTarget.innerHTML = '';
+      feedback.className = 'mt-4 text-sm text-gray-300';
+
+      data.kitEssentials.forEach((entry, idx) => {
+        const el = createDraggableItem(entry.item, `item-${idx}`);
+        itemsWrap.appendChild(el);
+      });
+
+      initializeDropZone(itemsWrap);
+      initializeDropZone(dropTarget);
+    }
+
+    function createDraggableItem(text, id) {
+      const el = document.createElement('div');
+      el.className = 'group flex items-center justify-between gap-3 select-none rounded-lg border border-white/10 bg-black/60 px-3 py-2 text-sm text-gray-200 hover:border-teal-500/40 transition-colors cursor-grab active:cursor-grabbing';
+      el.setAttribute('draggable', 'true');
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-label', text);
+      el.dataset.item = text;
+      el.id = id;
+
+      el.innerHTML = `
+        <div class="flex items-center gap-2">
+          <i data-lucide="grip-vertical" class="w-4 h-4 text-gray-500 group-hover:text-teal-300"></i>
+          <span>${text}</span>
+        </div>
+        <button type="button" class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs border border-white/10 text-gray-400 hover:text-teal-200 hover:border-teal-500/40 transition-colors move-toggle">
+          <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i>
+          Move
+        </button>
+      `;
+
+      el.addEventListener('dragstart', (e) => {
+        draggingEl = el;
+        e.dataTransfer.setData('text/plain', el.dataset.item);
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => el.classList.add('opacity-70'), 0);
+      });
+      el.addEventListener('dragend', () => {
+        draggingEl = null;
+        el.classList.remove('opacity-70');
+      });
+
+      // Click/keyboard move for accessibility
+      const moveBtn = el.querySelector('.move-toggle');
+      const handleMove = () => {
+        const dropTarget = document.getElementById('drop-target');
+        const dragItems = document.getElementById('drag-items');
+        if (el.parentElement && el.parentElement.id === 'drag-items') {
+          dropTarget.appendChild(el);
+        } else {
+          dragItems.appendChild(el);
+        }
+      };
+      moveBtn.addEventListener('click', handleMove);
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleMove();
+        }
+      });
+
+      return el;
+    }
+
+    function initializeDropZone(zone) {
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('ring-1', 'ring-teal-500/40');
+      });
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('ring-1', 'ring-teal-500/40');
+      });
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('ring-1', 'ring-teal-500/40');
+        if (draggingEl) zone.appendChild(draggingEl);
+      });
+    }
+
+    window.resetDragDrop = function(sel) {
+      renderDragDrop(sel);
+      showToast('Kit has been reset.');
+      if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    };
+
+    window.checkDragDropKit = function(sel) {
+      const data = disasterData[sel];
+      const required = new Set(data.kitEssentials.map(i => i.item));
+      const dropTarget = document.getElementById('drop-target');
+      const picked = Array.from(dropTarget.querySelectorAll('[data-item]')).map(el => el.dataset.item);
+      const pickedSet = new Set(picked);
+
+      const missing = [...required].filter(x => !pickedSet.has(x));
+      const extra = picked.filter(x => !required.has(x));
+
+      const feedback = document.getElementById('drag-drop-feedback');
+      if (!feedback) return;
+
+      if (missing.length === 0 && extra.length === 0 && picked.length === required.size) {
+        feedback.className = 'mt-4 text-sm text-teal-300';
+        feedback.innerHTML = `
+          <div class="inline-flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="check-circle-2" class="lucide lucide-check-circle-2 w-4 h-4"><path d="M22 11.08V12A10 10 0 1 1 12 2"></path><path d="m9 11 3 3L22 4"></path></svg>
+            Great job! Your kit covers all items for ${disasterData[sel].name}.
+          </div>
+        `;
+        showToast('All essentials packed!');
+      } else {
+        feedback.className = 'mt-4 text-sm text-amber-300';
+        feedback.innerHTML = `
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="alert-triangle" class="lucide lucide-alert-triangle w-4 h-4"><path d="M21.73 18-8-14a2 2 0 0 0-3.48 0L9 18"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+              Your kit is missing some essentials.
+            </div>
+            ${missing.length ? `<div class="text-amber-200"><span class="font-medium">Missing:</span> ${missing.join(', ')}</div>` : ''}
+            ${extra.length ? `<div class="text-gray-300"><span class="font-medium">Extras (optional):</span> ${extra.join(', ')}</div>` : ''}
+          </div>
+        `;
+        showToast('Review the kit feedback below.');
+      }
+      if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    };
+
+    // ---------- Quick Quiz ----------
+    function renderQuickQuiz(sel) {
+      const form = document.getElementById('quick-quiz-form');
+      if (!form) return;
+      const list = quizQuestions[sel] || [];
+      form.innerHTML = '';
+      list.forEach((q, qi) => {
+        const fieldset = document.createElement('fieldset');
+        fieldset.className = 'rounded-lg border border-white/10 bg-black/40 p-4';
+        const legend = document.createElement('legend');
+        legend.className = 'text-sm font-medium text-gray-100';
+        legend.textContent = `Q${qi + 1}. ${q.q}`;
+        fieldset.appendChild(legend);
+
+        const optsWrap = document.createElement('div');
+        optsWrap.className = 'mt-3 space-y-2';
+        q.options.forEach((opt, oi) => {
+          const id = `qq-${qi}-${oi}`;
+          const label = document.createElement('label');
+          label.className = 'flex items-start gap-3 rounded-md px-3 py-2 hover:bg-white/5 cursor-pointer';
+          label.setAttribute('for', id);
+
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = `qq-${qi}`;
+          input.id = id;
+          input.value = oi;
+          input.className = 'mt-1 h-4 w-4 text-teal-500 bg-gray-900 border-gray-700 focus:ring-teal-500';
+
+          const span = document.createElement('span');
+          span.className = 'text-sm text-gray-300';
+          span.textContent = opt;
+
+          label.appendChild(input);
+          label.appendChild(span);
+          optsWrap.appendChild(label);
+        });
+
+        fieldset.appendChild(optsWrap);
+        form.appendChild(fieldset);
+      });
+    }
+
+    window.checkQuiz = function(sel) {
+      const list = quizQuestions[sel] || [];
+      let score = 0;
+      const results = [];
+      list.forEach((q, qi) => {
+        const chosen = document.querySelector(`input[name="qq-${qi}"]:checked`);
+        const val = chosen ? parseInt(chosen.value, 10) : -1;
+        const correct = val === q.a;
+        if (correct) score++;
+        results.push({ q: q.q, correct, correctText: q.options[q.a], selectedText: chosen ? q.options[val] : 'No answer' });
+      });
+
+      const out = document.getElementById('quick-quiz-results');
+      if (!out) return;
+
+      out.classList.remove('hidden');
+      out.className = 'mt-4 rounded-lg border border-white/10 bg-black/40 p-4';
+      out.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-gray-300">
+            Score: <span class="font-semibold ${score === list.length ? 'text-teal-300' : 'text-amber-300'}">${score}/${list.length}</span>
+          </div>
+          <button type="button" class="text-xs text-gray-400 hover:text-teal-200 underline" onclick="document.getElementById('quick-quiz-results').classList.add('hidden')">Hide</button>
+        </div>
+        <div class="mt-3 space-y-2">
+          ${results.map((r, i) => `
+            <div class="rounded-md px-3 py-2 ${r.correct ? 'bg-teal-500/10 text-teal-200' : 'bg-rose-500/10 text-rose-200'}">
+              <div class="text-xs uppercase tracking-wide opacity-80">Q${i + 1}</div>
+              <div class="text-sm mt-1">${r.correct ? 'Correct' : 'Incorrect'} — Correct answer: <span class="font-medium">${r.correctText}</span></div>
+              ${!r.correct ? `<div class="text-xs text-gray-300/80 mt-0.5">You chose: ${r.selectedText}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+      showToast(`Quiz submitted: ${score}/${list.length}`);
+    };
+
+    // ---------- Scenario Quiz ----------
+    function renderScenarioQuiz(sel) {
+      const form = document.getElementById('scenario-quiz-form');
+      if (!form) return;
+      const list = (scenarioQuestions[sel] || []);
+      form.innerHTML = '';
+
+      list.forEach((s, si) => {
+        const fieldset = document.createElement('fieldset');
+        fieldset.className = 'rounded-lg border border-white/10 bg-black/40 p-4';
+
+        fieldset.innerHTML = `
+          <div class="text-xs font-medium text-teal-300 uppercase tracking-wide">Scenario ${si + 1}</div>
+          <p class="mt-1 text-sm text-gray-300">${s.scenario}</p>
+          <p class="mt-3 text-sm text-gray-100 font-medium">${s.question}</p>
+        `;
+
+        const optsWrap = document.createElement('div');
+        optsWrap.className = 'mt-3 space-y-2';
+
+        s.options.forEach((opt, oi) => {
+          const id = `sq-${si}-${oi}`;
+          const label = document.createElement('label');
+          label.className = 'flex items-start gap-3 rounded-md px-3 py-2 hover:bg-white/5 cursor-pointer';
+          label.setAttribute('for', id);
+
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = `sq-${si}`;
+          input.id = id;
+          input.value = oi;
+          input.className = 'mt-1 h-4 w-4 text-teal-500 bg-gray-900 border-gray-700 focus:ring-teal-500';
+          input.dataset.correct = String(!!opt.correct);
+          input.dataset.feedback = opt.feedback;
+
+          const span = document.createElement('span');
+          span.className = 'text-sm text-gray-300';
+          span.textContent = opt.text;
+
+          label.appendChild(input);
+          label.appendChild(span);
+          optsWrap.appendChild(label);
+        });
+
+        fieldset.appendChild(optsWrap);
+        form.appendChild(fieldset);
+      });
+    }
+
+    window.checkScenarioQuiz = function(sel) {
+      const list = (scenarioQuestions[sel] || []);
+      let score = 0;
+      const results = list.map((s, si) => {
+        const chosen = document.querySelector(`input[name="sq-${si}"]:checked`);
+        if (!chosen) return { correct: false, feedback: 'No option selected.' };
+        const correct = chosen.dataset.correct === 'true';
+        if (correct) score++;
+        return { correct, feedback: chosen.dataset.feedback };
+      });
+
+      let out = document.getElementById('scenario-quiz-results');
+      if (!out) return;
+
+      out.classList.remove('hidden');
+      out.className = 'mt-4 rounded-lg border border-white/10 bg-black/40 p-4';
+      out.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-gray-300">
+            Result: <span class="font-semibold ${score === list.length ? 'text-teal-300' : 'text-amber-300'}">${score}/${list.length}</span>
+          </div>
+          <button type="button" class="text-xs text-gray-400 hover:text-teal-200 underline" onclick="document.getElementById('scenario-quiz-results').classList.add('hidden')">Hide</button>
+        </div>
+        <div class="mt-3 space-y-2">
+          ${results.map((r, i) => `
+            <div class="rounded-md px-3 py-2 ${r.correct ? 'bg-teal-500/10 text-teal-200' : 'bg-rose-500/10 text-rose-200'}">
+              <div class="text-xs uppercase tracking-wide opacity-80">Scenario ${i + 1}</div>
+              <div class="text-sm mt-1">${r.correct ? 'Correct decision.' : 'Better choice available.'}</div>
+              <div class="text-xs text-gray-300/80 mt-0.5">${r.feedback}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      showToast(`Scenarios submitted: ${score}/${list.length}`);
+    };
+
+    // Initialize if a value is already selected (e.g., via back/forward)
+    if (disasterSelect.value) {
+      showDisasterInfo();
+    }
+  </script>
+
+</body></html>
